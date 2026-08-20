@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>YONEX 2026 FW 의류 e-카탈로그</title>
+<meta name="description" content="요넥스 2026 F/W 배드민턴 의류 디지털 카탈로그 — 룩북, 시즌 컬러 스토리, 상의·하의 고스트컷 매칭 및 비교 기능.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23362B6B'/><text x='50' y='68' font-family='Georgia,serif' font-weight='700' font-size='56' fill='%23F2EEDF' text-anchor='middle'>Y</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F1EFE5; --paper-2:#E8E5D6;
+  --ink:#1B1A1F; --ink-soft:#4A4A50; --muted:#82807A;
+  --line:rgba(27,26,31,.12);
+  --indigo:#362B6B; --indigo-deep:#241C4A;
+  --coral:#DE3A50;
+  --navy:#1B2740; --gray:#8993A6; --white-sw:#EFEDE3; --black-sw:#17181C;
+  --mint:#BFE0C6; --green:#33422E;
+  --card:#FBFAF4;
+  --radius:14px;
+  --serif:'Fraunces',Georgia,'Noto Serif KR',serif;
+  --sans:'Work Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:var(--sans);overflow-x:hidden;}
+a{color:inherit;}
+img{max-width:100%;display:block;}
+h1,h2,h3{font-family:var(--serif);font-weight:700;margin:0;text-wrap:balance;}
+::selection{background:var(--indigo);color:var(--paper);}
+:focus-visible{outline:2px solid var(--coral);outline-offset:2px;}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important;}}
+
+.eyebrow{font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);}
+.eyebrow b{color:var(--indigo);}
+
+/* ---------- NAV ---------- */
+header.nav{
+  position:sticky;top:0;z-index:80;background:rgba(241,239,229,.92);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav-row{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 20px;}
+.wordmark{font-family:var(--serif);font-weight:700;font-size:17px;letter-spacing:-.01em;display:flex;align-items:center;gap:9px;white-space:nowrap;}
+.wordmark .dot{width:7px;height:7px;border-radius:50%;background:var(--coral);}
+.season-pill{font-family:var(--mono);font-size:10px;font-weight:600;background:var(--indigo);color:var(--paper);padding:4px 9px;border-radius:999px;letter-spacing:.05em;}
+nav.pills{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;}
+nav.pills::-webkit-scrollbar{display:none;}
+nav.pills a{
+  flex:none;font-size:12.5px;font-weight:600;color:var(--ink-soft);padding:8px 12px;border-radius:999px;
+  white-space:nowrap;transition:background .15s ease,color .15s ease;
+}
+nav.pills a:hover{background:rgba(54,43,107,.08);color:var(--ink);}
+nav.pills a.active{background:var(--ink);color:var(--paper);}
+
+/* ---------- COVER ---------- */
+.cover{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--coral);}
+.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 15%;}
+.cover .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(222,58,80,.05) 0%,rgba(30,15,20,.15) 55%,rgba(15,8,12,.86) 100%);}
+.cover-inner{position:relative;z-index:2;max-width:1180px;margin:0 auto;width:100%;padding:0 24px 56px;color:#fff;}
+.cover-tags{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.cover-tags span{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;border:1px solid rgba(255,255,255,.55);padding:5px 11px;border-radius:999px;}
+.cover h1{font-size:clamp(40px,8.6vw,96px);line-height:.98;color:#fff;letter-spacing:-.01em;max-width:900px;}
+.cover h1 em{font-style:italic;color:var(--mint);}
+.cover .cover-sub{font-size:15.5px;color:rgba(255,255,255,.82);max-width:460px;margin:18px 0 0;line-height:1.7;}
+.cover-scroll{
+  position:absolute;right:24px;bottom:24px;z-index:2;color:rgba(255,255,255,.8);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.cover-scroll .line{width:1px;height:34px;background:rgba(255,255,255,.5);animation:grow 1.8s ease-in-out infinite;}
+@keyframes grow{0%,100%{transform:scaleY(.4);opacity:.5;}50%{transform:scaleY(1);opacity:1;}}
+
+main{max-width:1180px;margin:0 auto;padding:0 20px;}
+section{padding:74px 0;border-bottom:1px solid var(--line);}
+section:last-of-type{border-bottom:none;}
+.section-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:34px;}
+.section-head h2{font-size:clamp(28px,4.2vw,42px);letter-spacing:-.01em;}
+.section-note{font-size:13.5px;color:var(--muted);max-width:360px;line-height:1.6;text-align:right;}
+@media(max-width:640px){.section-note{text-align:left;}}
+
+/* ---------- SEASON MESSAGE ---------- */
+.season-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:52px;align-items:start;}
+@media(max-width:840px){.season-grid{grid-template-columns:1fr;}}
+.season-msg p{font-size:17px;line-height:1.85;color:var(--ink-soft);max-width:52ch;}
+.season-msg p+p{margin-top:14px;}
+.keywords{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;}
+.keywords span{font-family:var(--serif);font-size:14px;font-weight:600;font-style:italic;background:var(--card);border:1px solid var(--line);padding:9px 17px;border-radius:999px;}
+.palette-list{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line);}
+.palette-row{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);}
+.swatch{width:38px;height:38px;border-radius:50%;flex:none;border:1px solid rgba(0,0,0,.1);}
+.palette-row .pname{font-weight:700;font-size:14.5px;}
+.palette-row .pdesc{font-size:12.5px;color:var(--muted);margin-top:1px;}
+
+/* ---------- KEY VISUAL ---------- */
+.kv-spread{display:grid;grid-template-columns:1.3fr 1fr;gap:14px;}
+@media(max-width:720px){.kv-spread{grid-template-columns:1fr;}}
+.kv-spread figure{margin:0;position:relative;border-radius:18px;overflow:hidden;background:var(--ink);aspect-ratio:4/5;}
+.kv-spread figure img{width:100%;height:100%;object-fit:cover;}
+.kv-spread figcaption{position:absolute;left:16px;bottom:14px;color:#fff;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;background:rgba(0,0,0,.35);padding:5px 10px;border-radius:999px;backdrop-filter:blur(4px);}
+
+/* ---------- COLLECTION OVERVIEW ---------- */
+.overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+@media(max-width:900px){.overview-grid{grid-template-columns:repeat(2,1fr);}}
+.ov-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:10px;min-height:190px;justify-content:space-between;}
+.ov-card .ov-num{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.ov-card h3{font-size:20px;}
+.ov-card .ov-count{font-family:var(--mono);font-size:12.5px;color:var(--indigo);font-weight:600;}
+
+/* ---------- LOOK CARDS ---------- */
+.look-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media(max-width:900px){.look-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:620px){.look-grid{grid-template-columns:1fr;}}
+.look-card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;}
+.look-hero{position:relative;aspect-ratio:3/4;background:var(--indigo);overflow:hidden;}
+.look-hero img{width:100%;height:100%;object-fit:cover;}
+.look-hero .look-tag{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.92);color:var(--ink);font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.05em;padding:5px 10px;border-radius:999px;}
+.look-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;}
+.look-body h3{font-size:18px;}
+.look-pieces{display:flex;gap:10px;}
+.look-piece{display:flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:6px 9px;flex:1;min-width:0;}
+.look-piece img{width:30px;height:34px;object-fit:contain;flex:none;background:#fff;border-radius:4px;}
+.look-piece .lp-txt{min-width:0;}
+.look-piece .lp-code{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--muted);}
+.look-piece .lp-color{font-size:11.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.look-comment{font-size:12.5px;color:var(--ink-soft);line-height:1.55;}
+.look-actions{display:flex;gap:8px;margin-top:2px;}
+.btn-mini{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.03em;padding:8px 11px;border-radius:8px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;transition:background .15s ease,color .15s ease;}
+.btn-mini:hover{background:var(--ink);color:var(--paper);}
+.btn-mini.primary{background:var(--indigo);border-color:var(--indigo);color:#fff;}
+.btn-mini.primary:hover{background:var(--indigo-deep);}
+
+/* ---------- MIX & MATCH ---------- */
+.mm-wrap{background:var(--indigo);border-radius:26px;padding:34px 26px 30px;color:var(--paper);position:relative;overflow:hidden;}
+.mm-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 88% 8%,rgba(255,255,255,.08),transparent 55%);pointer-events:none;}
+.mm-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:22px;}
+.mm-head h2{color:#fff;font-size:clamp(26px,4vw,38px);}
+.mm-head .eyebrow{color:rgba(255,255,255,.6);}
+.mm-head .eyebrow b{color:var(--mint);}
+.mm-sub{font-size:13.5px;color:rgba(255,255,255,.7);max-width:380px;line-height:1.6;}
+
+.mm-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.fchip{font-family:var(--mono);font-size:11px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:transparent;color:rgba(255,255,255,.85);cursor:pointer;transition:all .15s ease;display:flex;align-items:center;gap:6px;}
+.fchip i{width:8px;height:8px;border-radius:50%;display:inline-block;border:1px solid rgba(255,255,255,.5);}
+.fchip:hover{border-color:#fff;color:#fff;}
+.fchip.active{background:#fff;color:var(--indigo-deep);border-color:#fff;}
+
+.mm-board{display:grid;grid-template-columns:1fr 1fr 1.05fr;gap:16px;align-items:start;}
+@media(max-width:980px){.mm-board{grid-template-columns:1fr;}}
+.mm-col{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px;}
+.mm-col-title{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:10px;padding:0 2px;}
+.mm-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:400px;overflow-y:auto;padding-right:2px;}
+.mm-item{
+  background:#fff;border-radius:10px;padding:8px 6px 7px;cursor:pointer;border:2px solid transparent;
+  display:flex;flex-direction:column;align-items:center;gap:5px;transition:transform .12s ease,border-color .12s ease;
+}
+.mm-item:hover{transform:translateY(-2px);}
+.mm-item.sel{border-color:var(--mint);box-shadow:0 0 0 1px var(--mint);}
+.mm-item img{width:100%;aspect-ratio:1/1.05;object-fit:contain;background:#fff;}
+.mm-item .mi-code{font-family:var(--mono);font-size:8.5px;color:var(--ink-soft);font-weight:600;}
+.mm-item .mi-color{font-size:9.5px;color:var(--muted);}
+
+.mm-preview{display:flex;flex-direction:column;gap:14px;}
+.mm-canvas{background:#fff;border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:center;gap:6px;min-height:210px;}
+.mm-canvas img{width:44%;object-fit:contain;}
+.mm-canvas .mm-plus{color:var(--muted);font-family:var(--mono);font-size:16px;}
+.mm-canvas .mm-empty{color:var(--muted);font-size:12.5px;text-align:center;font-family:var(--sans);}
+.mm-result{background:#fff;color:var(--ink);border-radius:12px;padding:14px 16px;}
+.mm-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:5px 10px;border-radius:999px;margin-bottom:9px;}
+.mm-badge.tonal{background:#EAE3FF;color:#4B2FBF;}
+.mm-badge.classic{background:#E7E9EF;color:#2C3446;}
+.mm-badge.contrast{background:#FDE3E7;color:#B21C3A;}
+.mm-badge.bold{background:#E4F2E6;color:#1F5C33;}
+.mm-badge.match{background:#F1EFE5;color:#4A4A50;}
+.mm-pick{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.03em;background:var(--coral);color:#fff;padding:4px 8px;border-radius:999px;margin-left:6px;}
+.mm-result .mr-title{font-family:var(--serif);font-size:17px;font-weight:700;margin-bottom:5px;}
+.mm-result .mr-codes{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:8px;}
+.mm-result .mr-comment{font-size:13px;line-height:1.6;color:var(--ink-soft);}
+.mm-cta-row{display:flex;gap:8px;}
+.btn-block{flex:1;font-family:var(--mono);font-size:11.5px;font-weight:700;padding:11px;border-radius:9px;border:none;cursor:pointer;letter-spacing:.03em;transition:opacity .15s ease;}
+.btn-block:hover{opacity:.88;}
+.btn-block.on{background:var(--mint);color:var(--indigo-deep);}
+.btn-block.ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.3);}
+
+.mm-best{margin-top:22px;}
+.mm-best-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+.mm-best-row::-webkit-scrollbar{display:none;}
+.mm-best-card{
+  flex:none;width:150px;background:#fff;border-radius:12px;padding:10px 10px 12px;cursor:pointer;
+  border:2px solid transparent;transition:transform .12s ease;
+}
+.mm-best-card:hover{transform:translateY(-3px);}
+.mm-best-card.active{border-color:var(--mint);}
+.mm-best-card .bc-imgs{display:flex;justify-content:center;gap:2px;margin-bottom:6px;}
+.mm-best-card img{width:44px;height:50px;object-fit:contain;}
+.mm-best-card .bc-name{font-size:11.5px;font-weight:700;color:var(--ink);line-height:1.3;}
+.mm-best-card .bc-pick{font-family:var(--mono);font-size:8.5px;color:var(--coral);font-weight:700;margin-top:3px;}
+
+/* compare tray */
+.cmp-tray{
+  position:fixed;left:16px;right:16px;bottom:16px;z-index:70;max-width:640px;margin:0 auto;
+  background:var(--ink);color:#fff;border-radius:999px;padding:9px 9px 9px 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  box-shadow:0 14px 30px rgba(0,0,0,.28);
+  opacity:0;transform:translateY(14px);pointer-events:none;transition:opacity .2s ease,transform .2s ease;
+}
+.cmp-tray.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+.cmp-tray .ct-label{font-family:var(--mono);font-size:12px;font-weight:600;white-space:nowrap;}
+.cmp-tray .ct-actions{display:flex;gap:8px;align-items:center;}
+.cmp-tray button.ct-view{background:var(--mint);color:var(--indigo-deep);border:none;font-family:var(--mono);font-weight:700;font-size:11.5px;padding:9px 15px;border-radius:999px;cursor:pointer;}
+.cmp-tray button.ct-clear{background:transparent;border:none;color:rgba(255,255,255,.55);font-size:17px;cursor:pointer;padding:6px 8px;}
+.cmp-tray button.ct-clear:hover{color:#fff;}
+
+.overlay{position:fixed;inset:0;background:rgba(20,15,10,.6);z-index:120;display:none;align-items:center;justify-content:center;padding:20px;}
+.overlay.open{display:flex;}
+.modal{background:#fff;border-radius:20px;max-width:920px;width:100%;max-height:86vh;overflow-y:auto;position:relative;padding:26px 24px 28px;}
+.modal .x{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:none;background:var(--paper);cursor:pointer;font-size:15px;}
+.modal h2{font-size:22px;margin-bottom:16px;}
+.cmp-table-wrap{overflow-x:auto;}
+table.cmp{border-collapse:collapse;width:100%;min-width:480px;}
+table.cmp th,table.cmp td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:12.5px;vertical-align:top;}
+table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight:600;font-family:var(--mono);font-size:10.5px;white-space:nowrap;width:110px;}
+.cmp-col-head{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:132px;}
+.cmp-col-head .cc-imgs{display:flex;gap:2px;}
+.cmp-col-head img{width:48px;height:54px;object-fit:contain;background:var(--paper);border-radius:6px;}
+.cmp-col-head .cc-remove{font-size:10px;font-family:var(--mono);color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:3px 9px;cursor:pointer;}
+
+/* ---------- PRODUCT DETAIL ---------- */
+.pd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+@media(max-width:900px){.pd-grid{grid-template-columns:1fr;}}
+.pd-card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;}
+.pd-photo{aspect-ratio:1/1;background:#fff;display:flex;align-items:center;justify-content:center;padding:22px;}
+.pd-photo img{max-height:100%;object-fit:contain;}
+.pd-body{padding:18px 20px 22px;}
+.pd-body .pd-copy{font-size:13.5px;line-height:1.7;color:var(--ink-soft);margin:8px 0 12px;}
+.pd-body h3{font-size:19px;}
+.pd-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;}
+.pd-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.pd-tags span{font-family:var(--mono);font-size:10px;font-weight:600;background:var(--paper-2);color:var(--ink-soft);padding:4px 9px;border-radius:999px;}
+.pd-specs{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;font-size:12px;color:var(--muted);}
+.pd-specs div{display:flex;justify-content:space-between;padding:3px 0;}
+.pd-specs b{color:var(--ink);font-weight:600;}
+
+/* ---------- COLOR STORY ---------- */
+.color-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+@media(max-width:900px){.color-grid{grid-template-columns:repeat(2,1fr);}}
+.color-card{border-radius:16px;padding:18px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;}
+.color-card .cc-name{font-family:var(--serif);font-size:19px;font-weight:700;}
+.color-card .cc-en{font-family:var(--mono);font-size:10px;letter-spacing:.05em;opacity:.7;margin-bottom:2px;}
+.color-card .cc-desc{font-size:12px;line-height:1.55;opacity:.85;margin-top:8px;}
+.color-card .cc-count{font-family:var(--mono);font-size:10.5px;font-weight:700;align-self:flex-end;opacity:.75;}
+
+/* ---------- FABRIC ---------- */
+.fab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+@media(max-width:900px){.fab-grid{grid-template-columns:repeat(2,1fr);}}
+.fab-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;}
+.fab-card .fab-icon{width:34px;height:34px;margin-bottom:12px;color:var(--indigo);}
+.fab-card h3{font-size:14.5px;font-family:var(--sans);font-weight:700;}
+.fab-card .fab-en{font-family:var(--mono);font-size:9.5px;color:var(--coral);font-weight:700;letter-spacing:.04em;margin-bottom:4px;}
+.fab-card p{font-size:12px;line-height:1.6;color:var(--muted);margin:6px 0 0;}
+
+/* ---------- LINE-UP ---------- */
+.lineup-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.lchip{font-family:var(--mono);font-size:11px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);cursor:pointer;}
+.lchip.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.lineup-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;}
+@media(max-width:960px){.lineup-grid{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:640px){.lineup-grid{grid-template-columns:repeat(3,1fr);}}
+.lu-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 8px 10px;}
+.lu-photo{aspect-ratio:1/1.05;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:8px;margin-bottom:7px;}
+.lu-photo img{max-height:100%;object-fit:contain;}
+.lu-code{font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--ink);}
+.lu-color{font-size:10.5px;color:var(--muted);}
+.lu-price{font-family:var(--mono);font-size:10.5px;font-weight:600;margin-top:3px;}
+
+/* ---------- BACK COVER ---------- */
+.back{position:relative;background:var(--indigo-deep);color:#fff;padding:0;border-bottom:none;overflow:hidden;}
+.back img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.28;}
+.back .scrim2{position:absolute;inset:0;background:linear-gradient(160deg,rgba(36,28,74,.55),rgba(20,15,40,.92));}
+.back-inner{position:relative;z-index:2;max-width:720px;margin:0 auto;padding:100px 24px;text-align:center;}
+.back h2{color:#fff;font-size:clamp(28px,5vw,44px);}
+.back p{font-size:14.5px;color:rgba(255,255,255,.72);line-height:1.7;margin-top:14px;max-width:44ch;margin-left:auto;margin-right:auto;}
+.back .back-tag{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--mint);margin-bottom:16px;}
+.back-note{margin-top:36px;font-size:11.5px;color:rgba(255,255,255,.4);}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-row">
+    <div class="wordmark"><span class="dot"></span>YONEX APPAREL<span class="season-pill">26 F/W</span></div>
+    <nav class="pills" id="navPills">
+      <a href="#season">SEASON</a>
+      <a href="#looks">LOOKS</a>
+      <a href="#match">MIX&amp;MATCH</a>
+      <a href="#products">PRODUCTS</a>
+      <a href="#color">COLOR</a>
+      <a href="#lineup">LINE-UP</a>
+    </nav>
+  </div>
+</header>
+
+<section class="cover" id="cover">
+  <img src="images/hero/cover-coral-1.jpeg" alt="YONEX 2026 F/W 배드민턴 국가대표팀 유니폼">
+  <div class="scrim"></div>
+  <div class="cover-inner">
+    <div class="cover-tags"><span>2026</span><span>FALL / WINTER</span><span>BADMINTON WEAR</span></div>
+    <h1>MOVE WITH<br><em>PRECISION.</em></h1>
+    <p class="cover-sub">랠리마다 흔들림 없는 퍼포먼스를 위한 요넥스 2026 F/W 의류 컬렉션. 상의와 하의를 직접 매칭해보고, 나만의 코트 룩을 완성해보세요.</p>
+  </div>
+  <div class="cover-scroll"><span>SCROLL</span><span class="line"></span></div>
+</section>
+
+<main>
+
+<section id="season">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">P.02 — <b>OPENING</b></p>
+      <h2>Season Message</h2>
+    </div>
+  </div>
+  <div class="season-grid">
+    <div class="season-msg">
+      <p>요넥스 배드민턴 의류는 디자인과 소재, 두 마리 토끼를 놓치지 않습니다. 항균·흡한속건·UV차단·냉감 기능을 더한 자체 개발 원단으로, 경기 중 체온과 습도 변화에도 흔들림 없는 착용감을 완성했습니다.</p>
+      <p>이번 시즌은 코트 위 국가대표팀 유니폼의 컬러 언어를 그대로 가져와, 게임 웨어부터 데일리·이지 웨어까지 하나의 팔레트로 연결했습니다.</p>
+      <div class="keywords"><span>Light</span><span>Breathable</span><span>Match Ready</span></div>
+    </div>
+    <div class="palette-list" id="paletteList"></div>
+  </div>
+</section>
+
+<section id="keyvisual">
+  <div class="section-head">
+    <div><p class="eyebrow">P.03–04 — <b>KEY VISUAL</b></p><h2>이 시즌을 갖고 싶게 만드는 순간</h2></div>
+    <p class="section-note">제품 설명보다 무드가 먼저. 코트 위 가장 대표적인 두 장면으로 시즌을 엽니다.</p>
+  </div>
+  <div class="kv-spread">
+    <figure><img src="images/hero/keyvisual-blue-1.jpeg" alt="블루 게임 저지 착장"><figcaption>20948YX · WORLD COLLECTION</figcaption></figure>
+    <figure><img src="images/hero/cover-coral-2.jpeg" alt="코랄 레드 팀 저지 착장"><figcaption>10756YX · KOREA NATIONAL TEAM</figcaption></figure>
+  </div>
+</section>
+
+<section id="overview">
+  <div class="section-head">
+    <div><p class="eyebrow">P.05 — <b>COLLECTION OVERVIEW</b></p><h2>이번 시즌 라인업</h2></div>
+    <p class="section-note">게임 웨어부터 데일리·이지 웨어까지, 26 F/W 웨어맵 기준 카테고리 요약.</p>
+  </div>
+  <div class="overview-grid" id="overviewGrid"></div>
+</section>
+
+<section id="looks">
+  <div class="section-head">
+    <div><p class="eyebrow">P.06–09 — <b>STYLE STORIES</b></p><h2>Coordinated Looks</h2></div>
+    <p class="section-note">"예쁘다"에서 끝나지 않도록 — 상의 · 하의 · 코멘트까지 세트로 제안합니다.</p>
+  </div>
+  <div class="look-grid" id="lookGrid"></div>
+</section>
+
+<section id="match">
+  <div class="section-head">
+    <div><p class="eyebrow">P.10–13 — <b>DIFFERENTIATOR</b></p><h2>Mix &amp; Match Guide</h2></div>
+    <p class="section-note">상의·하의 고스트컷을 직접 골라 조합하고, 최대 4세트까지 비교함에 담아 비교해보세요.</p>
+  </div>
+  <div class="mm-wrap">
+    <div class="mm-head">
+      <div>
+        <p class="eyebrow">BUILD YOUR LOOK</p>
+        <h2>TOP &amp; BOTTOM MATCH</h2>
+      </div>
+      <p class="mm-sub">컬러군으로 필터링하고, 상의·하의를 각각 하나씩 선택하면 매치 타입이 자동으로 계산됩니다.</p>
+    </div>
+    <div class="mm-filters" id="mmFilters"></div>
+    <div class="mm-board">
+      <div class="mm-col">
+        <div class="mm-col-title">TOP 선택 · <span id="topCountLabel"></span></div>
+        <div class="mm-picker" id="topPicker"></div>
+      </div>
+      <div class="mm-col">
+        <div class="mm-col-title">BOTTOM 선택 · <span id="bottomCountLabel"></span></div>
+        <div class="mm-picker" id="bottomPicker"></div>
+      </div>
+      <div class="mm-preview">
+        <div class="mm-canvas" id="mmCanvas"></div>
+        <div class="mm-result" id="mmResult"></div>
+        <div class="mm-cta-row">
+          <button class="btn-block on" id="mmAddBtn">비교함에 담기</button>
+          <button class="btn-block ghost" id="mmRandomBtn">랜덤 매치</button>
+        </div>
+      </div>
+    </div>
+    <div class="mm-best">
+      <div class="mm-col-title" style="color:rgba(255,255,255,.55);margin-bottom:12px;">EDITOR'S BEST MATCH · 클릭하면 바로 불러옵니다</div>
+      <div class="mm-best-row" id="mmBestRow"></div>
+    </div>
+  </div>
+</section>
+
+<section id="products">
+  <div class="section-head">
+    <div><p class="eyebrow">P.14–17 — <b>KEY PRODUCT DETAIL</b></p><h2>Performance Detail</h2></div>
+    <p class="section-note">기능을 나열하는 대신, 코트 위 움직임과 연결된 언어로.</p>
+  </div>
+  <div class="pd-grid" id="pdGrid"></div>
+</section>
+
+<section id="color">
+  <div class="section-head">
+    <div><p class="eyebrow">P.18–19 — <b>COLOR STORY</b></p><h2>시즌 컬러가 곧 전략입니다</h2></div>
+  </div>
+  <div class="color-grid" id="colorGrid"></div>
+</section>
+
+<section id="fabric">
+  <div class="section-head">
+    <div><p class="eyebrow">P.20 — <b>FABRIC / DETAIL</b></p><h2>YONEX Technologies</h2></div>
+    <p class="section-note">요넥스 자체 개발 기능성 원단 — 26 F/W 컬렉션 실제 적용 기술.</p>
+  </div>
+  <div class="fab-grid" id="fabGrid"></div>
+</section>
+
+<section id="lineup">
+  <div class="section-head">
+    <div><p class="eyebrow">P.21–23 — <b>FULL LINE-UP</b></p><h2>전체 라인업</h2></div>
+    <p class="section-note" id="lineupCount"></p>
+  </div>
+  <div class="lineup-filters" id="lineupFilters"></div>
+  <div class="lineup-grid" id="lineupGrid"></div>
+</section>
+
+</main>
+
+<section class="back" id="backcover">
+  <img src="images/hero/easywear-divider.jpeg" alt="">
+  <div class="scrim2"></div>
+  <div class="back-inner">
+    <p class="back-tag">P.24 — BACK COVER</p>
+    <h2>YONEX<br>2026 FALL / WINTER</h2>
+    <p>이 페이지는 요넥스 2026 F/W 의류 카탈로그를 기반으로 재구성한 디지털 목업입니다. 실제 구매·주문 및 전국 대리점 정보는 공식 카탈로그와 요넥스 채널을 참고해 주세요.</p>
+    <p class="back-note">YONEX APPAREL E-CATALOGUE · Mix &amp; Match Prototype</p>
+  </div>
+</section>
+
+<div class="cmp-tray" id="cmpTray">
+  <div class="ct-label" id="ctLabel">0개 비교 중</div>
+  <div class="ct-actions">
+    <button class="ct-clear" id="ctClear" title="비우기">×</button>
+    <button class="ct-view" id="ctView">비교하기</button>
+  </div>
+</div>
+
+<div class="overlay" id="cmpOverlay">
+  <div class="modal">
+    <button class="x" id="cmpClose">×</button>
+    <h2>세트 비교</h2>
+    <div class="cmp-table-wrap"><table class="cmp" id="cmpTable"></table></div>
+  </div>
+</div>
+
+<script>
+/* =============== REAL PRODUCT DATA (extracted from 2026 FW YONEX apparel catalog) =============== */
+const FAMILIES = {
+  white:{label:'White',hex:'#EFEDE3',dark:false},
+  black:{label:'Black',hex:'#17181C',dark:true},
+  navy:{label:'Navy',hex:'#1B2740',dark:true},
+  gray:{label:'Gray',hex:'#8993A6',dark:false},
+  coral:{label:'Coral',hex:'#DE3A50',dark:true},
+  mint:{label:'Mint',hex:'#BFE0C6',dark:false},
+  green:{label:'Green',hex:'#33422E',dark:true},
+};
+
+const TOPS = [
+ {code:'10756YX',name:'Team Raglan Tee',color:'Coral Red',family:'coral',gender:'Couple',price:145000,material:'PE 100%',size:'M(90)~3XL(110)',collection:'Korea National Team',img:'images/products/10756yx.jpeg'},
+ {code:'16864EX',name:'Practice Raglan Tee',color:'Indigo Blue / Pale Lilac',family:'navy',gender:'Unisex',price:49000,material:'PE 100%',size:'S(90)~4XL(120)',collection:'World Collection · Practice',img:'images/products/16864ex.jpeg'},
+ {code:'16866EX',name:'Practice Raglan Tee',color:'Black',family:'black',gender:'Unisex',price:49000,material:'PE 100%',size:'S(90)~4XL(120)',collection:'World Collection · Practice',img:'images/products/16866ex.jpeg'},
+ {code:'16868EX',name:'Practice Raglan Tee',color:'White',family:'white',gender:'Unisex',price:49000,material:'PE 100%',size:'S(90)~4XL(120)',collection:'World Collection · Practice',img:'images/products/16868ex.jpeg'},
+ {code:'10720EX',name:'Tournament Tank',color:'White',family:'white',gender:'Men',price:95000,material:'PE 100%',size:'S(95)~4XL(125)',collection:'World Collection · Tournament',img:'images/products/10720ex.jpeg'},
+ {code:'263TS001',name:'Game Tee',color:'Blue Gray',family:'gray',gender:'Couple',price:82000,material:'PE 100% / 배색 PE92%,PU8%',size:'95~120',collection:'Game Wear',img:'images/products/263ts001.jpeg'},
+ {code:'263TS003',name:'Game Tee',color:'Midnight Black',family:'black',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts003.jpeg'},
+ {code:'263TS005',name:'Game Tee',color:'White',family:'white',gender:'Couple',price:82000,material:'PE 100% / 배색 PE92%,PU8%',size:'95~120',collection:'Game Wear',img:'images/products/263ts005.jpeg'},
+ {code:'263TS007',name:'Game Tee',color:'White',family:'white',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts007.jpeg'},
+ {code:'263TS009',name:'Game Tee',color:'Pale Mint',family:'mint',gender:'Couple',price:82000,material:'PE 100% / 배색 PE95%,PU5%',size:'95~120',collection:'Game Wear',img:'images/products/263ts009.jpeg'},
+ {code:'263TS011',name:'Game Tee',color:'Black',family:'black',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts011.jpeg'},
+ {code:'263TS013',name:'Game Tee',color:'Dark Navy',family:'navy',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts013.jpeg'},
+ {code:'263TS015',name:'Game Tee',color:'White / Coral',family:'white',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts015.jpeg'},
+ {code:'263TS017',name:'Game Tee',color:'Black',family:'black',gender:'Couple',price:72000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts017.jpeg'},
+ {code:'263TS019',name:'Game Tee',color:'Dark Green',family:'green',gender:'Couple',price:72000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts019.jpeg'},
+ {code:'263TS025',name:'Game Tee',color:'White / Mint',family:'white',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts025.jpeg'},
+ {code:'263TR001',name:'Sleeveless Game Tee',color:'Blue Gray',family:'gray',gender:'Men',price:69000,material:'PE100% / 배색 PE92%,PU8%',size:'95~110',collection:'Game Wear',img:'images/products/263tr001.jpeg'},
+ {code:'263TR002',name:'Sleeveless Game Tee',color:'Midnight Black',family:'black',gender:'Men',price:69000,material:'PE100% / 배색1 PE92%,PU8% / 배색2 PE100%',size:'95~110',collection:'Game Wear',img:'images/products/263tr002.jpeg'},
+];
+
+const BOTTOMS = [
+ {code:'15258YX',name:'Team Shorts',color:'White',family:'white',gender:'Couple',price:135000,material:'PE 100%',size:'M(95)~2XL(110)',collection:'Japan National Team',img:'images/products/15258yx.jpeg'},
+ {code:'263PH001',name:'Knit Shorts (4부)',color:'Midnight Black / Dark Green',family:'black',gender:'Couple',price:59000,material:'PE 100%',size:'95~110',collection:'Game Wear',img:'images/products/263ph001.jpeg'},
+ {code:'15248EX',name:'LCW Shorts',color:'Indigo Blue',family:'navy',gender:'Unisex',price:105000,material:'PE 90%, PU 10%',size:'S(90)~3XL(115)',collection:'World Collection · LCW',img:'images/products/15248ex.jpeg'},
+ {code:'261PH005',name:'Shorts (4부)',color:'Black',family:'black',gender:'Couple',price:69000,material:'PE 100%',size:'95~110',collection:'Daily Wear',img:'images/products/261ph005.jpeg'},
+ {code:'261PH007',name:'Ankle Pants (7부)',color:'Charcoal Gray / Black',family:'gray',gender:'Couple',price:69000,material:'NY 77%, PU 23%',size:'95~110',collection:'Daily Wear',img:'images/products/261ph007.jpeg'},
+ {code:'261PH009',name:'Shorts (5부)',color:'Black / Gray / Dark Green',family:'black',gender:'Unisex',price:59000,material:'NY 91%, PU 9%',size:'85~110',collection:'Daily Wear',img:'images/products/261ph009.jpeg'},
+ {code:'261PS001',name:'Pleats Skirt',color:'White',family:'white',gender:'Women',price:65000,material:'NY 77%, PU 23%',size:'85~100',collection:'Daily Wear',img:'images/products/261ps001.jpeg'},
+ {code:'261PS002',name:'Pleats Skirt',color:'Navy',family:'navy',gender:'Women',price:65000,material:'NY 78%, PU 22%',size:'85~100',collection:'Daily Wear',img:'images/products/261ps002.jpeg'},
+ {code:'261PS003',name:'Pleats Skirt',color:'Black',family:'black',gender:'Women',price:65000,material:'NY 77%, PU 23%',size:'85~100',collection:'Daily Wear',img:'images/products/261ps003.jpeg'},
+];
+
+const CURATED = [
+ {top:'263TS001',bottom:'263PH001',name:'COURT ESSENTIAL',comment:'그레이 게임 티에 블랙 니트 쇼츠를 더한 클린한 매치 룩.'},
+ {top:'263TS005',bottom:'15248EX',name:'SPEED GAME',comment:'화이트 티와 인디고 블루 쇼츠, 상쾌한 대비로 스피디한 무드.'},
+ {top:'10756YX',bottom:'15258YX',name:'NATIONAL TEAM',comment:'코랄 레드 팀 저지 × 화이트 쇼츠 — 실제 내셔널팀 유니폼 조합.'},
+ {top:'263TS009',bottom:'261PH005',name:'MINT POINT',comment:'페일 민트 포인트 티에 블랙 쇼츠로 균형을 맞춘 룩.'},
+ {top:'263TR002',bottom:'261PS003',name:'CLEAN CLASSIC',comment:'블랙 톤온톤으로 완성하는 미니멀 코트 룩.'},
+ {top:'263TS013',bottom:'261PS001',name:"WOMEN'S MATCH",comment:'다크 네이비 상의와 화이트 스커트의 시원한 대비.'},
+];
+
+const FABRIC_TECH = [
+ {en:'Y-COOL',kr:'와이-쿨',desc:'피부 접촉 시 시원한 감촉을 주는 특수 냉감 물질이 체열을 빠르게 흡수·배출해 항시 쾌적한 상태를 유지합니다.'},
+ {en:'AEROSILVER',kr:'에어로실버',desc:'실에 은 입자를 입힌 나노 기술 원사로, 강력한 항균·흡한속건·악취 제거·UV 차단 기능을 제공합니다.'},
+ {en:'STRETCH',kr:'스트레치',desc:'스판이 함유되어 활동적인 움직임에도 부담 없는 부드러운 촉감과 편안한 착용감을 제공합니다.'},
+ {en:'SORONA',kr:'소로나',desc:'식물 기반 원사로 만든 친환경 섬유 소재이며, 지속적인 신축성을 갖추고 있습니다.'},
+ {en:'DEODORANT',kr:'데오도란트',desc:'은 플러스 이온 테이프가 땀으로 인한 냄새 성분과 만나 소취·항균 효과를 동시에 제공합니다.'},
+ {en:'VERYCOOL DRY',kr:'베리쿨 드라이',desc:'소수성 섬유가 수분을 원단 표면으로 빠르게 배출해 운동 중에도 시원하고 건조하게 유지합니다.'},
+ {en:'AIR RELEASE',kr:'에어 릴리즈',desc:'목 뒤·옆면 메시 설계로 통풍 기능을 크게 향상시켜 열을 방출하고 신선한 공기를 순환시킵니다.'},
+ {en:'UV REDUCTION',kr:'UV 감소',desc:'적외선·자외선의 약 92%를 차단해 플레이 중 열 축적을 최소화합니다. (BOKEN 연구소 테스트 기준)'},
+];
+
+/* =============== MATCH ENGINE =============== */
+function matchType(topFam, bottomFam){
+  const neutral = ['white','black','navy','gray'];
+  if(topFam === bottomFam) return {key:'tonal',kr:'톤온톤 매치',en:'TONAL MATCH'};
+  if(neutral.includes(topFam) && neutral.includes(bottomFam)) return {key:'classic',kr:'클래식 매치',en:'CLASSIC MATCH'};
+  const accent = ['coral','mint','green'];
+  if((neutral.includes(topFam) && accent.includes(bottomFam)) || (accent.includes(topFam) && neutral.includes(bottomFam)))
+    return {key:'contrast',kr:'컨트라스트 매치',en:'CONTRAST MATCH'};
+  if(accent.includes(topFam) && accent.includes(bottomFam)) return {key:'bold',kr:'볼드 매치',en:'BOLD MATCH'};
+  return {key:'match',kr:'프리 매치',en:'FREE MATCH'};
+}
+function findCurated(topCode,bottomCode){ return CURATED.find(c=>c.top===topCode && c.bottom===bottomCode); }
+function byCode(code){ return TOPS.find(t=>t.code===code) || BOTTOMS.find(b=>b.code===code); }
+
+/* =============== STATE =============== */
+const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].code, compare: [] };
+
+/* =============== RENDER: palette =============== */
+(function renderPalette(){
+  const list = [
+    {fam:'coral',name:'Coral Red',en:'CORAL RED',desc:'국가대표팀 유니폼의 시그니처 컬러 — 강렬한 에너지.'},
+    {fam:'navy',name:'Deep Navy',en:'DEEP NAVY',desc:'절제된 퍼포먼스를 위한 다크 톤.'},
+    {fam:'white',name:'Court White',en:'COURT WHITE',desc:'클린하고 클래식한 베이스 컬러.'},
+    {fam:'gray',name:'Blue Gray',en:'BLUE GRAY',desc:'뉴트럴하면서도 세련된 포인트.'},
+    {fam:'mint',name:'Pale Mint',en:'PALE MINT',desc:'상쾌한 무드를 더하는 시즌 악센트.'},
+  ];
+  document.getElementById('paletteList').innerHTML = list.map(c=>`
+    <div class="palette-row">
+      <span class="swatch" style="background:${FAMILIES[c.fam].hex}"></span>
+      <div><div class="pname">${c.name} <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;">${c.en}</span></div><div class="pdesc">${c.desc}</div></div>
+    </div>`).join('');
+})();
+
+/* =============== RENDER: overview =============== */
+(function renderOverview(){
+  const cats = [
+    {n:'01',name:'Game Wear',count: TOPS.filter(t=>t.collection.includes('Game')||t.collection.includes('National')).length + BOTTOMS.filter(b=>b.collection.includes('Game')||b.collection.includes('National')).length, sample:TOPS[5]},
+    {n:'02',name:'Daily Wear',count: BOTTOMS.filter(b=>b.collection==='Daily Wear').length, sample:BOTTOMS[3]},
+    {n:'03',name:'World Collection',count: TOPS.filter(t=>t.collection.includes('World')).length + BOTTOMS.filter(b=>b.collection.includes('World')).length, sample:TOPS[1]},
+    {n:'04',name:'Wear Map (전체)',count: TOPS.length+BOTTOMS.length, sample:BOTTOMS[6]},
+  ];
+  document.getElementById('overviewGrid').innerHTML = cats.map(c=>`
+    <div class="ov-card">
+      <div class="ov-num">${c.n}</div>
+      <h3>${c.name}</h3>
+      <div class="ov-count">${c.count} ITEMS</div>
+    </div>`).join('');
+})();
+
+/* =============== RENDER: looks (from CURATED) =============== */
+(function renderLooks(){
+  const heroImgs = ['images/hero/keyvisual-blue-1.jpeg','images/hero/cover-coral-2.jpeg','images/hero/daily-nature-1.jpeg','images/hero/daily-nature-2.jpeg','images/hero/keyvisual-blue-2.jpeg','images/hero/wearmap-divider.jpeg'];
+  document.getElementById('lookGrid').innerHTML = CURATED.map((c,i)=>{
+    const top = byCode(c.top), bottom = byCode(c.bottom);
+    const mt = matchType(top.family, bottom.family);
+    return `
+    <div class="look-card">
+      <div class="look-hero"><span class="look-tag">LOOK 0${i+1}</span><img src="${heroImgs[i%heroImgs.length]}" alt="${c.name}"></div>
+      <div class="look-body">
+        <h3>${c.name}</h3>
+        <div class="look-pieces">
+          <div class="look-piece"><img src="${top.img}" alt="${top.code}"><div class="lp-txt"><div class="lp-code">${top.code}</div><div class="lp-color">${top.color}</div></div></div>
+          <div class="look-piece"><img src="${bottom.img}" alt="${bottom.code}"><div class="lp-txt"><div class="lp-code">${bottom.code}</div><div class="lp-color">${bottom.color}</div></div></div>
+        </div>
+        <p class="look-comment">${c.comment}</p>
+        <div class="look-actions">
+          <button class="btn-mini primary" data-pick="${top.code}|${bottom.code}">MIX&amp;MATCH에서 보기</button>
+          <button class="btn-mini" data-cmpadd="${top.code}|${bottom.code}">비교함+</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+})();
+
+/* =============== MIX & MATCH: filters =============== */
+function renderFilters(){
+  const fams = Object.keys(FAMILIES);
+  const html = ['<button class="fchip active" data-fam="all">전체</button>']
+    .concat(fams.map(f=>`<button class="fchip" data-fam="${f}"><i style="background:${FAMILIES[f].hex}"></i>${FAMILIES[f].label}</button>`)).join('');
+  document.getElementById('mmFilters').innerHTML = html;
+  document.getElementById('mmFilters').addEventListener('click', e=>{
+    const btn = e.target.closest('.fchip'); if(!btn) return;
+    state.colorFilter = btn.dataset.fam;
+    document.querySelectorAll('#mmFilters .fchip').forEach(b=>b.classList.toggle('active', b===btn));
+    renderPickers();
+  });
+}
+function renderPickers(){
+  const filt = list => state.colorFilter==='all' ? list : list.filter(p=>p.family===state.colorFilter);
+  const tops = filt(TOPS), bottoms = filt(BOTTOMS);
+  document.getElementById('topCountLabel').textContent = tops.length+'개';
+  document.getElementById('bottomCountLabel').textContent = bottoms.length+'개';
+  document.getElementById('topPicker').innerHTML = tops.map(t=>`
+    <div class="mm-item ${state.selTop===t.code?'sel':''}" data-top="${t.code}">
+      <img src="${t.img}" alt="${t.code}"><div class="mi-code">${t.code}</div><div class="mi-color">${t.color.split(' / ')[0]}</div>
+    </div>`).join('') || '<p style="color:rgba(255,255,255,.5);font-size:12px;padding:8px;">해당 컬러의 상의가 없습니다.</p>';
+  document.getElementById('bottomPicker').innerHTML = bottoms.map(b=>`
+    <div class="mm-item ${state.selBottom===b.code?'sel':''}" data-bottom="${b.code}">
+      <img src="${b.img}" alt="${b.code}"><div class="mi-code">${b.code}</div><div class="mi-color">${b.color.split(' / ')[0]}</div>
+    </div>`).join('') || '<p style="color:rgba(255,255,255,.5);font-size:12px;padding:8px;">해당 컬러의 하의가 없습니다.</p>';
+}
+function renderPreview(){
+  const top = byCode(state.selTop), bottom = byCode(state.selBottom);
+  document.getElementById('mmCanvas').innerHTML = (top&&bottom) ?
+    `<img src="${top.img}" alt="${top.code}"><span class="mm-plus">+</span><img src="${bottom.img}" alt="${bottom.code}">` :
+    `<span class="mm-empty">상의와 하의를 각각 선택해주세요</span>`;
+  if(!top || !bottom){ document.getElementById('mmResult').innerHTML=''; return; }
+  const mt = matchType(top.family, bottom.family);
+  const curated = findCurated(top.code, bottom.code);
+  const comment = curated ? curated.comment : `${top.color} ${top.name}와(과) ${bottom.color} ${bottom.name}의 조합 — ${mt.kr}.`;
+  document.getElementById('mmResult').innerHTML = `
+    <span class="mm-badge ${mt.key}">${mt.en}</span>${curated?'<span class="mm-pick">EDITOR PICK</span>':''}
+    <div class="mr-title">${curated? curated.name : (top.color.split(' / ')[0]+' × '+bottom.color.split(' / ')[0])}</div>
+    <div class="mr-codes">${top.code} · ${bottom.code} · ${(top.price+bottom.price).toLocaleString()}원</div>
+    <p class="mr-comment">${comment}</p>`;
+}
+function renderBest(){
+  document.getElementById('mmBestRow').innerHTML = CURATED.map(c=>{
+    const top=byCode(c.top), bottom=byCode(c.bottom);
+    const active = state.selTop===c.top && state.selBottom===c.bottom;
+    return `<div class="mm-best-card ${active?'active':''}" data-pick="${c.top}|${c.bottom}">
+      <div class="bc-imgs"><img src="${top.img}" alt=""><img src="${bottom.img}" alt=""></div>
+      <div class="bc-name">${c.name}</div>
+      <div class="bc-pick">EDITOR PICK →</div>
+    </div>`;
+  }).join('');
+}
+function selectPair(topCode, bottomCode){
+  state.selTop = topCode; state.selBottom = bottomCode;
+  renderPickers(); renderPreview(); renderBest();
+}
+
+document.getElementById('topPicker').addEventListener('click', e=>{
+  const el = e.target.closest('[data-top]'); if(!el) return;
+  state.selTop = el.dataset.top; renderPickers(); renderPreview(); renderBest();
+});
+document.getElementById('bottomPicker').addEventListener('click', e=>{
+  const el = e.target.closest('[data-bottom]'); if(!el) return;
+  state.selBottom = el.dataset.bottom; renderPickers(); renderPreview(); renderBest();
+});
+document.getElementById('mmBestRow').addEventListener('click', e=>{
+  const el = e.target.closest('[data-pick]'); if(!el) return;
+  const [t,b] = el.dataset.pick.split('|'); selectPair(t,b);
+  document.getElementById('match').scrollIntoView({behavior:'smooth', block:'start'});
+});
+document.getElementById('mmRandomBtn').addEventListener('click', ()=>{
+  const t = TOPS[Math.floor(Math.random()*TOPS.length)];
+  const b = BOTTOMS[Math.floor(Math.random()*BOTTOMS.length)];
+  selectPair(t.code, b.code);
+});
+document.getElementById('mmAddBtn').addEventListener('click', ()=> addToCompare(state.selTop, state.selBottom));
+
+/* =============== COMPARE TRAY =============== */
+function addToCompare(topCode, bottomCode){
+  if(state.compare.some(c=>c.top===topCode && c.bottom===bottomCode)) return renderTray();
+  if(state.compare.length>=4){ state.compare.shift(); }
+  state.compare.push({top:topCode, bottom:bottomCode});
+  renderTray();
+}
+function renderTray(){
+  const n = state.compare.length;
+  document.getElementById('ctLabel').textContent = n+'개 비교 중 (최대 4개)';
+  document.getElementById('cmpTray').classList.toggle('show', n>0);
+  document.getElementById('ctView').disabled = n===0;
+}
+document.getElementById('ctClear').addEventListener('click', ()=>{ state.compare=[]; renderTray(); });
+document.getElementById('ctView').addEventListener('click', openCompareModal);
+document.getElementById('cmpClose').addEventListener('click', ()=> document.getElementById('cmpOverlay').classList.remove('open'));
+document.getElementById('cmpOverlay').addEventListener('click', e=>{ if(e.target.id==='cmpOverlay') e.currentTarget.classList.remove('open'); });
+
+function openCompareModal(){
+  if(state.compare.length===0) return;
+  const rows = ['TOP','BOTTOM','컬러','매치 타입','코멘트','합계 가격'];
+  let thead = '<tr><th></th>' + state.compare.map((c,i)=>{
+    const top=byCode(c.top), bottom=byCode(c.bottom);
+    return `<th><div class="cmp-col-head"><div class="cc-imgs"><img src="${top.img}"><img src="${bottom.img}"></div><button class="cc-remove" data-rm="${i}">제거</button></div></th>`;
+  }).join('') + '</tr>';
+  function rowHTML(label, fn){
+    return `<tr><td>${label}</td>` + state.compare.map(c=>{
+      const top=byCode(c.top), bottom=byCode(c.bottom);
+      return `<td>${fn(top,bottom,c)}</td>`;
+    }).join('') + '</tr>';
+  }
+  let tbody = '';
+  tbody += rowHTML('TOP', (t,b)=>`${t.code}<br>${t.color}`);
+  tbody += rowHTML('BOTTOM', (t,b)=>`${b.code}<br>${b.color}`);
+  tbody += rowHTML('매치 타입', (t,b)=>{ const mt=matchType(t.family,b.family); const cur=findCurated(t.code,b.code); return mt.en + (cur? ' · EDITOR PICK':''); });
+  tbody += rowHTML('코멘트', (t,b)=>{ const cur=findCurated(t.code,b.code); const mt=matchType(t.family,b.family); return cur? cur.comment : `${t.color} × ${b.color} — ${mt.kr}`; });
+  tbody += rowHTML('합계 가격', (t,b)=>(t.price+b.price).toLocaleString()+'원');
+  document.getElementById('cmpTable').innerHTML = thead + tbody;
+  document.getElementById('cmpTable').querySelectorAll('[data-rm]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ state.compare.splice(+btn.dataset.rm,1); renderTray(); if(state.compare.length) openCompareModal(); else document.getElementById('cmpOverlay').classList.remove('open'); });
+  });
+  document.getElementById('cmpOverlay').classList.add('open');
+}
+
+/* pick / cmpadd buttons from Style Stories */
+document.addEventListener('click', e=>{
+  const pick = e.target.closest('[data-pick]');
+  if(pick && pick.closest('.look-actions')){
+    const [t,b] = pick.dataset.pick.split('|'); selectPair(t,b);
+    document.getElementById('match').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  const add = e.target.closest('[data-cmpadd]');
+  if(add){ const [t,b] = add.dataset.cmpadd.split('|'); addToCompare(t,b); }
+});
+
+/* =============== PRODUCT DETAIL =============== */
+(function renderProducts(){
+  const picks = [
+    {p:TOPS[5], copy:'가볍게 스치는 원단이 빠른 스텝 전환을 방해하지 않도록 설계했습니다. 랠리가 길어질수록 차이를 느낄 수 있는 통기성.', tags:['AEROSILVER','STRETCH']},
+    {p:BOTTOMS[4], copy:'허리 밴드부터 무릎 가동 범위까지, 로우 스쿼트 자세에서도 걸림 없는 절개 설계.', tags:['STRETCH','VERYCOOL DRY']},
+    {p:TOPS[1], copy:'연습부터 실전까지 이어 입을 수 있는 유니섹스 실루엣과 뉴트럴 컬러웨이.', tags:['UV REDUCTION','Y-COOL']},
+  ];
+  document.getElementById('pdGrid').innerHTML = picks.map(({p,copy,tags})=>`
+    <div class="pd-card">
+      <div class="pd-photo"><img src="${p.img}" alt="${p.code}"></div>
+      <div class="pd-body">
+        <h3>${p.name}</h3>
+        <div class="pd-code">${p.code} · ${p.collection}</div>
+        <p class="pd-copy">${copy}</p>
+        <div class="pd-tags">${tags.map(t=>`<span>${t}</span>`).join('')}</div>
+        <div class="pd-specs">
+          <div><span>컬러</span><b>${p.color}</b></div>
+          <div><span>소재</span><b>${p.material}</b></div>
+          <div><span>사이즈</span><b>${p.size}</b></div>
+          <div><span>가격</span><b>${p.price.toLocaleString()}원</b></div>
+        </div>
+      </div>
+    </div>`).join('');
+})();
+
+/* =============== COLOR STORY =============== */
+(function renderColorStory(){
+  const items = [
+    {fam:'coral', name:'Coral Red', desc:'내셔널팀 유니폼의 시그니처 — 코트 위 가장 강렬한 존재감.'},
+    {fam:'navy', name:'Deep Navy', desc:'절제된 퍼포먼스 무드를 위한 다크 베이스.'},
+    {fam:'white', name:'Court White', desc:'가장 클래식하고 클린한 매치의 시작점.'},
+    {fam:'mint', name:'Pale Mint', desc:'이번 시즌 가장 상쾌한 포인트 컬러.'},
+  ];
+  document.getElementById('colorGrid').innerHTML = items.map(it=>{
+    const fam = FAMILIES[it.fam];
+    const count = TOPS.filter(t=>t.family===it.fam).length + BOTTOMS.filter(b=>b.family===it.fam).length;
+    return `<div class="color-card" style="background:${fam.hex};color:${fam.dark?'#F1EFE5':'#1B1A1F'}">
+      <div><div class="cc-en">${it.fam.toUpperCase()}</div><div class="cc-name">${it.name}</div><div class="cc-desc">${it.desc}</div></div>
+      <div class="cc-count">${count} ITEMS</div>
+    </div>`;
+  }).join('');
+})();
+
+/* =============== FABRIC =============== */
+(function renderFabric(){
+  document.getElementById('fabGrid').innerHTML = FABRIC_TECH.map(f=>`
+    <div class="fab-card">
+      <svg class="fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <div class="fab-en">${f.en}</div>
+      <h3>${f.kr}</h3>
+      <p>${f.desc}</p>
+    </div>`).join('');
+})();
+
+/* =============== LINE-UP =============== */
+(function renderLineup(){
+  const ALL = TOPS.map(t=>({...t,cat:'top'})).concat(BOTTOMS.map(b=>({...b,cat:'bottom'})));
+  document.getElementById('lineupCount').textContent = `총 ${ALL.length}개 SKU`;
+  const filters = [{k:'all',label:'전체'},{k:'top',label:'TOP'},{k:'bottom',label:'BOTTOM'}];
+  document.getElementById('lineupFilters').innerHTML = filters.map((f,i)=>`<button class="lchip ${i===0?'active':''}" data-cat="${f.k}">${f.label}</button>`).join('');
+  function draw(cat){
+    const list = cat==='all' ? ALL : ALL.filter(p=>p.cat===cat);
+    document.getElementById('lineupGrid').innerHTML = list.map(p=>`
+      <div class="lu-card">
+        <div class="lu-photo"><img src="${p.img}" alt="${p.code}"></div>
+        <div class="lu-code">${p.code}</div>
+        <div class="lu-color">${p.color}</div>
+        <div class="lu-price">${p.price.toLocaleString()}원</div>
+      </div>`).join('');
+  }
+  draw('all');
+  document.getElementById('lineupFilters').addEventListener('click', e=>{
+    const btn = e.target.closest('.lchip'); if(!btn) return;
+    document.querySelectorAll('#lineupFilters .lchip').forEach(b=>b.classList.toggle('active', b===btn));
+    draw(btn.dataset.cat);
+  });
+})();
+
+/* =============== NAV ACTIVE STATE =============== */
+(function navObserver(){
+  const links = Array.from(document.querySelectorAll('#navPills a'));
+  const targets = links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        const id = '#'+en.target.id;
+        links.forEach(a=>a.classList.toggle('active', a.getAttribute('href')===id));
+      }
+    });
+  }, {rootMargin:'-40% 0px -50% 0px'});
+  targets.forEach(t=>io.observe(t));
+})();
+
+/* =============== INIT =============== */
+renderFilters();
+renderPickers();
+renderPreview();
+renderBest();
+renderTray();
+</script>
+</body>
+</html>
