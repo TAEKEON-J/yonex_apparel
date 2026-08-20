@@ -735,14 +735,15 @@ function recommendSize(gender, height, weight){
   if(!height || isNaN(height)) return null;
   let idx = chart.findIndex(b=> height>=b.min && height<=b.max);
   if(idx===-1) idx = height < chart[0].min ? 0 : chart.length-1;
-  let adjust = null;
+  let steps = 0;
   if(weight && !isNaN(weight)){
     const h = height/100;
-    const low = 20*h*h, high = 24*h*h; // typical BMI 20~24 band for this height
-    if(weight > high+5 && idx < chart.length-1){ idx += 1; adjust = 'up'; }
-    else if(weight < low-5 && idx > 0){ idx -= 1; adjust = 'down'; }
+    const bmi = weight/(h*h); // typical BMI 20~24 band treated as "no adjustment"
+    if(bmi > 24) steps = Math.ceil((bmi-24)/4);       // every ~4 BMI points over 24 = +1 size step
+    else if(bmi < 20) steps = -Math.ceil((20-bmi)/4); // every ~4 BMI points under 20 = -1 size step
+    idx = Math.min(chart.length-1, Math.max(0, idx+steps));
   }
-  return {size: chart[idx].size, adjust};
+  return {size: chart[idx].size, adjustSteps: steps};
 }
 function sizeRangeOf(p){
   const nums = (p.size.match(/\d{2,3}/g)||[]).map(Number);
@@ -795,7 +796,7 @@ const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].c
   const gameCount = TOPS.filter(t=>GAME_WEAR_COLLECTIONS.includes(t.collection)).length + BOTTOMS.filter(b=>GAME_WEAR_COLLECTIONS.includes(b.collection)).length;
   const dailyCount = TOPS.filter(t=>t.collection==='Daily Wear').length + BOTTOMS.filter(b=>b.collection==='Daily Wear').length;
   const cats = [
-    {n:'01',name:'Game Wear',count: gameCount, note:'World Collection 포함'},
+    {n:'01',name:'Game Wear',count: gameCount},
     {n:'02',name:'Daily Wear',count: dailyCount},
     {n:'03',name:'Easy Wear',count: 0, soon:true},
     {n:'04',name:'Acc / Bag',count: 0, soon:true},
@@ -949,8 +950,8 @@ function updateSizeFinder(){
   if(rec){
     text = `추천 사이즈: ${rec.size} (${genderLabel} · ${state.myHeight}cm`;
     text += state.myWeight ? `, ${state.myWeight}kg 기준` : ' 기준';
-    if(rec.adjust==='up') text += ' · 체형 고려 +1단계';
-    else if(rec.adjust==='down') text += ' · 체형 고려 -1단계';
+    if(rec.adjustSteps>0) text += ` · 체형 고려 +${rec.adjustSteps}단계`;
+    else if(rec.adjustSteps<0) text += ` · 체형 고려 ${rec.adjustSteps}단계`;
     text += ')';
   }
   document.getElementById('sfResult').textContent = text;
