@@ -234,6 +234,29 @@ section{padding:74px 0;}
 .mm-head .eyebrow b{color:var(--mint);}
 .mm-sub{font-size:13.5px;color:rgba(255,255,255,.7);max-width:380px;line-height:1.6;}
 
+.size-finder{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:14px;
+  padding:12px 16px;margin-bottom:18px;
+}
+.sf-label{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;color:rgba(255,255,255,.55);flex:none;}
+.sf-gender{display:flex;gap:4px;flex:none;}
+.sf-g-btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,.75);cursor:pointer;}
+.sf-g-btn.active{background:#fff;color:var(--indigo-deep);border-color:#fff;}
+.sf-height{display:flex;align-items:center;gap:6px;flex:none;}
+.sf-height input{
+  width:70px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);border-radius:8px;
+  padding:6px 9px;color:#fff;font-family:var(--mono);font-size:12px;outline:none;
+}
+.sf-height input::placeholder{color:rgba(255,255,255,.45);}
+.sf-height input:focus{border-color:var(--mint);}
+.sf-height span{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.55);}
+.sf-result{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--mint);flex:1;min-width:120px;}
+.sf-note{width:100%;font-size:10px;color:rgba(255,255,255,.4);font-family:var(--sans);}
+.mrp-sizecheck{font-size:10px;font-weight:700;margin-left:6px;}
+.mrp-sizecheck.ok{color:#3FAE5C;}
+.mrp-sizecheck.no{color:var(--coral);}
+
 .mm-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .fchip{font-family:var(--mono);font-size:11px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:transparent;color:rgba(255,255,255,.85);cursor:pointer;transition:all .15s ease;display:flex;align-items:center;gap:6px;}
 .fchip i{width:8px;height:8px;border-radius:50%;display:inline-block;border:1px solid rgba(255,255,255,.5);}
@@ -515,6 +538,19 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
       </div>
       <p class="mm-sub">컬러군으로 필터링하고, 상의·하의를 각각 하나씩 선택하면 매치 타입이 자동으로 계산됩니다.</p>
     </div>
+    <div class="size-finder">
+      <div class="sf-label">MY SIZE</div>
+      <div class="sf-gender" id="sfGender">
+        <button class="sf-g-btn active" data-gender="M">남성</button>
+        <button class="sf-g-btn" data-gender="F">여성</button>
+      </div>
+      <div class="sf-height">
+        <input type="number" id="sfHeightInput" placeholder="키 입력" min="140" max="200">
+        <span>cm</span>
+      </div>
+      <div class="sf-result" id="sfResult">키를 입력하면 추천 사이즈를 알려드려요</div>
+      <div class="sf-note">* 요넥스 공식 사이즈 정보(신장 기준 조견표) 기반 · 소재·핏에 따라 오차가 있을 수 있어요</div>
+    </div>
     <div class="mm-filters" id="mmFilters"></div>
     <div class="mm-board">
       <div class="mm-col">
@@ -681,6 +717,30 @@ const COLLECTION_MOOD = {
 };
 function moodFor(p){ return COLLECTION_MOOD[p.collection] || {img:'images/hero/daily-nature-2.jpeg', label:'YONEX 26 F/W 화보컷'}; }
 
+/* =============== SIZE FINDER (real YONEX body-size chart, height-based) =============== */
+const BODY_SIZE_CHART = {
+  M: [{min:165,max:175,size:'95'},{min:170,max:180,size:'100'},{min:175,max:185,size:'105'},{min:180,max:190,size:'110'}],
+  F: [{min:150,max:160,size:'85'},{min:155,max:165,size:'90'},{min:160,max:170,size:'95'},{min:165,max:175,size:'100'}],
+};
+function recommendSize(gender, height){
+  const chart = BODY_SIZE_CHART[gender];
+  if(!height || isNaN(height)) return null;
+  const fit = chart.find(b=> height>=b.min && height<=b.max);
+  if(fit) return fit.size;
+  return height < chart[0].min ? chart[0].size : chart[chart.length-1].size;
+}
+function sizeRangeOf(p){
+  const nums = (p.size.match(/\d{2,3}/g)||[]).map(Number);
+  if(!nums.length) return null;
+  return {min:Math.min(...nums), max:Math.max(...nums)};
+}
+function checkSizeFit(p, recSize){
+  const range = sizeRangeOf(p);
+  if(!range || !recSize) return null;
+  const rec = parseInt(recSize,10);
+  return rec>=range.min && rec<=range.max;
+}
+
 /* =============== MATCH ENGINE =============== */
 function matchType(topFam, bottomFam){
   const neutral = ['white','black','navy','gray'];
@@ -696,7 +756,7 @@ function findCurated(topCode,bottomCode){ return CURATED.find(c=>c.top===topCode
 function byCode(code){ return TOPS.find(t=>t.code===code) || BOTTOMS.find(b=>b.code===code); }
 
 /* =============== STATE =============== */
-const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].code, compare: [] };
+const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].code, compare: [], myGender:'M', myHeight:null };
 
 /* =============== RENDER: palette =============== */
 (function renderPalette(){
@@ -808,10 +868,17 @@ function renderPreview(){
   const mt = matchType(top.family, bottom.family);
   const curated = findCurated(top.code, bottom.code);
   const comment = curated ? curated.comment : `${top.color} ${top.name}와(과) ${bottom.color} ${bottom.name}의 조합 — ${mt.kr}.`;
+  const recSize = recommendSize(state.myGender, state.myHeight);
   function pieceRow(p, catLabel){
+    let sizeCheckHTML = '';
+    if(recSize){
+      const fits = checkSizeFit(p, recSize);
+      if(fits===true) sizeCheckHTML = `<span class="mrp-sizecheck ok">· 추천 ${recSize} 사이즈 있음 ✓</span>`;
+      else if(fits===false) sizeCheckHTML = `<span class="mrp-sizecheck no">· 추천 ${recSize} 사이즈 없음</span>`;
+    }
     return `<div class="mr-piece">
       <div class="mrp-top"><span class="mrp-tag">${catLabel}</span><span class="mrp-code">${p.code}</span><span class="mrp-color">${p.color}</span><span class="mrp-price">${p.price.toLocaleString()}원</span></div>
-      <div class="mrp-spec">소재 ${p.material} · 사이즈 ${p.size}</div>
+      <div class="mrp-spec">소재 ${p.material} · 사이즈 ${p.size}${sizeCheckHTML}</div>
     </div>`;
   }
   document.getElementById('mmResult').innerHTML = `
@@ -854,6 +921,25 @@ document.getElementById('mmRandomBtn').addEventListener('click', ()=>{
   selectPair(t.code, b.code);
 });
 document.getElementById('mmAddBtn').addEventListener('click', ()=> addToCompare(state.selTop, state.selBottom));
+
+/* =============== SIZE FINDER events =============== */
+function updateSizeFinder(){
+  const rec = recommendSize(state.myGender, state.myHeight);
+  document.getElementById('sfResult').textContent = rec
+    ? `추천 사이즈: ${rec} (${state.myGender==='M'?'남성':'여성'} · ${state.myHeight}cm 기준)`
+    : '키를 입력하면 추천 사이즈를 알려드려요';
+  renderPreview();
+}
+document.getElementById('sfGender').addEventListener('click', e=>{
+  const btn = e.target.closest('.sf-g-btn'); if(!btn) return;
+  state.myGender = btn.dataset.gender;
+  document.querySelectorAll('#sfGender .sf-g-btn').forEach(b=>b.classList.toggle('active', b===btn));
+  updateSizeFinder();
+});
+document.getElementById('sfHeightInput').addEventListener('input', e=>{
+  state.myHeight = e.target.value ? parseFloat(e.target.value) : null;
+  updateSizeFinder();
+});
 
 /* =============== COMPARE TRAY =============== */
 function addToCompare(topCode, bottomCode){
