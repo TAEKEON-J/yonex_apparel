@@ -330,12 +330,14 @@ section{padding:74px 0;}
   background:radial-gradient(ellipse at 50% 30%, #fff 0%, #fdfcf8 60%, #f7f5ee 100%);
   border-radius:12px;padding:22px 16px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;
 }
-.outfit-figure{position:relative;width:150px;display:flex;flex-direction:column;align-items:center;}
-.outfit-top-wrap{width:100%;z-index:2;position:relative;}
-.outfit-top-wrap img{width:100%;object-fit:contain;display:block;filter:drop-shadow(0 6px 10px rgba(27,26,31,.14));}
-.outfit-bottom-wrap{width:80%;margin-top:-30%;z-index:1;position:relative;}
-.outfit-bottom-wrap img{width:100%;object-fit:contain;display:block;filter:drop-shadow(0 8px 12px rgba(27,26,31,.16));}
-.outfit-ground{width:104px;height:12px;border-radius:50%;background:radial-gradient(ellipse,rgba(27,26,31,.14),transparent 72%);margin-top:6px;}
+.outfit-figure{position:relative;width:186px;aspect-ratio:200/480;}
+.outfit-mannequin{position:absolute;inset:0;width:100%;height:100%;z-index:0;}
+.outfit-mannequin path,.outfit-mannequin rect,.outfit-mannequin ellipse{fill:var(--paper-2);stroke:rgba(16,16,18,.12);stroke-width:1.5;}
+.outfit-top-wrap{position:absolute;left:6%;right:6%;top:1%;z-index:2;}
+.outfit-top-wrap img{width:100%;object-fit:contain;display:block;filter:drop-shadow(0 6px 10px rgba(27,26,31,.16));}
+.outfit-bottom-wrap{position:absolute;left:13%;right:13%;top:35%;z-index:1;}
+.outfit-bottom-wrap img{width:100%;object-fit:contain;display:block;filter:drop-shadow(0 8px 12px rgba(27,26,31,.18));}
+.outfit-ground{position:absolute;left:50%;bottom:-3%;transform:translateX(-50%);width:60%;height:13px;border-radius:50%;background:radial-gradient(ellipse,rgba(27,26,31,.16),transparent 72%);z-index:0;}
 .mm-canvas .mm-empty{color:var(--muted);font-size:12.5px;text-align:center;font-family:var(--sans);}
 
 .mm-editorial{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:var(--ink);}
@@ -1345,10 +1347,20 @@ function renderPreview(){
   const top = byCode(state.selTop), bottom = byCode(state.selBottom);
   document.getElementById('mmCanvas').innerHTML = (top&&bottom) ?
     `<div class="outfit-figure">
+       <svg class="outfit-mannequin" viewBox="0 0 200 480" aria-hidden="true">
+         <rect x="84" y="2" width="32" height="36" rx="16"/>
+         <path d="M54,38 Q100,22 146,38 L154,192 Q100,210 46,192 Z"/>
+         <path d="M56,42 Q38,50 34,112 Q31,172 39,228 Q41,238 55,236 Q62,234 59,224 Q52,168 56,112 Q58,72 68,44 Z"/>
+         <path d="M144,42 Q162,50 166,112 Q169,172 161,228 Q159,238 145,236 Q138,234 141,224 Q148,168 144,112 Q142,72 132,44 Z"/>
+         <path d="M58,190 Q52,262 54,344 Q55,414 60,468 Q62,477 76,477 Q82,475 80,465 Q74,412 74,344 Q75,262 82,192 Z"/>
+         <path d="M142,190 Q148,262 146,344 Q145,414 140,468 Q138,477 124,477 Q118,475 120,465 Q126,412 126,344 Q125,262 118,192 Z"/>
+         <ellipse cx="68" cy="475" rx="17" ry="7"/>
+         <ellipse cx="132" cy="475" rx="17" ry="7"/>
+       </svg>
        <div class="outfit-top-wrap"><img src="${top.img}" alt="${top.code}"></div>
        <div class="outfit-bottom-wrap"><img src="${bottom.img}" alt="${bottom.code}"></div>
-     </div>
-     <div class="outfit-ground"></div>` :
+       <div class="outfit-ground"></div>
+     </div>` :
     `<span class="mm-empty">상의와 하의를 각각 선택해주세요</span>`;
   if(!top || !bottom){ document.getElementById('mmResult').innerHTML=''; document.getElementById('mmEditorial').innerHTML=''; return; }
   const mood = moodFor(top);
