@@ -427,11 +427,10 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
       <div class="search-results" id="searchResults"></div>
     </div>
     <nav class="pills" id="navPills">
-      <button data-tab="season">SEASON</button>
-      <button data-tab="looks">LOOKS</button>
       <button data-tab="match">MIX&amp;MATCH</button>
-      <button data-tab="color">COLOR</button>
+      <button data-tab="looks">LOOKS</button>
       <button data-tab="lineup">LINE-UP</button>
+      <button data-tab="season">SEASON</button>
       <button data-tab="closing">CLOSING</button>
     </nav>
   </div>
@@ -454,7 +453,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
     <img src="images/products/10756yx.png" alt="10756YX">
     <span class="cs-txt"><span class="cs-eyebrow">FEATURED IN THIS LOOK</span><b>10756YX · Team Raglan Tee</b><span class="cs-cta">이 상의로 Mix &amp; Match 시작하기 →</span></span>
   </button>
-  <button class="cover-scroll" id="coverNext"><span>시즌 열어보기</span><span>→</span></button>
+  <button class="cover-scroll" id="coverNext"><span>매칭 시작하기</span><span>→</span></button>
 </section>
 
 <main>
@@ -551,14 +550,14 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
   <div class="pd-grid" id="pdGrid"></div>
 </section>
 
-<section data-tab="color" id="color">
+<section data-tab="season" id="color">
   <div class="section-head">
     <div><p class="eyebrow">P.18–19 — <b>COLOR STORY</b></p><h2>시즌 컬러가 곧 전략입니다</h2></div>
   </div>
   <div class="color-grid" id="colorGrid"></div>
 </section>
 
-<section data-tab="color" id="fabric">
+<section data-tab="season" id="fabric">
   <div class="section-head">
     <div><p class="eyebrow">P.20 — <b>FABRIC / DETAIL</b></p><h2>YONEX Technologies</h2></div>
     <p class="section-note">요넥스 자체 개발 기능성 원단 — 26 F/W 컬렉션 실제 적용 기술.</p>
@@ -1005,16 +1004,15 @@ document.addEventListener('click', e=>{
 /* =============== TAB NAVIGATION =============== */
 const TAB_ORDER = [
   {id:'cover', label:'COVER'},
-  {id:'season', label:'SEASON'},
-  {id:'looks', label:'LOOKS'},
   {id:'match', label:'MIX & MATCH'},
-  {id:'color', label:'COLOR'},
+  {id:'looks', label:'LOOKS'},
   {id:'lineup', label:'LINE-UP'},
+  {id:'season', label:'SEASON'},
   {id:'closing', label:'CLOSING'},
 ];
 let currentTabIndex = 0;
-const PAGE_LABELS = {cover:'P.01',season:'P.02–04',looks:'P.05–09, 14–17',match:'P.10–13',color:'P.18–20',lineup:'P.21–23',closing:'P.24'};
-const MAIN_TABS = ['season','looks','match','color','lineup'];
+const PAGE_LABELS = {cover:'P.01',match:'P.10–13',looks:'P.05–09, 14–17',lineup:'P.21–23',season:'P.02–04, 18–20',closing:'P.24'};
+const MAIN_TABS = ['match','looks','lineup','season'];
 
 function switchTab(tabId){
   const idx = TAB_ORDER.findIndex(t=>t.id===tabId);
@@ -1043,7 +1041,7 @@ document.getElementById('navPills').addEventListener('click', e=>{
   switchTab(btn.dataset.tab);
 });
 document.getElementById('logoHome').addEventListener('click', ()=> switchTab('cover'));
-document.getElementById('coverNext').addEventListener('click', ()=> switchTab('season'));
+document.getElementById('coverNext').addEventListener('click', ()=> switchTab('match'));
 document.getElementById('coverShopBtn').addEventListener('click', ()=>{
   state.selTop = '10756YX'; state.colorFilter='all';
   renderPickers(); renderPreview(); renderBest();
