@@ -545,11 +545,15 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
         <button class="sf-g-btn" data-gender="F">여성</button>
       </div>
       <div class="sf-height">
-        <input type="number" id="sfHeightInput" placeholder="키 입력" min="140" max="200">
+        <input type="number" id="sfHeightInput" placeholder="키" min="140" max="200">
         <span>cm</span>
       </div>
+      <div class="sf-height">
+        <input type="number" id="sfWeightInput" placeholder="몸무게" min="30" max="150">
+        <span>kg</span>
+      </div>
       <div class="sf-result" id="sfResult">키를 입력하면 추천 사이즈를 알려드려요</div>
-      <div class="sf-note">* 요넥스 공식 사이즈 정보(신장 기준 조견표) 기반 · 소재·핏에 따라 오차가 있을 수 있어요</div>
+      <div class="sf-note">* 요넥스 공식 사이즈 정보(신장 기준 조견표) 기반, 몸무게는 체형에 따라 ±1단계 보정하는 데만 사용해요 · 소재·핏에 따라 오차가 있을 수 있어요</div>
     </div>
     <div class="mm-filters" id="mmFilters"></div>
     <div class="mm-board">
@@ -722,12 +726,19 @@ const BODY_SIZE_CHART = {
   M: [{min:165,max:175,size:'95'},{min:170,max:180,size:'100'},{min:175,max:185,size:'105'},{min:180,max:190,size:'110'}],
   F: [{min:150,max:160,size:'85'},{min:155,max:165,size:'90'},{min:160,max:170,size:'95'},{min:165,max:175,size:'100'}],
 };
-function recommendSize(gender, height){
+function recommendSize(gender, height, weight){
   const chart = BODY_SIZE_CHART[gender];
   if(!height || isNaN(height)) return null;
-  const fit = chart.find(b=> height>=b.min && height<=b.max);
-  if(fit) return fit.size;
-  return height < chart[0].min ? chart[0].size : chart[chart.length-1].size;
+  let idx = chart.findIndex(b=> height>=b.min && height<=b.max);
+  if(idx===-1) idx = height < chart[0].min ? 0 : chart.length-1;
+  let adjust = null;
+  if(weight && !isNaN(weight)){
+    const h = height/100;
+    const low = 20*h*h, high = 24*h*h; // typical BMI 20~24 band for this height
+    if(weight > high+5 && idx < chart.length-1){ idx += 1; adjust = 'up'; }
+    else if(weight < low-5 && idx > 0){ idx -= 1; adjust = 'down'; }
+  }
+  return {size: chart[idx].size, adjust};
 }
 function sizeRangeOf(p){
   const nums = (p.size.match(/\d{2,3}/g)||[]).map(Number);
@@ -756,7 +767,7 @@ function findCurated(topCode,bottomCode){ return CURATED.find(c=>c.top===topCode
 function byCode(code){ return TOPS.find(t=>t.code===code) || BOTTOMS.find(b=>b.code===code); }
 
 /* =============== STATE =============== */
-const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].code, compare: [], myGender:'M', myHeight:null };
+const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].code, compare: [], myGender:'M', myHeight:null, myWeight:null };
 
 /* =============== RENDER: palette =============== */
 (function renderPalette(){
@@ -868,7 +879,8 @@ function renderPreview(){
   const mt = matchType(top.family, bottom.family);
   const curated = findCurated(top.code, bottom.code);
   const comment = curated ? curated.comment : `${top.color} ${top.name}와(과) ${bottom.color} ${bottom.name}의 조합 — ${mt.kr}.`;
-  const recSize = recommendSize(state.myGender, state.myHeight);
+  const rec = recommendSize(state.myGender, state.myHeight, state.myWeight);
+  const recSize = rec ? rec.size : null;
   function pieceRow(p, catLabel){
     let sizeCheckHTML = '';
     if(recSize){
@@ -924,10 +936,17 @@ document.getElementById('mmAddBtn').addEventListener('click', ()=> addToCompare(
 
 /* =============== SIZE FINDER events =============== */
 function updateSizeFinder(){
-  const rec = recommendSize(state.myGender, state.myHeight);
-  document.getElementById('sfResult').textContent = rec
-    ? `추천 사이즈: ${rec} (${state.myGender==='M'?'남성':'여성'} · ${state.myHeight}cm 기준)`
-    : '키를 입력하면 추천 사이즈를 알려드려요';
+  const rec = recommendSize(state.myGender, state.myHeight, state.myWeight);
+  const genderLabel = state.myGender==='M'?'남성':'여성';
+  let text = '키를 입력하면 추천 사이즈를 알려드려요';
+  if(rec){
+    text = `추천 사이즈: ${rec.size} (${genderLabel} · ${state.myHeight}cm`;
+    text += state.myWeight ? `, ${state.myWeight}kg 기준` : ' 기준';
+    if(rec.adjust==='up') text += ' · 체형 고려 +1단계';
+    else if(rec.adjust==='down') text += ' · 체형 고려 -1단계';
+    text += ')';
+  }
+  document.getElementById('sfResult').textContent = text;
   renderPreview();
 }
 document.getElementById('sfGender').addEventListener('click', e=>{
@@ -938,6 +957,10 @@ document.getElementById('sfGender').addEventListener('click', e=>{
 });
 document.getElementById('sfHeightInput').addEventListener('input', e=>{
   state.myHeight = e.target.value ? parseFloat(e.target.value) : null;
+  updateSizeFinder();
+});
+document.getElementById('sfWeightInput').addEventListener('input', e=>{
+  state.myWeight = e.target.value ? parseFloat(e.target.value) : null;
   updateSizeFinder();
 });
 
