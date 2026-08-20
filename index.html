@@ -8,19 +8,19 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23362B6B'/><text x='50' y='68' font-family='Georgia,serif' font-weight='700' font-size='56' fill='%23F2EEDF' text-anchor='middle'>Y</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#F1EFE5; --paper-2:#E8E5D6;
-  --ink:#1B1A1F; --ink-soft:#4A4A50; --muted:#82807A;
-  --line:rgba(27,26,31,.12);
+  --paper:#F7F7F5; --paper-2:#ECECE8;
+  --ink:#111113; --ink-soft:#3D3D40; --muted:#75757A;
+  --line:rgba(17,17,19,.12);
   --indigo:#362B6B; --indigo-deep:#241C4A;
   --coral:#DE3A50;
   --navy:#1B2740; --gray:#8993A6; --white-sw:#EFEDE3; --black-sw:#17181C;
   --mint:#BFE0C6; --green:#33422E;
-  --card:#FBFAF4;
+  --card:#FFFFFF;
   --radius:14px;
-  --serif:'Fraunces',Georgia,'Noto Serif KR',serif;
+  --serif:'Work Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;
   --sans:'Work Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
 }
@@ -29,7 +29,7 @@ html{scroll-behavior:smooth;}
 html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:var(--sans);overflow-x:hidden;}
 a{color:inherit;}
 img{max-width:100%;display:block;}
-h1,h2,h3{font-family:var(--serif);font-weight:700;margin:0;text-wrap:balance;}
+h1,h2,h3{font-family:var(--serif);font-weight:900;margin:0;text-wrap:balance;letter-spacing:-.02em;}
 ::selection{background:var(--indigo);color:var(--paper);}
 :focus-visible{outline:2px solid var(--coral);outline-offset:2px;}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important;}}
@@ -103,8 +103,8 @@ nav.pills button.active{background:var(--ink);color:var(--paper);}
 .cover-inner{position:relative;z-index:2;max-width:1180px;margin:0 auto;width:100%;padding:0 24px 56px;color:#fff;}
 .cover-tags{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
 .cover-tags span{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;border:1px solid rgba(255,255,255,.55);padding:5px 11px;border-radius:999px;}
-.cover h1{font-size:clamp(40px,8.6vw,96px);line-height:.98;color:#fff;letter-spacing:-.01em;max-width:900px;}
-.cover h1 em{font-style:italic;color:var(--mint);}
+.cover h1{font-size:clamp(40px,8.6vw,96px);line-height:.94;color:#fff;letter-spacing:-.03em;max-width:900px;text-transform:uppercase;}
+.cover h1 em{font-style:normal;color:var(--mint);}
 .cover .cover-sub{font-size:15.5px;color:rgba(255,255,255,.82);max-width:460px;margin:18px 0 0;line-height:1.7;}
 .cover-scroll{
   position:absolute;right:24px;bottom:24px;z-index:2;
@@ -161,7 +161,7 @@ section{padding:74px 0;}
 .season-msg p{font-size:17px;line-height:1.85;color:var(--ink-soft);max-width:52ch;}
 .season-msg p+p{margin-top:14px;}
 .keywords{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;}
-.keywords span{font-family:var(--serif);font-size:14px;font-weight:600;font-style:italic;background:var(--card);border:1px solid var(--line);padding:9px 17px;border-radius:999px;}
+.keywords span{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--card);border:1px solid var(--line);padding:9px 17px;border-radius:999px;}
 .palette-list{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line);}
 .palette-row{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);}
 .swatch{width:38px;height:38px;border-radius:50%;flex:none;border:1px solid rgba(0,0,0,.1);}
@@ -404,6 +404,11 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 .pd-body h3{font-size:19px;}
 .pd-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;flex-wrap:wrap;gap:6px;justify-content:space-between;}
 .qv-photo{aspect-ratio:3/4;max-width:440px;margin:0 auto;}
+.qv-thumbs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;max-width:440px;margin:10px auto 0;}
+.qv-thumb{width:52px;height:52px;border-radius:8px;border:2px solid transparent;background-size:cover;background-position:center;cursor:pointer;padding:0;flex:none;}
+.qv-thumb.active{border-color:var(--indigo);}
+.qv-thumb:hover{border-color:var(--line);}
+.qv-thumb.active:hover{border-color:var(--indigo);}
 .qv-code{font-family:var(--mono);font-size:clamp(22px,6vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink);}
 .pd-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
 .pd-tags span{font-family:var(--mono);font-size:10px;font-weight:600;background:var(--paper-2);color:var(--ink-soft);padding:4px 9px;border-radius:999px;}
@@ -1002,16 +1007,18 @@ const COLLECTION_MOOD = {
 };
 function moodFor(p){ return COLLECTION_MOOD[p.collection] || {img:'images/hero/daily-nature-2.jpeg', label:'YONEX 26 F/W 화보컷'}; }
 
-/* =============== MODEL CUT BY GENDER (M/W editorial photo per category group, for Quick View) =============== */
+/* =============== MODEL CUT BY GENDER (M/W editorial photo set per category group, for Quick View gallery) =============== */
+/* Each M/W is an array — today it holds whatever real photography we already have (1-2 shots per group);
+   add more paths here once the client uploads dedicated per-product model cuts and the gallery grows automatically. */
 const MODEL_CUT_MW = {
-  game: {M:'images/hero/cover-coral-2.jpeg', W:'images/hero/keyvisual-blue-1.jpeg', label:'게임웨어 모델컷'},
-  daily: {M:'images/hero/daily-nature-2.jpeg', W:'images/hero/easywear-divider.jpeg', label:'데일리웨어 모델컷'},
-  easy: {M:'images/hero/wearmap-divider.jpeg', W:'images/hero/easywear-divider.jpeg', label:'이지웨어 모델컷'},
-  acc: {M:'images/hero/wearmap-divider.jpeg', W:'images/hero/wearmap-divider.jpeg', label:'악세서리 컷'},
+  game: {M:['images/hero/cover-coral-2.jpeg','images/hero/cover-coral-1.jpeg'], W:['images/hero/keyvisual-blue-1.jpeg','images/hero/keyvisual-blue-2.jpeg'], label:'게임웨어 모델컷'},
+  daily: {M:['images/hero/daily-nature-2.jpeg','images/hero/daily-nature-1.jpeg'], W:['images/hero/easywear-divider.jpeg'], label:'데일리웨어 모델컷'},
+  easy: {M:['images/hero/wearmap-divider.jpeg'], W:['images/hero/easywear-divider.jpeg'], label:'이지웨어 모델컷'},
+  acc: {M:['images/hero/wearmap-divider.jpeg'], W:['images/hero/wearmap-divider.jpeg'], label:'악세서리 컷'},
 };
 function modelCutFor(p, gender){
   const entry = MODEL_CUT_MW[collectionGroupOf(p)] || MODEL_CUT_MW.daily;
-  return {img: gender==='W' ? entry.W : entry.M, label: entry.label};
+  return {imgs: gender==='W' ? entry.W : entry.M, label: entry.label};
 }
 function groupLabelOf(p){
   const g = CATEGORY_GROUPS.find(c=>c.key===collectionGroupOf(p));
@@ -1063,10 +1070,11 @@ function matchType(topFam, bottomFam){
 }
 function findCurated(topCode,bottomCode){ return CURATED.find(c=>c.top===topCode && c.bottom===bottomCode); }
 function byCode(code){ return TOPS.find(t=>t.code===code) || BOTTOMS.find(b=>b.code===code) || ACCESSORIES.find(a=>a.code===code); }
-function genderToggleHTML(p){
+function genderToggleHTML(p, initialGender){
   if(!p.pairCode) return '';
+  const g = initialGender==='W' ? 'W' : 'M';
   return `<span class="g-toggle" data-m="${p.code}" data-w="${p.pairCode}">
-    <button type="button" class="active" data-g="M">M</button><button type="button" data-g="W">W</button>
+    <button type="button" class="${g==='M'?'active':''}" data-g="M">M</button><button type="button" class="${g==='W'?'active':''}" data-g="W">W</button>
   </span>`;
 }
 document.addEventListener('click', e=>{
@@ -1078,8 +1086,12 @@ document.addEventListener('click', e=>{
   wrap.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b===btn));
 });
 
-/* =============== QUICK VIEW (model cut, from Line-up) =============== */
-function openQuickView(code){
+/* =============== QUICK VIEW (model cut gallery, from Line-up) =============== */
+function qvGalleryHTML(imgs, activeIdx){
+  if(imgs.length<2) return '';
+  return `<div class="qv-thumbs">${imgs.map((src,i)=>`<button type="button" class="qv-thumb ${i===activeIdx?'active':''}" data-idx="${i}" style="background-image:url('${src}')"></button>`).join('')}</div>`;
+}
+function openQuickView(code, preferredGender){
   const p = byCode(code); if(!p) return;
   const cat = TOPS.some(t=>t.code===code) ? 'top' : (BOTTOMS.some(b=>b.code===code) ? 'bottom' : 'acc');
   let sizeVal = p.size;
@@ -1091,17 +1103,19 @@ function openQuickView(code){
       else if(fits===false) sizeVal += ` <span class="mrp-sizecheck no">· 추천 ${rec.size} 없음</span>`;
     }
   }
-  const initialGender = p.gender==='Women' ? 'W' : 'M';
+  const initialGender = preferredGender==='W' ? 'W' : (preferredGender==='M' ? 'M' : (p.gender==='Women' ? 'W' : 'M'));
+  const displayCode = (initialGender==='W' && p.pairCode) ? p.pairCode : p.code;
   const mc = modelCutFor(p, initialGender);
   const subtitle = [groupLabelOf(p), p.collection].filter((v,i,a)=> v && a.indexOf(v)===i).join(' · ');
-  const selectBtn = cat==='acc' ? '' : `<button class="btn-mini primary" id="qvSelectBtn" data-code="${p.code}" data-cat="${cat}">Mix &amp; Match에서 선택</button>`;
+  const selectBtn = cat==='acc' ? '' : `<button class="btn-mini primary" id="qvSelectBtn" data-code="${displayCode}" data-cat="${cat}">Mix &amp; Match에서 선택</button>`;
   document.getElementById('qvBody').innerHTML = `
-    <div class="pd-photo qv-photo" style="background-image:url('${mc.img}');">
+    <div class="pd-photo qv-photo" style="background-image:url('${mc.imgs[0]}');">
       <span class="pd-ghost-label">${cat==='acc'?'PRODUCT CUT':'MODEL CUT'}</span>
     </div>
+    ${qvGalleryHTML(mc.imgs, 0)}
     <div class="pd-body" style="padding:20px 4px 4px;">
-      <h3 class="qv-code">${p.code}</h3>
-      <div class="pd-code">${subtitle}${genderToggleHTML(p)}</div>
+      <h3 class="qv-code">${displayCode}</h3>
+      <div class="pd-code">${subtitle}${genderToggleHTML(p, initialGender)}</div>
       <p class="pd-copy">${p.name} — ${mc.label}</p>
       <div class="pd-tags"><span>${cat.toUpperCase()}</span><span>${p.gender}</span></div>
       <div class="pd-specs">
@@ -1112,12 +1126,20 @@ function openQuickView(code){
       </div>
       <div class="mm-cta-row" style="margin-top:16px;gap:8px;display:flex;">
         ${selectBtn}
-        <button class="btn-mini" id="qvCmpBtn" data-code="${p.code}">비교함에 담기</button>
+        <button class="btn-mini" id="qvCmpBtn" data-code="${displayCode}">비교함에 담기</button>
       </div>
     </div>`;
   document.getElementById('qvOverlay').classList.add('open');
 }
 document.getElementById('qvBody').addEventListener('click', e=>{
+  const thumb = e.target.closest('.qv-thumb');
+  if(thumb){
+    const src = thumb.style.backgroundImage.slice(5,-2);
+    const photoEl = document.querySelector('#qvBody .qv-photo');
+    if(photoEl) photoEl.style.backgroundImage = `url('${src}')`;
+    thumb.parentElement.querySelectorAll('.qv-thumb').forEach(t=>t.classList.toggle('active', t===thumb));
+    return;
+  }
   const gBtn = e.target.closest('.g-toggle button');
   if(gBtn){
     const wrap = gBtn.closest('.g-toggle');
@@ -1127,9 +1149,13 @@ document.getElementById('qvBody').addEventListener('click', e=>{
     wrap.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b===gBtn));
     const baseP = byCode(wrap.dataset.m);
     const photoEl = document.querySelector('#qvBody .qv-photo');
+    const thumbsEl = document.querySelector('#qvBody .qv-thumbs');
     if(baseP && photoEl){
       const mc = modelCutFor(baseP, gBtn.dataset.g);
-      photoEl.style.backgroundImage = `url('${mc.img}')`;
+      photoEl.style.backgroundImage = `url('${mc.imgs[0]}')`;
+      const newThumbs = qvGalleryHTML(mc.imgs, 0);
+      if(thumbsEl) thumbsEl.outerHTML = newThumbs;
+      else if(newThumbs) photoEl.insertAdjacentHTML('afterend', newThumbs);
     }
     const selBtn2 = document.getElementById('qvSelectBtn');
     if(selBtn2) selBtn2.dataset.code = codeVal;
@@ -1612,7 +1638,7 @@ document.addEventListener('click', e=>{
     }
     if(e.target.closest('.g-toggle')) return;
     const card = e.target.closest('.lu-card');
-    if(card){ openQuickView(card.dataset.code); }
+    if(card){ openQuickView(card.dataset.code, globalGenderView); }
   });
   window.refreshLineupSizes = function(){ draw(); };
   window.syncLineupCompareSelection = function(){ draw(); };
