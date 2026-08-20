@@ -247,13 +247,15 @@ section{padding:74px 0;}
 .mm-sub{font-size:13.5px;color:rgba(255,255,255,.7);max-width:380px;line-height:1.6;}
 
 .size-finder{
-  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  display:flex;flex-direction:column;gap:10px;
   background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:14px;
   padding:12px 16px;margin-bottom:18px;
 }
-.sf-label{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;color:rgba(255,255,255,.55);flex:none;}
+.sf-row{display:flex;align-items:center;gap:10px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+.sf-row::-webkit-scrollbar{display:none;}
+.sf-label{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;color:rgba(255,255,255,.55);flex:none;white-space:nowrap;}
 .sf-gender{display:flex;gap:4px;flex:none;}
-.sf-g-btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,.75);cursor:pointer;}
+.sf-g-btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,.75);cursor:pointer;white-space:nowrap;}
 .sf-g-btn.active{background:#fff;color:var(--indigo-deep);border-color:#fff;}
 .sf-height{display:flex;align-items:center;gap:6px;flex:none;}
 .sf-height input{
@@ -262,14 +264,23 @@ section{padding:74px 0;}
 }
 .sf-height input::placeholder{color:rgba(255,255,255,.45);}
 .sf-height input:focus{border-color:var(--mint);}
-.sf-height span{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.55);}
-.sf-result{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--mint);flex:1;min-width:120px;}
+.sf-height span{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.55);white-space:nowrap;}
+.sf-result{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--mint);width:100%;text-align:center;}
 .sf-note{width:100%;font-size:10px;color:rgba(255,255,255,.4);font-family:var(--sans);}
+@media(max-width:480px){
+  .sf-row{gap:7px;}
+  .sf-label{font-size:9.5px;}
+  .sf-g-btn{font-size:10px;padding:5px 9px;}
+  .sf-height{gap:4px;}
+  .sf-height input{width:52px;padding:6px 7px;font-size:11px;}
+  .sf-height span{font-size:10px;}
+}
 .mrp-sizecheck{font-size:10px;font-weight:700;margin-left:6px;}
 .mrp-sizecheck.ok{color:#3FAE5C;}
 .mrp-sizecheck.no{color:var(--coral);}
 
-.mm-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.mm-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.mm-filters .fchip{padding:5px 10px;font-size:10px;}
 .fchip{font-family:var(--mono);font-size:11px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:transparent;color:rgba(255,255,255,.85);cursor:pointer;transition:all .15s ease;display:flex;align-items:center;gap:6px;}
 .fchip i{width:8px;height:8px;border-radius:50%;display:inline-block;border:1px solid rgba(255,255,255,.5);}
 .fchip:hover{border-color:#fff;color:#fff;}
@@ -605,30 +616,33 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
       <p class="mm-sub">컬러군으로 필터링하고, 상의·하의를 각각 하나씩 선택하면 매치 타입이 자동으로 계산됩니다.</p>
     </div>
     <div class="size-finder">
-      <div class="sf-label">MY SIZE</div>
-      <div class="sf-gender" id="sfGender">
-        <button class="sf-g-btn active" data-gender="M">남성</button>
-        <button class="sf-g-btn" data-gender="F">여성</button>
-      </div>
-      <div class="sf-height">
-        <input type="number" id="sfHeightInput" placeholder="키" min="140" max="200">
-        <span>cm</span>
-      </div>
-      <div class="sf-height">
-        <input type="number" id="sfWeightInput" placeholder="몸무게" min="30" max="150">
-        <span>kg</span>
+      <div class="sf-row">
+        <div class="sf-label">MY SIZE</div>
+        <div class="sf-gender" id="sfGender">
+          <button class="sf-g-btn active" data-gender="M">남성</button>
+          <button class="sf-g-btn" data-gender="F">여성</button>
+        </div>
+        <div class="sf-height">
+          <input type="number" id="sfHeightInput" placeholder="키" min="140" max="200">
+          <span>cm</span>
+        </div>
+        <div class="sf-height">
+          <input type="number" id="sfWeightInput" placeholder="몸무게" min="30" max="150">
+          <span>kg</span>
+        </div>
       </div>
       <div class="sf-result" id="sfResult">키를 입력하면 추천 사이즈를 알려드려요</div>
       <div class="sf-note">* 요넥스 공식 사이즈 정보(신장 기준 조견표) 기반, 몸무게는 체형에 따라 ±1단계 보정하는 데만 사용해요 · 소재·핏에 따라 오차가 있을 수 있어요</div>
     </div>
-    <div class="mm-filters" id="mmFilters"></div>
     <div class="mm-board">
       <div class="mm-col">
         <div class="mm-col-title">TOP 선택 · <span id="topCountLabel"></span></div>
+        <div class="mm-filters" id="mmFiltersTop"></div>
         <div class="scroll-fade-wrap on-dark"><div class="mm-picker" id="topPicker"></div></div>
       </div>
       <div class="mm-col">
         <div class="mm-col-title">BOTTOM 선택 · <span id="bottomCountLabel"></span></div>
+        <div class="mm-filters" id="mmFiltersBottom"></div>
         <div class="scroll-fade-wrap on-dark"><div class="mm-picker" id="bottomPicker"></div></div>
       </div>
       <div class="mm-preview">
@@ -1206,7 +1220,7 @@ document.getElementById('qvClose').addEventListener('click', ()=> document.getEl
 document.getElementById('qvOverlay').addEventListener('click', e=>{ if(e.target.id==='qvOverlay') e.currentTarget.classList.remove('open'); });
 
 /* =============== STATE =============== */
-const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].code, compare: [], myGender:'M', myHeight:null, myWeight:null };
+const state = { topColorFilter:'all', bottomColorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].code, compare: [], myGender:'M', myHeight:null, myWeight:null };
 
 /* =============== RENDER: palette =============== */
 (function renderPalette(){
@@ -1282,22 +1296,30 @@ const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].c
   initReveal(document.getElementById('lookGrid'), 70, 350);
 })();
 
-/* =============== MIX & MATCH: filters =============== */
-function renderFilters(){
+/* =============== MIX & MATCH: filters (top/bottom independent) =============== */
+function renderColorFilter(containerId, stateKey){
   const fams = Object.keys(FAMILIES);
-  const html = ['<button class="fchip active" data-fam="all">전체</button>']
+  const html = [`<button class="fchip active" data-fam="all">전체</button>`]
     .concat(fams.map(f=>`<button class="fchip" data-fam="${f}"><i style="background:${FAMILIES[f].hex}"></i>${FAMILIES[f].label}</button>`)).join('');
-  document.getElementById('mmFilters').innerHTML = html;
-  document.getElementById('mmFilters').addEventListener('click', e=>{
+  const el = document.getElementById(containerId);
+  el.innerHTML = html;
+  el.addEventListener('click', e=>{
     const btn = e.target.closest('.fchip'); if(!btn) return;
-    state.colorFilter = btn.dataset.fam;
-    document.querySelectorAll('#mmFilters .fchip').forEach(b=>b.classList.toggle('active', b===btn));
+    state[stateKey] = btn.dataset.fam;
+    el.querySelectorAll('.fchip').forEach(b=>b.classList.toggle('active', b===btn));
     renderPickers();
   });
 }
+function renderFilters(){
+  renderColorFilter('mmFiltersTop', 'topColorFilter');
+  renderColorFilter('mmFiltersBottom', 'bottomColorFilter');
+}
+function syncFilterActive(containerId, value){
+  document.querySelectorAll(`#${containerId} .fchip`).forEach(b=>b.classList.toggle('active', b.dataset.fam===value));
+}
 function renderPickers(){
-  const filt = list => state.colorFilter==='all' ? list : list.filter(p=>p.family===state.colorFilter);
-  const tops = filt(TOPS), bottoms = filt(BOTTOMS);
+  const tops = state.topColorFilter==='all' ? TOPS : TOPS.filter(p=>p.family===state.topColorFilter);
+  const bottoms = state.bottomColorFilter==='all' ? BOTTOMS : BOTTOMS.filter(p=>p.family===state.bottomColorFilter);
   document.getElementById('topCountLabel').textContent = tops.length+'개';
   document.getElementById('bottomCountLabel').textContent = bottoms.length+'개';
   document.getElementById('topPicker').innerHTML = tops.map(t=>`
@@ -1736,7 +1758,8 @@ document.getElementById('navPills').addEventListener('click', e=>{
 document.getElementById('logoHome').addEventListener('click', ()=> switchTab('cover'));
 document.getElementById('coverNext').addEventListener('click', ()=> switchTab('looks'));
 document.getElementById('coverShopBtn').addEventListener('click', ()=>{
-  state.selTop = '10756YX'; state.colorFilter='all';
+  state.selTop = '10756YX'; state.topColorFilter='all'; state.bottomColorFilter='all';
+  syncFilterActive('mmFiltersTop','all'); syncFilterActive('mmFiltersBottom','all');
   renderPickers(); renderPreview(); renderBest();
   switchTab('match');
 });
