@@ -372,17 +372,17 @@ section{padding:74px 0;}
 
 .overlay{position:fixed;inset:0;background:rgba(20,15,10,.6);z-index:120;display:none;align-items:center;justify-content:center;padding:20px;}
 .overlay.open{display:flex;}
-.modal{background:#fff;border-radius:20px;max-width:920px;width:100%;max-height:86vh;overflow-y:auto;position:relative;padding:26px 24px 28px;}
-.modal .x{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:none;background:var(--paper);cursor:pointer;font-size:15px;}
+.modal{background:#fff;border-radius:20px;max-width:1080px;width:100%;max-height:86vh;overflow-y:auto;position:relative;padding:26px 24px 28px;}
+.modal .x{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:none;background:var(--paper);cursor:pointer;font-size:15px;z-index:3;}
 .modal h2{font-size:22px;margin-bottom:16px;}
 .cmp-table-wrap{overflow-x:auto;}
-table.cmp{border-collapse:collapse;width:100%;min-width:480px;}
-table.cmp th,table.cmp td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:12.5px;vertical-align:top;}
+table.cmp{border-collapse:collapse;width:100%;min-width:560px;}
+table.cmp th,table.cmp td{padding:10px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:12.5px;vertical-align:top;}
 table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight:600;font-family:var(--mono);font-size:10.5px;white-space:nowrap;width:110px;}
-.cmp-col-head{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:132px;}
-.cmp-col-head .cc-imgs{display:flex;flex-direction:column;gap:3px;}
-.cmp-col-head img{width:48px;height:54px;object-fit:contain;background:var(--paper);border-radius:6px;}
-.cmp-col-head .cc-remove{font-size:10px;font-family:var(--mono);color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:3px 9px;cursor:pointer;}
+.cmp-col-head{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:180px;}
+.cmp-col-head .cc-imgs{display:flex;flex-direction:column;gap:6px;background:var(--paper);border-radius:12px;padding:10px;}
+.cmp-col-head img{width:150px;height:168px;object-fit:contain;background:#fff;border-radius:8px;}
+.cmp-col-head .cc-remove{font-size:10.5px;font-family:var(--mono);color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:4px 11px;cursor:pointer;}
 
 /* ---------- PRODUCT DETAIL ---------- */
 .pd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
@@ -431,7 +431,9 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 @media(max-width:640px){.lineup-grid{grid-template-columns:repeat(3,1fr);}}
 .lu-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 8px 10px;position:relative;transition:box-shadow .15s ease,border-color .15s ease;}
 .lu-card.cmp-selected{border-color:var(--indigo);box-shadow:0 0 0 2px var(--indigo);}
-.lu-photo{aspect-ratio:1/1.05;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:8px;margin-bottom:7px;position:relative;}
+.lu-photo{aspect-ratio:1/1.05;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:8px;margin-bottom:7px;position:relative;cursor:pointer;}
+.lu-photo:hover img{transform:scale(1.04);}
+.lu-photo img{transition:transform .15s ease;}
 .lu-cmp-toggle{
   position:absolute;top:6px;right:6px;z-index:2;width:22px;height:22px;border-radius:50%;
   background:rgba(255,255,255,.92);border:1.5px solid var(--line);color:var(--ink);
@@ -449,6 +451,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 .g-toggle button{font-family:var(--mono);font-size:7.5px;font-weight:700;padding:1.5px 5px;border-radius:4px;border:1px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer;line-height:1.4;}
 .g-toggle button.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
 .mrp-code .g-toggle{margin-left:5px;}
+.code-text + .g-toggle{margin-left:6px;}
 .lu-price{font-family:var(--mono);font-size:10.5px;font-weight:600;margin-top:3px;}
 @keyframes highlightPulse{0%,100%{box-shadow:0 0 0 0 rgba(222,58,80,0);}30%{box-shadow:0 0 0 4px rgba(222,58,80,.5);}}
 .lu-card.lu-highlight{animation:highlightPulse 1.8s ease;border-color:var(--coral);}
@@ -670,8 +673,15 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 <div class="overlay" id="cmpOverlay">
   <div class="modal">
     <button class="x" id="cmpClose">×</button>
-    <h2>세트 비교</h2>
+    <h2>상품 비교</h2>
     <div class="cmp-table-wrap"><table class="cmp" id="cmpTable"></table></div>
+  </div>
+</div>
+
+<div class="overlay" id="qvOverlay">
+  <div class="modal">
+    <button class="x" id="qvClose">×</button>
+    <div id="qvBody"></div>
   </div>
 </div>
 
@@ -825,6 +835,59 @@ document.addEventListener('click', e=>{
   if(textEl) textEl.textContent = codeVal;
   wrap.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b===btn));
 });
+
+/* =============== QUICK VIEW (model cut + detail, from Line-up) =============== */
+function openQuickView(code){
+  const p = byCode(code); if(!p) return;
+  const cat = TOPS.some(t=>t.code===code) ? 'top' : 'bottom';
+  const mood = moodFor(p);
+  const rec = recommendSize(state.myGender, state.myHeight, state.myWeight);
+  let sizeVal = p.size;
+  if(rec){
+    const fits = checkSizeFit(p, rec.size);
+    if(fits===true) sizeVal += ` <span class="mrp-sizecheck ok">· 추천 ${rec.size} 있음 ✓</span>`;
+    else if(fits===false) sizeVal += ` <span class="mrp-sizecheck no">· 추천 ${rec.size} 없음</span>`;
+  }
+  document.getElementById('qvBody').innerHTML = `
+    <div class="pd-photo" style="background-image:url('${mood.img}');aspect-ratio:16/9;">
+      <span class="pd-ghost-label">MODEL CUT + GHOST CUT</span>
+      <div class="pd-cutout"><img src="${p.img}" alt="${p.code}"></div>
+    </div>
+    <div class="pd-body" style="padding:20px 4px 4px;">
+      <h3 style="font-size:22px;">${p.name}</h3>
+      <div class="pd-code"><span class="code-text">${p.code}</span>${genderToggleHTML(p)} · ${p.collection}</div>
+      <p class="pd-copy">${mood.label} — ${cat==='top'?'상의':'하의'} 아이템입니다.</p>
+      <div class="pd-tags"><span>${cat==='top'?'TOP':'BOTTOM'}</span><span>${p.gender}</span></div>
+      <div class="pd-specs">
+        <div><span>컬러</span><b>${p.color}</b></div>
+        <div><span>소재</span><b>${p.material}</b></div>
+        <div><span>사이즈</span><b>${sizeVal}</b></div>
+        <div><span>가격</span><b>${p.price.toLocaleString()}원</b></div>
+      </div>
+      <div class="mm-cta-row" style="margin-top:16px;gap:8px;display:flex;">
+        <button class="btn-mini primary" id="qvSelectBtn" data-code="${p.code}" data-cat="${cat}">Mix &amp; Match에서 선택</button>
+        <button class="btn-mini" id="qvCmpBtn" data-code="${p.code}">비교함에 담기</button>
+      </div>
+    </div>`;
+  document.getElementById('qvOverlay').classList.add('open');
+}
+document.getElementById('qvBody').addEventListener('click', e=>{
+  const selBtn = e.target.closest('#qvSelectBtn');
+  if(selBtn){
+    if(selBtn.dataset.cat==='top') state.selTop = selBtn.dataset.code; else state.selBottom = selBtn.dataset.code;
+    renderPickers(); renderPreview(); renderBest();
+    document.getElementById('qvOverlay').classList.remove('open');
+    switchTab('match');
+    return;
+  }
+  const cmpBtn = e.target.closest('#qvCmpBtn');
+  if(cmpBtn){
+    addSingleToCompare(cmpBtn.dataset.code);
+    document.getElementById('qvOverlay').classList.remove('open');
+  }
+});
+document.getElementById('qvClose').addEventListener('click', ()=> document.getElementById('qvOverlay').classList.remove('open'));
+document.getElementById('qvOverlay').addEventListener('click', e=>{ if(e.target.id==='qvOverlay') e.currentTarget.classList.remove('open'); });
 
 /* =============== STATE =============== */
 const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].code, compare: [], myGender:'M', myHeight:null, myWeight:null };
@@ -1236,10 +1299,15 @@ document.addEventListener('click', e=>{
     draw();
   });
   document.getElementById('lineupGrid').addEventListener('click', e=>{
-    const btn = e.target.closest('[data-cmp]'); if(!btn) return;
-    const code = btn.dataset.cmp;
-    const idx = state.compare.findIndex(c=>c.type==='single' && c.code===code);
-    if(idx>-1){ removeFromCompare(idx); } else { addSingleToCompare(code); }
+    const cmpBtn = e.target.closest('[data-cmp]');
+    if(cmpBtn){
+      const code = cmpBtn.dataset.cmp;
+      const idx = state.compare.findIndex(c=>c.type==='single' && c.code===code);
+      if(idx>-1){ removeFromCompare(idx); } else { addSingleToCompare(code); }
+      return;
+    }
+    const photo = e.target.closest('.lu-photo');
+    if(photo){ openQuickView(photo.closest('.lu-card').dataset.code); }
   });
   window.refreshLineupSizes = function(){ draw(); };
   window.syncLineupCompareSelection = function(){ draw(); };
