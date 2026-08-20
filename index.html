@@ -75,8 +75,8 @@ nav.pills button.active{background:var(--ink);color:var(--paper);}
 @media(max-width:560px){.pager-dots{display:none;}}
 
 /* ---------- COVER ---------- */
-.cover{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--coral);}
-.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 15%;}
+.cover{position:relative;min-height:calc(100svh - 100px);display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--coral);}
+.cover > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 15%;}
 .cover .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(222,58,80,.05) 0%,rgba(30,15,20,.15) 55%,rgba(15,8,12,.86) 100%);}
 .cover-inner{position:relative;z-index:2;max-width:1180px;margin:0 auto;width:100%;padding:0 24px 56px;color:#fff;}
 .cover-tags{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
@@ -92,11 +92,42 @@ nav.pills button.active{background:var(--ink);color:var(--paper);}
   transition:background .15s ease;
 }
 .cover-scroll:hover{background:rgba(255,255,255,.26);}
+.cover-shop{
+  position:absolute;left:24px;bottom:24px;z-index:2;
+  display:flex;align-items:center;gap:11px;background:rgba(251,250,244,.95);border:none;cursor:pointer;
+  border-radius:13px;padding:10px 15px 10px 10px;box-shadow:0 14px 30px rgba(0,0,0,.3);
+  transition:transform .15s ease;
+}
+.cover-shop:hover{transform:translateY(-2px);}
+.cover-shop img{width:42px;height:48px;object-fit:contain;background:#fff;border-radius:8px;border:1px solid var(--line);flex:none;}
+.cover-shop .cs-txt{text-align:left;}
+.cover-shop .cs-txt .cs-eyebrow{display:block;font-family:var(--mono);font-size:8.5px;font-weight:700;letter-spacing:.06em;color:var(--coral);margin-bottom:2px;}
+.cover-shop .cs-txt b{font-family:var(--sans);font-size:12.5px;color:var(--ink);}
+.cover-shop .cs-txt .cs-cta{display:block;font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:2px;}
+@media(max-width:640px){.cover-shop{left:16px;bottom:88px;padding:8px 12px 8px 8px;}.cover-shop .cs-txt b{font-size:11.5px;}}
 
 section[data-tab]{display:none;}
-main{max-width:1180px;margin:0 auto;padding:0 20px;}
-section{padding:74px 0;border-bottom:1px solid var(--line);}
-section:last-of-type{border-bottom:none;}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.tab-enter{animation:pageIn .38s cubic-bezier(.2,.7,.2,1) both;}
+
+body{background:var(--paper-2);}
+main{
+  max-width:1180px;margin:30px auto 46px;position:relative;
+  background:var(--card);border-radius:20px;overflow:hidden;
+  box-shadow:0 1px 1px rgba(27,26,31,.04), 0 2px 6px rgba(27,26,31,.05), 0 30px 60px -24px rgba(27,26,31,.28);
+}
+main::before{
+  content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,transparent,var(--line) 10%,var(--line) 90%,transparent);
+}
+.page-corner{
+  position:absolute;right:26px;bottom:20px;z-index:3;
+  font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em;
+  background:var(--card);padding:2px 0 0 10px;
+}
+main section[data-tab]{padding:58px 40px 64px;border-bottom:none;position:relative;z-index:2;}
+@media(max-width:640px){main section[data-tab]{padding:44px 20px 52px;} .page-corner{right:16px;bottom:14px;}}
+section{padding:74px 0;}
 .section-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:34px;}
 .section-head h2{font-size:clamp(28px,4.2vw,42px);letter-spacing:-.01em;}
 .section-note{font-size:13.5px;color:var(--muted);max-width:360px;line-height:1.6;text-align:right;}
@@ -138,6 +169,19 @@ section:last-of-type{border-bottom:none;}
 .look-hero{position:relative;aspect-ratio:3/4;background:var(--indigo);overflow:hidden;}
 .look-hero img{width:100%;height:100%;object-fit:cover;}
 .look-hero .look-tag{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.92);color:var(--ink);font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.05em;padding:5px 10px;border-radius:999px;}
+.shop-tag{
+  position:absolute;left:10px;right:10px;bottom:10px;z-index:2;
+  background:rgba(251,250,244,.96);border-radius:11px;padding:8px 10px;
+  display:flex;align-items:center;gap:8px;box-shadow:0 10px 22px rgba(0,0,0,.22);
+}
+.shop-tag .st-label{
+  font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.05em;color:var(--coral);
+  writing-mode:vertical-rl;text-orientation:mixed;flex:none;align-self:stretch;display:flex;align-items:center;justify-content:center;
+}
+.shop-tag .st-imgs{display:flex;gap:5px;flex:none;}
+.shop-tag .st-imgs img{width:32px;height:37px;object-fit:contain;background:#fff;border-radius:6px;border:1px solid var(--line);}
+.shop-tag .st-codes{display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0;}
+.shop-tag .st-codes span{font-family:var(--mono);font-size:9px;color:var(--ink-soft);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .look-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;}
 .look-body h3{font-size:18px;}
 .look-pieces{display:flex;gap:10px;}
@@ -252,8 +296,11 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 .pd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
 @media(max-width:900px){.pd-grid{grid-template-columns:1fr;}}
 .pd-card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;}
-.pd-photo{aspect-ratio:1/1;background:#fff;display:flex;align-items:center;justify-content:center;padding:22px;}
-.pd-photo img{max-height:100%;object-fit:contain;}
+.pd-photo{aspect-ratio:4/5;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;position:relative;}
+.pd-photo::before{content:'';position:absolute;inset:0;background:linear-gradient(185deg,rgba(27,26,31,.1),rgba(27,26,31,.62));}
+.pd-cutout{position:relative;z-index:2;background:#fff;border-radius:14px;padding:14px 12px;box-shadow:0 18px 34px rgba(0,0,0,.3);width:56%;aspect-ratio:1/1.08;display:flex;align-items:center;justify-content:center;}
+.pd-cutout img{max-height:100%;object-fit:contain;}
+.pd-photo .pd-ghost-label{position:absolute;top:12px;left:12px;z-index:2;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.05em;color:#fff;background:rgba(0,0,0,.35);padding:4px 9px;border-radius:999px;backdrop-filter:blur(3px);}
 .pd-body{padding:18px 20px 22px;}
 .pd-body .pd-copy{font-size:13.5px;line-height:1.7;color:var(--ink-soft);margin:8px 0 12px;}
 .pd-body h3{font-size:19px;}
@@ -298,7 +345,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 
 /* ---------- BACK COVER ---------- */
 .back{position:relative;background:var(--indigo-deep);color:#fff;padding:0;border-bottom:none;overflow:hidden;}
-.back img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.28;}
+.back > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.28;}
 .back .scrim2{position:absolute;inset:0;background:linear-gradient(160deg,rgba(36,28,74,.55),rgba(20,15,40,.92));}
 .back-inner{position:relative;z-index:2;max-width:720px;margin:0 auto;padding:100px 24px;text-align:center;}
 .back h2{color:#fff;font-size:clamp(28px,5vw,44px);}
@@ -337,6 +384,10 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
     <h1>MOVE WITH<br><em>PRECISION.</em></h1>
     <p class="cover-sub">랠리마다 흔들림 없는 퍼포먼스를 위한 요넥스 2026 F/W 의류 컬렉션. 상의와 하의를 직접 매칭해보고, 나만의 코트 룩을 완성해보세요.</p>
   </div>
+  <button class="cover-shop" id="coverShopBtn">
+    <img src="images/products/10756yx.jpeg" alt="10756YX">
+    <span class="cs-txt"><span class="cs-eyebrow">FEATURED IN THIS LOOK</span><b>10756YX · Team Raglan Tee</b><span class="cs-cta">이 상의로 Mix &amp; Match 시작하기 →</span></span>
+  </button>
   <button class="cover-scroll" id="coverNext"><span>시즌 열어보기</span><span>→</span></button>
 </section>
 
@@ -457,6 +508,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
   <div class="lineup-grid" id="lineupGrid"></div>
 </section>
 
+<span class="page-corner" id="pageCorner">P.02–04</span>
 </main>
 
 <section class="back" data-tab="closing" id="backcover">
@@ -608,7 +660,15 @@ const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].c
     const mt = matchType(top.family, bottom.family);
     return `
     <div class="look-card">
-      <div class="look-hero"><span class="look-tag">LOOK 0${i+1}</span><img src="${heroImgs[i%heroImgs.length]}" alt="${c.name}"></div>
+      <div class="look-hero">
+        <span class="look-tag">LOOK 0${i+1}</span>
+        <img src="${heroImgs[i%heroImgs.length]}" alt="${c.name}">
+        <div class="shop-tag">
+          <span class="st-label">GHOST CUT</span>
+          <div class="st-imgs"><img src="${top.img}" alt="${top.code}"><img src="${bottom.img}" alt="${bottom.code}"></div>
+          <div class="st-codes"><span>${top.code}</span><span>${bottom.code}</span></div>
+        </div>
+      </div>
       <div class="look-body">
         <h3>${c.name}</h3>
         <div class="look-pieces">
@@ -760,13 +820,16 @@ document.addEventListener('click', e=>{
 /* =============== PRODUCT DETAIL =============== */
 (function renderProducts(){
   const picks = [
-    {p:TOPS[5], copy:'가볍게 스치는 원단이 빠른 스텝 전환을 방해하지 않도록 설계했습니다. 랠리가 길어질수록 차이를 느낄 수 있는 통기성.', tags:['AEROSILVER','STRETCH']},
-    {p:BOTTOMS[4], copy:'허리 밴드부터 무릎 가동 범위까지, 로우 스쿼트 자세에서도 걸림 없는 절개 설계.', tags:['STRETCH','VERYCOOL DRY']},
-    {p:TOPS[1], copy:'연습부터 실전까지 이어 입을 수 있는 유니섹스 실루엣과 뉴트럴 컬러웨이.', tags:['UV REDUCTION','Y-COOL']},
+    {p:TOPS[5], bg:'images/hero/keyvisual-blue-1.jpeg', copy:'가볍게 스치는 원단이 빠른 스텝 전환을 방해하지 않도록 설계했습니다. 랠리가 길어질수록 차이를 느낄 수 있는 통기성.', tags:['AEROSILVER','STRETCH']},
+    {p:BOTTOMS[4], bg:'images/hero/daily-nature-1.jpeg', copy:'허리 밴드부터 무릎 가동 범위까지, 로우 스쿼트 자세에서도 걸림 없는 절개 설계.', tags:['STRETCH','VERYCOOL DRY']},
+    {p:TOPS[1], bg:'images/hero/daily-nature-2.jpeg', copy:'연습부터 실전까지 이어 입을 수 있는 유니섹스 실루엣과 뉴트럴 컬러웨이.', tags:['UV REDUCTION','Y-COOL']},
   ];
-  document.getElementById('pdGrid').innerHTML = picks.map(({p,copy,tags})=>`
+  document.getElementById('pdGrid').innerHTML = picks.map(({p,bg,copy,tags})=>`
     <div class="pd-card">
-      <div class="pd-photo"><img src="${p.img}" alt="${p.code}"></div>
+      <div class="pd-photo" style="background-image:url('${bg}')">
+        <span class="pd-ghost-label">MODEL CUT + GHOST CUT</span>
+        <div class="pd-cutout"><img src="${p.img}" alt="${p.code}"></div>
+      </div>
       <div class="pd-body">
         <h3>${p.name}</h3>
         <div class="pd-code">${p.code} · ${p.collection}</div>
@@ -847,15 +910,22 @@ const TAB_ORDER = [
   {id:'closing', label:'CLOSING'},
 ];
 let currentTabIndex = 0;
+const PAGE_LABELS = {cover:'P.01',season:'P.02–04',looks:'P.05–09',match:'P.10–13',products:'P.14–17',color:'P.18–20',lineup:'P.21–23',closing:'P.24'};
+const MAIN_TABS = ['season','looks','match','products','color','lineup'];
 
 function switchTab(tabId){
   const idx = TAB_ORDER.findIndex(t=>t.id===tabId);
   if(idx===-1) return;
   currentTabIndex = idx;
+  const mainEl = document.querySelector('main');
+  mainEl.style.display = MAIN_TABS.includes(tabId) ? 'block' : 'none';
   document.querySelectorAll('section[data-tab]').forEach(el=>{
     const active = el.dataset.tab===tabId;
     el.style.display = active ? (el.classList.contains('cover') ? 'flex' : 'block') : 'none';
+    if(active){ el.classList.remove('tab-enter'); void el.offsetWidth; el.classList.add('tab-enter'); }
   });
+  if(MAIN_TABS.includes(tabId)){ mainEl.classList.remove('tab-enter'); void mainEl.offsetWidth; mainEl.classList.add('tab-enter'); }
+  document.getElementById('pageCorner').textContent = PAGE_LABELS[tabId] + ' / 24P';
   document.querySelectorAll('#navPills button').forEach(b=> b.classList.toggle('active', b.dataset.tab===tabId));
   document.getElementById('pgLabel').textContent = TAB_ORDER[idx].label;
   document.getElementById('pgIndex').textContent = (idx+1)+' / '+TAB_ORDER.length;
@@ -871,6 +941,11 @@ document.getElementById('navPills').addEventListener('click', e=>{
 });
 document.getElementById('logoHome').addEventListener('click', ()=> switchTab('cover'));
 document.getElementById('coverNext').addEventListener('click', ()=> switchTab('season'));
+document.getElementById('coverShopBtn').addEventListener('click', ()=>{
+  state.selTop = '10756YX'; state.colorFilter='all';
+  renderPickers(); renderPreview(); renderBest();
+  switchTab('match');
+});
 document.getElementById('pgPrev').addEventListener('click', ()=>{ if(currentTabIndex>0) switchTab(TAB_ORDER[currentTabIndex-1].id); });
 document.getElementById('pgNext').addEventListener('click', ()=>{ if(currentTabIndex<TAB_ORDER.length-1) switchTab(TAB_ORDER[currentTabIndex+1].id); });
 
