@@ -14,7 +14,7 @@
   --paper:#FFFFFF; --paper-2:#F2F2F0;
   --ink:#101012; --ink-soft:#3D3D40; --muted:#75757A;
   --line:rgba(16,16,18,.12);
-  --accent:#E4362B; --accent-deep:#B9291F;
+  --accent:#9C7714; --accent-deep:#77590E;
   --indigo:var(--accent); --indigo-deep:var(--accent-deep);
   --coral:var(--accent);
   --navy:#1B2740; --gray:#8993A6; --white-sw:#EFEDE3; --black-sw:#17181C;
@@ -100,7 +100,7 @@ nav.pills button.active{background:var(--ink);color:var(--paper);}
 /* ---------- COVER ---------- */
 .cover{position:relative;min-height:calc(100svh - 100px);display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--coral);}
 .cover > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 15%;}
-.cover .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(222,58,80,.05) 0%,rgba(30,15,20,.15) 55%,rgba(15,8,12,.86) 100%);}
+.cover .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(156,119,20,.06) 0%,rgba(20,16,8,.18) 55%,rgba(12,10,6,.86) 100%);}
 .cover-inner{position:relative;z-index:2;max-width:1180px;margin:0 auto;width:100%;padding:0 24px 56px;color:#fff;}
 .cover-tags{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
 .cover-tags span{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;border:1px solid rgba(255,255,255,.55);padding:5px 11px;border-radius:999px;}
@@ -486,7 +486,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 .mrp-code .g-toggle{margin-left:5px;}
 .code-text + .g-toggle{margin-left:6px;}
 .lu-price{font-family:var(--mono);font-size:10.5px;font-weight:600;margin-top:3px;}
-@keyframes highlightPulse{0%,100%{box-shadow:0 0 0 0 rgba(222,58,80,0);}30%{box-shadow:0 0 0 4px rgba(222,58,80,.5);}}
+@keyframes highlightPulse{0%,100%{box-shadow:0 0 0 0 rgba(156,119,20,0);}30%{box-shadow:0 0 0 4px rgba(156,119,20,.5);}}
 .lu-card.lu-highlight{animation:highlightPulse 1.8s ease;border-color:var(--coral);}
 .lu-sizecheck{font-family:var(--mono);font-size:9px;font-weight:700;margin-top:4px;}
 .lu-sizecheck.ok{color:#2E8B47;}
