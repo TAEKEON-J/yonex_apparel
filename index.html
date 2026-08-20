@@ -182,7 +182,14 @@ section{padding:74px 0;}
 /* ---------- COLLECTION OVERVIEW ---------- */
 .overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
 @media(max-width:900px){.overview-grid{grid-template-columns:repeat(2,1fr);}}
-.ov-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:10px;min-height:190px;justify-content:space-between;}
+.ov-card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;
+  display:flex;flex-direction:column;gap:10px;min-height:190px;justify-content:space-between;
+  text-align:left;width:100%;font-family:var(--sans);cursor:pointer;
+  transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;
+}
+.ov-card:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(27,26,31,.1);border-color:var(--indigo);}
+.ov-card:active{transform:translateY(0) scale(.98);}
 .ov-card .ov-num{font-family:var(--mono);font-size:11px;color:var(--muted);}
 .ov-card h3{font-size:20px;}
 .ov-card .ov-count{font-family:var(--mono);font-size:12.5px;color:var(--indigo);font-weight:600;}
@@ -419,6 +426,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 .lchip{font-family:var(--mono);font-size:11px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);cursor:pointer;}
 .lchip.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
 .lineup-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;}
+.lu-empty{grid-column:1 / -1;text-align:center;padding:50px 20px;color:var(--muted);font-size:13.5px;background:var(--card);border:1px dashed var(--line);border-radius:14px;}
 @media(max-width:960px){.lineup-grid{grid-template-columns:repeat(4,1fr);}}
 @media(max-width:640px){.lineup-grid{grid-template-columns:repeat(3,1fr);}}
 .lu-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 8px 10px;}
@@ -617,6 +625,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
     <div><p class="eyebrow">P.21–23 — <b>FULL LINE-UP</b></p><h2>전체 라인업</h2></div>
     <p class="section-note" id="lineupCount"></p>
   </div>
+  <div class="lineup-filters" id="lineupGroupFilters"></div>
   <div class="lineup-filters" id="lineupFilters"></div>
   <div class="lineup-grid" id="lineupGrid"></div>
 </section>
@@ -716,6 +725,20 @@ const FABRIC_TECH = [
  {en:'UV REDUCTION',kr:'UV 감소',desc:'적외선·자외선의 약 92%를 차단해 플레이 중 열 축적을 최소화합니다. (BOKEN 연구소 테스트 기준)'},
 ];
 
+/* =============== TOP-LEVEL CATEGORY GROUPS (Collection Overview <-> Line-up filter) =============== */
+const GAME_WEAR_COLLECTIONS = ['Korea National Team','Japan National Team','Game Wear','World Collection · Practice','World Collection · Tournament','World Collection · LCW'];
+const CATEGORY_GROUPS = [
+  {key:'game', label:'Game Wear'},
+  {key:'daily', label:'Daily Wear'},
+  {key:'easy', label:'Easy Wear'},
+  {key:'acc', label:'Acc / Bag'},
+];
+function collectionGroupOf(p){
+  if(GAME_WEAR_COLLECTIONS.includes(p.collection)) return 'game';
+  if(p.collection==='Daily Wear') return 'daily';
+  return null; // Easy Wear / Acc·Bag not yet digitized into this sample
+}
+
 /* =============== COLLECTION MOOD (editorial photo per collection) =============== */
 const COLLECTION_MOOD = {
   'Korea National Team': {img:'images/hero/cover-coral-1.jpeg', label:'대한민국 국가대표팀 유니폼 화보컷'},
@@ -795,21 +818,25 @@ const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].c
 
 /* =============== RENDER: overview =============== */
 (function renderOverview(){
-  const GAME_WEAR_COLLECTIONS = ['Korea National Team','Japan National Team','Game Wear','World Collection · Practice','World Collection · Tournament','World Collection · LCW'];
-  const gameCount = TOPS.filter(t=>GAME_WEAR_COLLECTIONS.includes(t.collection)).length + BOTTOMS.filter(b=>GAME_WEAR_COLLECTIONS.includes(b.collection)).length;
-  const dailyCount = TOPS.filter(t=>t.collection==='Daily Wear').length + BOTTOMS.filter(b=>b.collection==='Daily Wear').length;
+  const ALL_PRODUCTS = TOPS.concat(BOTTOMS);
+  function countOf(key){ return ALL_PRODUCTS.filter(p=>collectionGroupOf(p)===key).length; }
   const cats = [
-    {n:'01',name:'Game Wear',count: gameCount},
-    {n:'02',name:'Daily Wear',count: dailyCount},
-    {n:'03',name:'Easy Wear',count: 0, soon:true},
-    {n:'04',name:'Acc / Bag',count: 0, soon:true},
+    {n:'01', key:'game', name:'Game Wear', count: countOf('game')},
+    {n:'02', key:'daily', name:'Daily Wear', count: countOf('daily')},
+    {n:'03', key:'easy', name:'Easy Wear', count: 0, soon:true},
+    {n:'04', key:'acc', name:'Acc / Bag', count: 0, soon:true},
   ];
   document.getElementById('overviewGrid').innerHTML = cats.map(c=>`
-    <div class="ov-card ${c.soon?'soon':''}">
+    <button class="ov-card ${c.soon?'soon':''}" data-group="${c.key}">
       <div class="ov-num">${c.n}</div>
-      <div><h3>${c.name}</h3>${c.note?`<div class="ov-note">${c.note}</div>`:''}</div>
+      <div><h3>${c.name}</h3></div>
       <div class="ov-count">${c.soon ? '확장 예정' : c.count+' ITEMS'}</div>
-    </div>`).join('');
+    </button>`).join('');
+  document.getElementById('overviewGrid').addEventListener('click', e=>{
+    const card = e.target.closest('.ov-card'); if(!card) return;
+    if(window.showLineupGroup) window.showLineupGroup(card.dataset.group);
+    switchTab('lineup');
+  });
 })();
 
 /* =============== RENDER: looks (from CURATED) =============== */
@@ -1094,11 +1121,18 @@ document.addEventListener('click', e=>{
   document.getElementById('lineupCount').textContent = `총 ${ALL.length}개 SKU`;
   const filters = [{k:'all',label:'전체'},{k:'top',label:'TOP'},{k:'bottom',label:'BOTTOM'}];
   document.getElementById('lineupFilters').innerHTML = filters.map((f,i)=>`<button class="lchip ${i===0?'active':''}" data-cat="${f.k}">${f.label}</button>`).join('');
+  const groupFilters = [{k:'all',label:'전체 카테고리'}].concat(CATEGORY_GROUPS);
+  document.getElementById('lineupGroupFilters').innerHTML = groupFilters.map((f,i)=>`<button class="lchip ${i===0?'active':''}" data-group="${f.key||f.k}">${f.label}</button>`).join('');
   let currentCat = 'all';
-  function draw(cat){
-    currentCat = cat;
-    const list = cat==='all' ? ALL : ALL.filter(p=>p.cat===cat);
+  let currentGroup = 'all';
+  function draw(){
+    let list = currentCat==='all' ? ALL : ALL.filter(p=>p.cat===currentCat);
+    if(currentGroup!=='all') list = list.filter(p=>collectionGroupOf(p)===currentGroup);
     const rec = recommendSize(state.myGender, state.myHeight, state.myWeight);
+    if(!list.length){
+      document.getElementById('lineupGrid').innerHTML = `<div class="lu-empty">이 카테고리는 아직 준비 중이에요 — 곧 추가될 예정입니다.</div>`;
+      return;
+    }
     document.getElementById('lineupGrid').innerHTML = list.map(p=>{
       let badge = '';
       if(rec){
@@ -1116,16 +1150,31 @@ document.addEventListener('click', e=>{
       </div>`;
     }).join('');
   }
-  draw('all');
+  draw();
   document.getElementById('lineupFilters').addEventListener('click', e=>{
     const btn = e.target.closest('.lchip'); if(!btn) return;
+    currentCat = btn.dataset.cat;
     document.querySelectorAll('#lineupFilters .lchip').forEach(b=>b.classList.toggle('active', b===btn));
-    draw(btn.dataset.cat);
+    draw();
   });
-  window.refreshLineupSizes = function(){ draw(currentCat); };
-  window.showProductInLineup = function(code){
+  document.getElementById('lineupGroupFilters').addEventListener('click', e=>{
+    const btn = e.target.closest('.lchip'); if(!btn) return;
+    currentGroup = btn.dataset.group;
+    document.querySelectorAll('#lineupGroupFilters .lchip').forEach(b=>b.classList.toggle('active', b===btn));
+    draw();
+  });
+  window.refreshLineupSizes = function(){ draw(); };
+  window.showLineupGroup = function(group){
+    currentGroup = group; currentCat = 'all';
+    document.querySelectorAll('#lineupGroupFilters .lchip').forEach(b=>b.classList.toggle('active', b.dataset.group===group));
     document.querySelectorAll('#lineupFilters .lchip').forEach(b=>b.classList.toggle('active', b.dataset.cat==='all'));
-    draw('all');
+    draw();
+  };
+  window.showProductInLineup = function(code){
+    currentCat = 'all'; currentGroup = 'all';
+    document.querySelectorAll('#lineupFilters .lchip').forEach(b=>b.classList.toggle('active', b.dataset.cat==='all'));
+    document.querySelectorAll('#lineupGroupFilters .lchip').forEach(b=>b.classList.toggle('active', b.dataset.group==='all'));
+    draw();
     requestAnimationFrame(()=>{
       const card = document.querySelector(`.lu-card[data-code="${code}"]`);
       if(!card) return;
