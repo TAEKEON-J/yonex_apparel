@@ -430,7 +430,6 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
       <button data-tab="season">SEASON</button>
       <button data-tab="looks">LOOKS</button>
       <button data-tab="match">MIX&amp;MATCH</button>
-      <button data-tab="products">PRODUCTS</button>
       <button data-tab="color">COLOR</button>
       <button data-tab="lineup">LINE-UP</button>
       <button data-tab="closing">CLOSING</button>
@@ -544,7 +543,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
   </div>
 </section>
 
-<section data-tab="products" id="products">
+<section data-tab="looks" id="products">
   <div class="section-head">
     <div><p class="eyebrow">P.14–17 — <b>KEY PRODUCT DETAIL</b></p><h2>Performance Detail</h2></div>
     <p class="section-note">기능을 나열하는 대신, 코트 위 움직임과 연결된 언어로.</p>
@@ -1009,14 +1008,13 @@ const TAB_ORDER = [
   {id:'season', label:'SEASON'},
   {id:'looks', label:'LOOKS'},
   {id:'match', label:'MIX & MATCH'},
-  {id:'products', label:'PRODUCTS'},
   {id:'color', label:'COLOR'},
   {id:'lineup', label:'LINE-UP'},
   {id:'closing', label:'CLOSING'},
 ];
 let currentTabIndex = 0;
-const PAGE_LABELS = {cover:'P.01',season:'P.02–04',looks:'P.05–09',match:'P.10–13',products:'P.14–17',color:'P.18–20',lineup:'P.21–23',closing:'P.24'};
-const MAIN_TABS = ['season','looks','match','products','color','lineup'];
+const PAGE_LABELS = {cover:'P.01',season:'P.02–04',looks:'P.05–09, 14–17',match:'P.10–13',color:'P.18–20',lineup:'P.21–23',closing:'P.24'};
+const MAIN_TABS = ['season','looks','match','color','lineup'];
 
 function switchTab(tabId){
   const idx = TAB_ORDER.findIndex(t=>t.id===tabId);
