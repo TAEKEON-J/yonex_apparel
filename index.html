@@ -423,13 +423,19 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 
 /* ---------- LINE-UP ---------- */
 .lineup-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.lineup-filter-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.lineup-filter-row .lineup-filters{margin-bottom:0;}
+.lu-gender-view{display:flex;align-items:center;gap:7px;margin-bottom:20px;}
+.lu-gv-label{font-family:var(--mono);font-size:10.5px;color:var(--muted);}
+.lu-gv-btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);cursor:pointer;}
+.lu-gv-btn.active{background:var(--indigo);color:#fff;border-color:var(--indigo);}
 .lchip{font-family:var(--mono);font-size:11px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);cursor:pointer;}
 .lchip.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
 .lineup-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;}
 .lu-empty{grid-column:1 / -1;text-align:center;padding:50px 20px;color:var(--muted);font-size:13.5px;background:var(--card);border:1px dashed var(--line);border-radius:14px;}
 @media(max-width:960px){.lineup-grid{grid-template-columns:repeat(4,1fr);}}
 @media(max-width:640px){.lineup-grid{grid-template-columns:repeat(3,1fr);}}
-.lu-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 8px 10px;position:relative;transition:box-shadow .15s ease,border-color .15s ease;}
+.lu-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 8px 10px;position:relative;transition:box-shadow .15s ease,border-color .15s ease;cursor:pointer;}
 .lu-card.cmp-selected{border-color:var(--indigo);box-shadow:0 0 0 2px var(--indigo);}
 .lu-photo{aspect-ratio:1/1.05;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:8px;margin-bottom:7px;position:relative;cursor:pointer;}
 .lu-photo:hover img{transform:scale(1.04);}
@@ -644,7 +650,14 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
     <p class="section-note" id="lineupCount"></p>
   </div>
   <div class="lineup-filters" id="lineupGroupFilters"></div>
-  <div class="lineup-filters" id="lineupFilters"></div>
+  <div class="lineup-filter-row">
+    <div class="lineup-filters" id="lineupFilters"></div>
+    <div class="lu-gender-view" id="lineupGenderView">
+      <span class="lu-gv-label">품번 표시</span>
+      <button class="lu-gv-btn active" data-g="M">Men</button>
+      <button class="lu-gv-btn" data-g="W">Women</button>
+    </div>
+  </div>
   <div class="lineup-grid" id="lineupGrid"></div>
 </section>
 
@@ -1254,6 +1267,15 @@ document.addEventListener('click', e=>{
   document.getElementById('lineupGroupFilters').innerHTML = groupFilters.map((f,i)=>`<button class="lchip ${i===0?'active':''}" data-group="${f.key||f.k}">${f.label}</button>`).join('');
   let currentCat = 'all';
   let currentGroup = 'all';
+  let globalGenderView = 'M';
+  function applyGlobalGenderView(){
+    document.querySelectorAll('#lineupGrid .g-toggle').forEach(wrap=>{
+      const codeVal = globalGenderView==='M' ? wrap.dataset.m : wrap.dataset.w;
+      const textEl = wrap.parentElement.querySelector('.code-text');
+      if(textEl) textEl.textContent = codeVal;
+      wrap.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b.dataset.g===globalGenderView));
+    });
+  }
   function draw(){
     let list = currentCat==='all' ? ALL : ALL.filter(p=>p.cat===currentCat);
     if(currentGroup!=='all') list = list.filter(p=>collectionGroupOf(p)===currentGroup);
@@ -1284,8 +1306,15 @@ document.addEventListener('click', e=>{
         ${badge}
       </div>`;
     }).join('');
+    applyGlobalGenderView();
   }
   draw();
+  document.getElementById('lineupGenderView').addEventListener('click', e=>{
+    const btn = e.target.closest('.lu-gv-btn'); if(!btn) return;
+    globalGenderView = btn.dataset.g;
+    document.querySelectorAll('#lineupGenderView .lu-gv-btn').forEach(b=>b.classList.toggle('active', b===btn));
+    applyGlobalGenderView();
+  });
   document.getElementById('lineupFilters').addEventListener('click', e=>{
     const btn = e.target.closest('.lchip'); if(!btn) return;
     currentCat = btn.dataset.cat;
@@ -1306,8 +1335,9 @@ document.addEventListener('click', e=>{
       if(idx>-1){ removeFromCompare(idx); } else { addSingleToCompare(code); }
       return;
     }
-    const photo = e.target.closest('.lu-photo');
-    if(photo){ openQuickView(photo.closest('.lu-card').dataset.code); }
+    if(e.target.closest('.g-toggle')) return;
+    const card = e.target.closest('.lu-card');
+    if(card){ openQuickView(card.dataset.code); }
   });
   window.refreshLineupSizes = function(){ draw(); };
   window.syncLineupCompareSelection = function(){ draw(); };
