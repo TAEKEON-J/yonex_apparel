@@ -443,8 +443,12 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 .lu-cmp-toggle.active{background:var(--indigo);border-color:var(--indigo);color:#fff;}
 .lu-cmp-toggle svg{width:12px;height:12px;}
 .lu-photo img{max-height:100%;object-fit:contain;}
-.lu-code{font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--ink);}
+.lu-code{font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:5px;}
 .lu-color{font-size:10.5px;color:var(--muted);}
+.g-toggle{display:inline-flex;gap:2px;vertical-align:middle;}
+.g-toggle button{font-family:var(--mono);font-size:7.5px;font-weight:700;padding:1.5px 5px;border-radius:4px;border:1px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer;line-height:1.4;}
+.g-toggle button.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.mrp-code .g-toggle{margin-left:5px;}
 .lu-price{font-family:var(--mono);font-size:10.5px;font-weight:600;margin-top:3px;}
 @keyframes highlightPulse{0%,100%{box-shadow:0 0 0 0 rgba(222,58,80,0);}30%{box-shadow:0 0 0 4px rgba(222,58,80,.5);}}
 .lu-card.lu-highlight{animation:highlightPulse 1.8s ease;border-color:var(--coral);}
@@ -684,32 +688,32 @@ const FAMILIES = {
 };
 
 const TOPS = [
- {code:'10756YX',name:'Team Raglan Tee',color:'Coral Red',family:'coral',gender:'Couple',price:145000,material:'PE 100%',size:'M(90)~3XL(110)',collection:'Korea National Team',img:'images/products/10756yx.png'},
+ {code:'10756YX',pairCode:'21002YX',name:'Team Raglan Tee',color:'Coral Red',family:'coral',gender:'Couple',price:145000,material:'PE 100%',size:'M(90)~3XL(110)',collection:'Korea National Team',img:'images/products/10756yx.png'},
  {code:'16864EX',name:'Practice Raglan Tee',color:'Indigo Blue / Pale Lilac',family:'navy',gender:'Unisex',price:49000,material:'PE 100%',size:'S(90)~4XL(120)',collection:'World Collection · Practice',img:'images/products/16864ex.png'},
  {code:'16866EX',name:'Practice Raglan Tee',color:'Black',family:'black',gender:'Unisex',price:49000,material:'PE 100%',size:'S(90)~4XL(120)',collection:'World Collection · Practice',img:'images/products/16866ex.png'},
  {code:'16868EX',name:'Practice Raglan Tee',color:'White',family:'white',gender:'Unisex',price:49000,material:'PE 100%',size:'S(90)~4XL(120)',collection:'World Collection · Practice',img:'images/products/16868ex.png'},
  {code:'10720EX',name:'Tournament Tank',color:'White',family:'white',gender:'Men',price:95000,material:'PE 100%',size:'S(95)~4XL(125)',collection:'World Collection · Tournament',img:'images/products/10720ex.png'},
- {code:'263TS001',name:'Game Tee',color:'Blue Gray',family:'gray',gender:'Couple',price:82000,material:'PE 100% / 배색 PE92%,PU8%',size:'95~120',collection:'Game Wear',img:'images/products/263ts001.png'},
- {code:'263TS003',name:'Game Tee',color:'Midnight Black',family:'black',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts003.png'},
- {code:'263TS005',name:'Game Tee',color:'White',family:'white',gender:'Couple',price:82000,material:'PE 100% / 배색 PE92%,PU8%',size:'95~120',collection:'Game Wear',img:'images/products/263ts005.png'},
- {code:'263TS007',name:'Game Tee',color:'White',family:'white',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts007.png'},
- {code:'263TS009',name:'Game Tee',color:'Pale Mint',family:'mint',gender:'Couple',price:82000,material:'PE 100% / 배색 PE95%,PU5%',size:'95~120',collection:'Game Wear',img:'images/products/263ts009.png'},
- {code:'263TS011',name:'Game Tee',color:'Black',family:'black',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts011.png'},
- {code:'263TS013',name:'Game Tee',color:'Dark Navy',family:'navy',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts013.png'},
- {code:'263TS015',name:'Game Tee',color:'White / Coral',family:'white',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts015.png'},
- {code:'263TS017',name:'Game Tee',color:'Black',family:'black',gender:'Couple',price:72000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts017.png'},
- {code:'263TS019',name:'Game Tee',color:'Dark Green',family:'green',gender:'Couple',price:72000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts019.png'},
- {code:'263TS025',name:'Game Tee',color:'White / Mint',family:'white',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts025.png'},
+ {code:'263TS001',pairCode:'263TS002',name:'Game Tee',color:'Blue Gray',family:'gray',gender:'Couple',price:82000,material:'PE 100% / 배색 PE92%,PU8%',size:'95~120',collection:'Game Wear',img:'images/products/263ts001.png'},
+ {code:'263TS003',pairCode:'263TS004',name:'Game Tee',color:'Midnight Black',family:'black',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts003.png'},
+ {code:'263TS005',pairCode:'263TS006',name:'Game Tee',color:'White',family:'white',gender:'Couple',price:82000,material:'PE 100% / 배색 PE92%,PU8%',size:'95~120',collection:'Game Wear',img:'images/products/263ts005.png'},
+ {code:'263TS007',pairCode:'263TS008',name:'Game Tee',color:'White',family:'white',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts007.png'},
+ {code:'263TS009',pairCode:'263TS010',name:'Game Tee',color:'Pale Mint',family:'mint',gender:'Couple',price:82000,material:'PE 100% / 배색 PE95%,PU5%',size:'95~120',collection:'Game Wear',img:'images/products/263ts009.png'},
+ {code:'263TS011',pairCode:'263TS012',name:'Game Tee',color:'Black',family:'black',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts011.png'},
+ {code:'263TS013',pairCode:'263TS014',name:'Game Tee',color:'Dark Navy',family:'navy',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts013.png'},
+ {code:'263TS015',pairCode:'263TS016',name:'Game Tee',color:'White / Coral',family:'white',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts015.png'},
+ {code:'263TS017',pairCode:'263TS018',name:'Game Tee',color:'Black',family:'black',gender:'Couple',price:72000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts017.png'},
+ {code:'263TS019',pairCode:'263TS020',name:'Game Tee',color:'Dark Green',family:'green',gender:'Couple',price:72000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts019.png'},
+ {code:'263TS025',pairCode:'263TS026',name:'Game Tee',color:'White / Mint',family:'white',gender:'Couple',price:82000,material:'PE 100%',size:'95~120',collection:'Game Wear',img:'images/products/263ts025.png'},
  {code:'263TR001',name:'Sleeveless Game Tee',color:'Blue Gray',family:'gray',gender:'Men',price:69000,material:'PE100% / 배색 PE92%,PU8%',size:'95~110',collection:'Game Wear',img:'images/products/263tr001.png'},
  {code:'263TR002',name:'Sleeveless Game Tee',color:'Midnight Black',family:'black',gender:'Men',price:69000,material:'PE100% / 배색1 PE92%,PU8% / 배색2 PE100%',size:'95~110',collection:'Game Wear',img:'images/products/263tr002.png'},
 ];
 
 const BOTTOMS = [
- {code:'15258YX',name:'Team Shorts',color:'White',family:'white',gender:'Couple',price:135000,material:'PE 100%',size:'M(95)~2XL(110)',collection:'Japan National Team',img:'images/products/15258yx.png'},
- {code:'263PH001',name:'Knit Shorts (4부)',color:'Midnight Black / Dark Green',family:'black',gender:'Couple',price:59000,material:'PE 100%',size:'95~110',collection:'Game Wear',img:'images/products/263ph001.png'},
+ {code:'15258YX',pairCode:'26208YX',name:'Team Shorts',color:'White',family:'white',gender:'Couple',price:135000,material:'PE 100%',size:'M(95)~2XL(110)',collection:'Japan National Team',img:'images/products/15258yx.png'},
+ {code:'263PH001',pairCode:'263PH002',name:'Knit Shorts (4부)',color:'Midnight Black / Dark Green',family:'black',gender:'Couple',price:59000,material:'PE 100%',size:'95~110',collection:'Game Wear',img:'images/products/263ph001.png'},
  {code:'15248EX',name:'LCW Shorts',color:'Indigo Blue',family:'navy',gender:'Unisex',price:105000,material:'PE 90%, PU 10%',size:'S(90)~3XL(115)',collection:'World Collection · LCW',img:'images/products/15248ex.png'},
- {code:'261PH005',name:'Shorts (4부)',color:'Black',family:'black',gender:'Couple',price:69000,material:'PE 100%',size:'95~110',collection:'Daily Wear',img:'images/products/261ph005.png'},
- {code:'261PH007',name:'Ankle Pants (7부)',color:'Charcoal Gray / Black',family:'gray',gender:'Couple',price:69000,material:'NY 77%, PU 23%',size:'95~110',collection:'Daily Wear',img:'images/products/261ph007.png'},
+ {code:'261PH005',pairCode:'261PH006',name:'Shorts (4부)',color:'Black',family:'black',gender:'Couple',price:69000,material:'PE 100%',size:'95~110',collection:'Daily Wear',img:'images/products/261ph005.png'},
+ {code:'261PH007',pairCode:'261PH008',name:'Ankle Pants (7부)',color:'Charcoal Gray / Black',family:'gray',gender:'Couple',price:69000,material:'NY 77%, PU 23%',size:'95~110',collection:'Daily Wear',img:'images/products/261ph007.png'},
  {code:'261PH009',name:'Shorts (5부)',color:'Black / Gray / Dark Green',family:'black',gender:'Unisex',price:59000,material:'NY 91%, PU 9%',size:'85~110',collection:'Daily Wear',img:'images/products/261ph009.png'},
  {code:'261PS001',name:'Pleats Skirt',color:'White',family:'white',gender:'Women',price:65000,material:'NY 77%, PU 23%',size:'85~100',collection:'Daily Wear',img:'images/products/261ps001.png'},
  {code:'261PS002',name:'Pleats Skirt',color:'Navy',family:'navy',gender:'Women',price:65000,material:'NY 78%, PU 22%',size:'85~100',collection:'Daily Wear',img:'images/products/261ps002.png'},
@@ -807,6 +811,20 @@ function matchType(topFam, bottomFam){
 }
 function findCurated(topCode,bottomCode){ return CURATED.find(c=>c.top===topCode && c.bottom===bottomCode); }
 function byCode(code){ return TOPS.find(t=>t.code===code) || BOTTOMS.find(b=>b.code===code); }
+function genderToggleHTML(p){
+  if(!p.pairCode) return '';
+  return `<span class="g-toggle" data-m="${p.code}" data-w="${p.pairCode}">
+    <button type="button" class="active" data-g="M">M</button><button type="button" data-g="W">W</button>
+  </span>`;
+}
+document.addEventListener('click', e=>{
+  const btn = e.target.closest('.g-toggle button'); if(!btn) return;
+  const wrap = btn.closest('.g-toggle');
+  const codeVal = btn.dataset.g==='M' ? wrap.dataset.m : wrap.dataset.w;
+  const textEl = wrap.parentElement.querySelector('.code-text');
+  if(textEl) textEl.textContent = codeVal;
+  wrap.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b===btn));
+});
 
 /* =============== STATE =============== */
 const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].code, compare: [], myGender:'M', myHeight:null, myWeight:null };
@@ -938,7 +956,7 @@ function renderPreview(){
       else if(fits===false) sizeCheckHTML = `<span class="mrp-sizecheck no">· 추천 ${recSize} 사이즈 없음</span>`;
     }
     return `<div class="mr-piece">
-      <div class="mrp-top"><span class="mrp-tag">${catLabel}</span><span class="mrp-code">${p.code}</span><span class="mrp-color">${p.color}</span><span class="mrp-price">${p.price.toLocaleString()}원</span></div>
+      <div class="mrp-top"><span class="mrp-tag">${catLabel}</span><span class="mrp-code"><span class="code-text">${p.code}</span>${genderToggleHTML(p)}</span><span class="mrp-color">${p.color}</span><span class="mrp-price">${p.price.toLocaleString()}원</span></div>
       <div class="mrp-spec">소재 ${p.material} · 사이즈 ${p.size}${sizeCheckHTML}</div>
     </div>`;
   }
@@ -1197,7 +1215,7 @@ document.addEventListener('click', e=>{
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </button>
         </div>
-        <div class="lu-code">${p.code}</div>
+        <div class="lu-code"><span class="code-text">${p.code}</span>${genderToggleHTML(p)}</div>
         <div class="lu-color">${p.color}</div>
         <div class="lu-price">${p.price.toLocaleString()}원</div>
         ${badge}
