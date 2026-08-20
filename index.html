@@ -290,17 +290,17 @@ section{padding:74px 0;}
 .mm-item{
   background:#fff;border-radius:10px;padding:8px 6px 7px;cursor:pointer;border:2px solid transparent;
   display:flex;flex-direction:column;align-items:center;gap:5px;transition:transform .12s ease,border-color .12s ease;
-  flex:0 0 78px;scroll-snap-align:start;
+  flex:0 0 78px;min-width:0;scroll-snap-align:start;
 }
 .mm-item:hover{transform:translateY(-2px);}
 .mm-item.sel{border-color:var(--mint);box-shadow:0 0 0 1px var(--mint);}
 .mm-item img{width:100%;aspect-ratio:1/1.05;object-fit:contain;background:#fff;}
-.mm-item .mi-code{font-family:var(--mono);font-size:8.5px;color:var(--ink-soft);font-weight:600;white-space:nowrap;}
-.mm-item .mi-color{font-size:9.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.mm-item .mi-code{font-family:var(--mono);font-size:8.5px;color:var(--ink-soft);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;min-width:0;}
+.mm-item .mi-color{font-size:9.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;min-width:0;}
 .mm-picker::-webkit-scrollbar{height:5px;}
 .mm-picker::-webkit-scrollbar-thumb{background:rgba(255,255,255,.35);border-radius:99px;}
 
-.mm-preview{display:flex;flex-direction:column;gap:14px;}
+.mm-preview{display:flex;flex-direction:column;gap:14px;min-width:0;}
 .mm-canvas{
   background:radial-gradient(ellipse at 50% 30%, #fff 0%, #fdfcf8 60%, #f7f5ee 100%);
   border-radius:12px;padding:22px 16px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;
@@ -402,7 +402,9 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 .pd-body{padding:18px 20px 22px;}
 .pd-body .pd-copy{font-size:13.5px;line-height:1.7;color:var(--ink-soft);margin:8px 0 12px;}
 .pd-body h3{font-size:19px;}
-.pd-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;}
+.pd-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;flex-wrap:wrap;gap:6px;}
+.qv-photo{aspect-ratio:3/4;max-width:440px;margin:0 auto;}
+.qv-code{font-family:var(--mono);font-size:clamp(22px,6vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink);}
 .pd-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
 .pd-tags span{font-family:var(--mono);font-size:10px;font-weight:600;background:var(--paper-2);color:var(--ink-soft);padding:4px 9px;border-radius:999px;}
 .pd-specs{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;font-size:12px;color:var(--muted);}
@@ -996,6 +998,22 @@ const COLLECTION_MOOD = {
 };
 function moodFor(p){ return COLLECTION_MOOD[p.collection] || {img:'images/hero/daily-nature-2.jpeg', label:'YONEX 26 F/W 화보컷'}; }
 
+/* =============== MODEL CUT BY GENDER (M/W editorial photo per category group, for Quick View) =============== */
+const MODEL_CUT_MW = {
+  game: {M:'images/hero/cover-coral-2.jpeg', W:'images/hero/keyvisual-blue-1.jpeg', label:'게임웨어 모델컷'},
+  daily: {M:'images/hero/daily-nature-2.jpeg', W:'images/hero/easywear-divider.jpeg', label:'데일리웨어 모델컷'},
+  easy: {M:'images/hero/wearmap-divider.jpeg', W:'images/hero/easywear-divider.jpeg', label:'이지웨어 모델컷'},
+  acc: {M:'images/hero/wearmap-divider.jpeg', W:'images/hero/wearmap-divider.jpeg', label:'악세서리 컷'},
+};
+function modelCutFor(p, gender){
+  const entry = MODEL_CUT_MW[collectionGroupOf(p)] || MODEL_CUT_MW.daily;
+  return {img: gender==='W' ? entry.W : entry.M, label: entry.label};
+}
+function groupLabelOf(p){
+  const g = CATEGORY_GROUPS.find(c=>c.key===collectionGroupOf(p));
+  return g ? g.label : '';
+}
+
 /* =============== SIZE FINDER (real YONEX body-size chart, height-based) =============== */
 const BODY_SIZE_CHART = {
   M: [{min:165,max:175,size:'95'},{min:170,max:180,size:'100'},{min:175,max:185,size:'105'},{min:180,max:190,size:'110'}],
@@ -1056,11 +1074,10 @@ document.addEventListener('click', e=>{
   wrap.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b===btn));
 });
 
-/* =============== QUICK VIEW (model cut + detail, from Line-up) =============== */
+/* =============== QUICK VIEW (model cut, from Line-up) =============== */
 function openQuickView(code){
   const p = byCode(code); if(!p) return;
   const cat = TOPS.some(t=>t.code===code) ? 'top' : (BOTTOMS.some(b=>b.code===code) ? 'bottom' : 'acc');
-  const mood = moodFor(p);
   let sizeVal = p.size;
   if(cat!=='acc'){
     const rec = recommendSize(state.myGender, state.myHeight, state.myWeight);
@@ -1070,17 +1087,18 @@ function openQuickView(code){
       else if(fits===false) sizeVal += ` <span class="mrp-sizecheck no">· 추천 ${rec.size} 없음</span>`;
     }
   }
-  const catLabel = cat==='top' ? '상의' : cat==='bottom' ? '하의' : '악세서리/가방';
+  const initialGender = p.gender==='Women' ? 'W' : 'M';
+  const mc = modelCutFor(p, initialGender);
+  const subtitle = [groupLabelOf(p), p.collection].filter((v,i,a)=> v && a.indexOf(v)===i).join(' · ');
   const selectBtn = cat==='acc' ? '' : `<button class="btn-mini primary" id="qvSelectBtn" data-code="${p.code}" data-cat="${cat}">Mix &amp; Match에서 선택</button>`;
   document.getElementById('qvBody').innerHTML = `
-    <div class="pd-photo" style="background-image:url('${mood.img}');aspect-ratio:16/9;">
-      <span class="pd-ghost-label">${cat==='acc'?'PRODUCT CUT':'MODEL CUT + GHOST CUT'}</span>
-      <div class="pd-cutout"><img src="${p.img}" alt="${p.code}"></div>
+    <div class="pd-photo qv-photo" style="background-image:url('${mc.img}');">
+      <span class="pd-ghost-label">${cat==='acc'?'PRODUCT CUT':'MODEL CUT'}</span>
     </div>
     <div class="pd-body" style="padding:20px 4px 4px;">
-      <h3 style="font-size:22px;">${p.name}</h3>
-      <div class="pd-code"><span class="code-text">${p.code}</span>${genderToggleHTML(p)} · ${p.collection}</div>
-      <p class="pd-copy">${mood.label} — ${catLabel} 아이템입니다.</p>
+      <h3 class="qv-code">${p.code}</h3>
+      <div class="pd-code">${subtitle}${genderToggleHTML(p)}</div>
+      <p class="pd-copy">${p.name} — ${mc.label}</p>
       <div class="pd-tags"><span>${cat.toUpperCase()}</span><span>${p.gender}</span></div>
       <div class="pd-specs">
         <div><span>컬러</span><b>${p.color}</b></div>
@@ -1096,6 +1114,25 @@ function openQuickView(code){
   document.getElementById('qvOverlay').classList.add('open');
 }
 document.getElementById('qvBody').addEventListener('click', e=>{
+  const gBtn = e.target.closest('.g-toggle button');
+  if(gBtn){
+    const wrap = gBtn.closest('.g-toggle');
+    const codeVal = gBtn.dataset.g==='M' ? wrap.dataset.m : wrap.dataset.w;
+    const codeEl = document.querySelector('#qvBody .qv-code');
+    if(codeEl) codeEl.textContent = codeVal;
+    wrap.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b===gBtn));
+    const baseP = byCode(wrap.dataset.m);
+    const photoEl = document.querySelector('#qvBody .qv-photo');
+    if(baseP && photoEl){
+      const mc = modelCutFor(baseP, gBtn.dataset.g);
+      photoEl.style.backgroundImage = `url('${mc.img}')`;
+    }
+    const selBtn2 = document.getElementById('qvSelectBtn');
+    if(selBtn2) selBtn2.dataset.code = codeVal;
+    const cmpBtn2 = document.getElementById('qvCmpBtn');
+    if(cmpBtn2) cmpBtn2.dataset.code = codeVal;
+    return;
+  }
   const selBtn = e.target.closest('#qvSelectBtn');
   if(selBtn){
     if(selBtn.dataset.cat==='top') state.selTop = selBtn.dataset.code; else state.selBottom = selBtn.dataset.code;
@@ -1492,7 +1529,7 @@ document.addEventListener('click', e=>{
 (function renderLineup(){
   const ALL = TOPS.map(t=>({...t,cat:'top'})).concat(BOTTOMS.map(b=>({...b,cat:'bottom'}))).concat(ACCESSORIES.map(a=>({...a,cat:'acc'})));
   document.getElementById('lineupCount').textContent = `총 ${ALL.length}개 SKU`;
-  const filters = [{k:'all',label:'전체'},{k:'top',label:'TOP'},{k:'bottom',label:'BOTTOM'},{k:'acc',label:'ACC / BAG'}];
+  const filters = [{k:'all',label:'전체'},{k:'top',label:'TOP'},{k:'bottom',label:'BOTTOM'}];
   document.getElementById('lineupFilters').innerHTML = filters.map((f,i)=>`<button class="lchip ${i===0?'active':''}" data-cat="${f.k}">${f.label}</button>`).join('');
   const groupFilters = [{k:'all',label:'전체 카테고리'}].concat(CATEGORY_GROUPS);
   document.getElementById('lineupGroupFilters').innerHTML = groupFilters.map((f,i)=>`<button class="lchip ${i===0?'active':''}" data-group="${f.key||f.k}">${f.label}</button>`).join('');
