@@ -42,7 +42,29 @@ header.nav{
   position:sticky;top:0;z-index:80;background:rgba(241,239,229,.92);backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
 }
-.nav-row{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 20px;}
+.nav-row{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 20px;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1 1 240px;max-width:360px;order:2;}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--paper-2);border:1px solid var(--line);border-radius:999px;padding:9px 14px;transition:border-color .15s ease;}
+.search-box:focus-within{border-color:var(--indigo);}
+.search-box svg{flex:none;color:var(--muted);}
+.search-box input{border:none;background:none;outline:none;font-size:13px;color:var(--ink);width:100%;font-family:var(--sans);}
+.search-box input::placeholder{color:var(--muted);}
+.search-results{
+  position:absolute;top:calc(100% + 8px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 20px 40px rgba(27,26,31,.2);max-height:420px;overflow-y:auto;z-index:95;display:none;
+}
+.search-results.show{display:block;}
+.sr-item{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--line);text-align:left;background:none;border-left:none;border-right:none;border-top:none;width:100%;}
+.sr-item:last-child{border-bottom:none;}
+.sr-item:hover{background:var(--paper);}
+.sr-item img{width:34px;height:38px;object-fit:contain;background:var(--paper);border-radius:6px;flex:none;}
+.sr-item .sr-txt{min-width:0;flex:1;}
+.sr-item .sr-code{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--ink);}
+.sr-item .sr-code i{font-family:var(--sans);font-weight:400;font-style:normal;color:var(--muted);}
+.sr-item .sr-meta{font-size:11px;color:var(--muted);margin-top:1px;}
+.sr-item .sr-price{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--indigo);flex:none;}
+.sr-empty{padding:18px 14px;text-align:center;color:var(--muted);font-size:12.5px;}
+@media(max-width:760px){.nav-row{justify-content:flex-start;} .wordmark{order:1;} .search-wrap{order:3;flex:1 1 100%;max-width:none;} nav.pills{order:2;}}
 .wordmark{font-family:var(--serif);font-weight:700;font-size:17px;letter-spacing:-.01em;display:flex;align-items:center;gap:9px;white-space:nowrap;background:none;border:none;cursor:pointer;color:var(--ink);padding:0;}
 .wordmark .dot{width:7px;height:7px;border-radius:50%;background:var(--coral);}
 .season-pill{font-family:var(--mono);font-size:10px;font-weight:600;background:var(--indigo);color:var(--paper);padding:4px 9px;border-radius:999px;letter-spacing:.05em;}
@@ -120,6 +142,10 @@ main::before{
   content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;z-index:1;pointer-events:none;
   background:linear-gradient(180deg,transparent,var(--line) 10%,var(--line) 90%,transparent);
 }
+main::after{
+  content:'';position:absolute;top:0;left:0;bottom:0;width:26px;z-index:1;pointer-events:none;
+  background:linear-gradient(90deg,rgba(27,26,31,.1),rgba(27,26,31,.02) 60%,transparent);
+}
 .page-corner{
   position:absolute;right:26px;bottom:20px;z-index:3;
   font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em;
@@ -184,12 +210,14 @@ section{padding:74px 0;}
 .shop-tag .st-codes span{font-family:var(--mono);font-size:9px;color:var(--ink-soft);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .look-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;}
 .look-body h3{font-size:18px;}
-.look-pieces{display:flex;gap:10px;}
-.look-piece{display:flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:6px 9px;flex:1;min-width:0;}
-.look-piece img{width:30px;height:34px;object-fit:contain;flex:none;background:#fff;border-radius:4px;}
-.look-piece .lp-txt{min-width:0;}
+.look-pieces{display:flex;flex-direction:column;gap:7px;}
+.look-piece{display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:7px 10px;min-width:0;}
+.look-piece img{width:36px;height:41px;object-fit:contain;flex:none;background:#fff;border-radius:6px;}
+.look-piece .lp-txt{min-width:0;flex:1;display:flex;flex-direction:column;}
+.look-piece .lp-cat{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.05em;color:var(--muted);}
 .look-piece .lp-code{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--muted);}
 .look-piece .lp-color{font-size:11.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.look-piece .lp-price{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--indigo);flex:none;}
 .look-comment{font-size:12.5px;color:var(--ink-soft);line-height:1.55;}
 .look-actions{display:flex;gap:8px;margin-top:2px;}
 .btn-mini{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.03em;padding:8px 11px;border-radius:8px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;transition:background .15s ease,color .15s ease;}
@@ -228,9 +256,15 @@ section{padding:74px 0;}
 .mm-item .mi-color{font-size:9.5px;color:var(--muted);}
 
 .mm-preview{display:flex;flex-direction:column;gap:14px;}
-.mm-canvas{background:#fff;border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:center;gap:6px;min-height:210px;}
-.mm-canvas img{width:44%;object-fit:contain;}
-.mm-canvas .mm-plus{color:var(--muted);font-family:var(--mono);font-size:16px;}
+.mm-canvas{background:#fff;border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;justify-content:center;min-height:210px;}
+.mm-stack-row{display:flex;align-items:center;gap:12px;padding:9px 0;}
+.mm-stack-row img{width:62px;height:70px;object-fit:contain;background:var(--paper);border-radius:9px;flex:none;}
+.mm-stack-txt{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.mm-stack-txt .mst-cat{font-family:var(--mono);font-size:8.5px;font-weight:700;letter-spacing:.06em;color:var(--coral);}
+.mm-stack-txt .mst-code{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);}
+.mm-stack-txt .mst-name{font-size:11.5px;color:var(--ink-soft);}
+.mm-stack-txt .mst-price{font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--indigo);margin-top:1px;}
+.mm-stack-divider{text-align:center;color:var(--muted);font-family:var(--mono);font-size:13px;line-height:1;padding:0 0 0 31px;}
 .mm-canvas .mm-empty{color:var(--muted);font-size:12.5px;text-align:center;font-family:var(--sans);}
 .mm-result{background:#fff;color:var(--ink);border-radius:12px;padding:14px 16px;}
 .mm-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:5px 10px;border-radius:999px;margin-bottom:9px;}
@@ -288,7 +322,7 @@ table.cmp{border-collapse:collapse;width:100%;min-width:480px;}
 table.cmp th,table.cmp td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:12.5px;vertical-align:top;}
 table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight:600;font-family:var(--mono);font-size:10.5px;white-space:nowrap;width:110px;}
 .cmp-col-head{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:132px;}
-.cmp-col-head .cc-imgs{display:flex;gap:2px;}
+.cmp-col-head .cc-imgs{display:flex;flex-direction:column;gap:3px;}
 .cmp-col-head img{width:48px;height:54px;object-fit:contain;background:var(--paper);border-radius:6px;}
 .cmp-col-head .cc-remove{font-size:10px;font-family:var(--mono);color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:3px 9px;cursor:pointer;}
 
@@ -342,6 +376,8 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 .lu-code{font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--ink);}
 .lu-color{font-size:10.5px;color:var(--muted);}
 .lu-price{font-family:var(--mono);font-size:10.5px;font-weight:600;margin-top:3px;}
+@keyframes highlightPulse{0%,100%{box-shadow:0 0 0 0 rgba(222,58,80,0);}30%{box-shadow:0 0 0 4px rgba(222,58,80,.5);}}
+.lu-card.lu-highlight{animation:highlightPulse 1.8s ease;border-color:var(--coral);}
 
 /* ---------- BACK COVER ---------- */
 .back{position:relative;background:var(--indigo-deep);color:#fff;padding:0;border-bottom:none;overflow:hidden;}
@@ -359,6 +395,13 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 <header class="nav">
   <div class="nav-row">
     <button class="wordmark" id="logoHome"><span class="dot"></span>YONEX APPAREL<span class="season-pill">26 F/W</span></button>
+    <div class="search-wrap">
+      <div class="search-box">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg>
+        <input type="text" id="searchInput" placeholder="품번·상품명·컬러로 검색 (예: 263TS001, Navy)" autocomplete="off">
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
     <nav class="pills" id="navPills">
       <button data-tab="season">SEASON</button>
       <button data-tab="looks">LOOKS</button>
@@ -672,8 +715,8 @@ const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].c
       <div class="look-body">
         <h3>${c.name}</h3>
         <div class="look-pieces">
-          <div class="look-piece"><img src="${top.img}" alt="${top.code}"><div class="lp-txt"><div class="lp-code">${top.code}</div><div class="lp-color">${top.color}</div></div></div>
-          <div class="look-piece"><img src="${bottom.img}" alt="${bottom.code}"><div class="lp-txt"><div class="lp-code">${bottom.code}</div><div class="lp-color">${bottom.color}</div></div></div>
+          <div class="look-piece"><img src="${top.img}" alt="${top.code}"><div class="lp-txt"><div class="lp-cat">TOP</div><div class="lp-code">${top.code}</div><div class="lp-color">${top.color}</div></div><div class="lp-price">${top.price.toLocaleString()}원</div></div>
+          <div class="look-piece"><img src="${bottom.img}" alt="${bottom.code}"><div class="lp-txt"><div class="lp-cat">BOTTOM</div><div class="lp-code">${bottom.code}</div><div class="lp-color">${bottom.color}</div></div><div class="lp-price">${bottom.price.toLocaleString()}원</div></div>
         </div>
         <p class="look-comment">${c.comment}</p>
         <div class="look-actions">
@@ -714,8 +757,19 @@ function renderPickers(){
 }
 function renderPreview(){
   const top = byCode(state.selTop), bottom = byCode(state.selBottom);
+  function stackRow(p, catLabel){
+    return `<div class="mm-stack-row">
+      <img src="${p.img}" alt="${p.code}">
+      <div class="mm-stack-txt">
+        <span class="mst-cat">${catLabel}</span>
+        <span class="mst-code">${p.code}</span>
+        <span class="mst-name">${p.color} · ${p.name}</span>
+        <span class="mst-price">${p.price.toLocaleString()}원</span>
+      </div>
+    </div>`;
+  }
   document.getElementById('mmCanvas').innerHTML = (top&&bottom) ?
-    `<img src="${top.img}" alt="${top.code}"><span class="mm-plus">+</span><img src="${bottom.img}" alt="${bottom.code}">` :
+    stackRow(top,'TOP') + '<div class="mm-stack-divider">+</div>' + stackRow(bottom,'BOTTOM') :
     `<span class="mm-empty">상의와 하의를 각각 선택해주세요</span>`;
   if(!top || !bottom){ document.getElementById('mmResult').innerHTML=''; return; }
   const mt = matchType(top.family, bottom.family);
@@ -883,7 +937,7 @@ document.addEventListener('click', e=>{
   function draw(cat){
     const list = cat==='all' ? ALL : ALL.filter(p=>p.cat===cat);
     document.getElementById('lineupGrid').innerHTML = list.map(p=>`
-      <div class="lu-card">
+      <div class="lu-card" data-code="${p.code}">
         <div class="lu-photo"><img src="${p.img}" alt="${p.code}"></div>
         <div class="lu-code">${p.code}</div>
         <div class="lu-color">${p.color}</div>
@@ -896,6 +950,16 @@ document.addEventListener('click', e=>{
     document.querySelectorAll('#lineupFilters .lchip').forEach(b=>b.classList.toggle('active', b===btn));
     draw(btn.dataset.cat);
   });
+  window.showProductInLineup = function(code){
+    document.querySelectorAll('#lineupFilters .lchip').forEach(b=>b.classList.toggle('active', b.dataset.cat==='all'));
+    draw('all');
+    requestAnimationFrame(()=>{
+      const card = document.querySelector(`.lu-card[data-code="${code}"]`);
+      if(!card) return;
+      card.scrollIntoView({behavior:'smooth', block:'center'});
+      card.classList.remove('lu-highlight'); void card.offsetWidth; card.classList.add('lu-highlight');
+    });
+  };
 })();
 
 /* =============== TAB NAVIGATION =============== */
@@ -948,6 +1012,51 @@ document.getElementById('coverShopBtn').addEventListener('click', ()=>{
 });
 document.getElementById('pgPrev').addEventListener('click', ()=>{ if(currentTabIndex>0) switchTab(TAB_ORDER[currentTabIndex-1].id); });
 document.getElementById('pgNext').addEventListener('click', ()=>{ if(currentTabIndex<TAB_ORDER.length-1) switchTab(TAB_ORDER[currentTabIndex+1].id); });
+
+/* =============== SEARCH =============== */
+const SEARCH_INDEX = TOPS.map(t=>({...t,cat:'top'})).concat(BOTTOMS.map(b=>({...b,cat:'bottom'})));
+function searchProducts(q){
+  q = q.trim().toLowerCase();
+  if(!q) return [];
+  return SEARCH_INDEX.filter(p=>
+    p.code.toLowerCase().includes(q) ||
+    p.name.toLowerCase().includes(q) ||
+    p.color.toLowerCase().includes(q) ||
+    p.collection.toLowerCase().includes(q)
+  );
+}
+function renderSearchResults(q){
+  const box = document.getElementById('searchResults');
+  if(!q.trim()){ box.classList.remove('show'); box.innerHTML=''; return; }
+  const results = searchProducts(q);
+  box.innerHTML = results.length ? results.slice(0,12).map(p=>`
+    <button type="button" class="sr-item" data-code="${p.code}">
+      <img src="${p.img}" alt="${p.code}">
+      <div class="sr-txt">
+        <div class="sr-code">${p.code} <i>· ${p.cat==='top'?'TOP':'BOTTOM'} · ${p.color}</i></div>
+        <div class="sr-meta">${p.name} · ${p.collection}</div>
+      </div>
+      <div class="sr-price">${p.price.toLocaleString()}원</div>
+    </button>`).join('') : `<div class="sr-empty">"${q}"에 해당하는 상품이 없습니다.</div>`;
+  box.classList.add('show');
+}
+const searchInputEl = document.getElementById('searchInput');
+searchInputEl.addEventListener('input', e=> renderSearchResults(e.target.value));
+searchInputEl.addEventListener('focus', e=>{ if(e.target.value.trim()) renderSearchResults(e.target.value); });
+document.getElementById('searchResults').addEventListener('click', e=>{
+  const item = e.target.closest('.sr-item'); if(!item) return;
+  const code = item.dataset.code;
+  document.getElementById('searchResults').classList.remove('show');
+  searchInputEl.value = '';
+  switchTab('lineup');
+  window.showProductInLineup(code);
+});
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.search-wrap')) document.getElementById('searchResults').classList.remove('show');
+});
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){ document.getElementById('searchResults').classList.remove('show'); searchInputEl.blur(); }
+});
 
 /* =============== INIT =============== */
 renderFilters();
