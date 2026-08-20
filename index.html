@@ -402,7 +402,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 .pd-body{padding:18px 20px 22px;}
 .pd-body .pd-copy{font-size:13.5px;line-height:1.7;color:var(--ink-soft);margin:8px 0 12px;}
 .pd-body h3{font-size:19px;}
-.pd-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;flex-wrap:wrap;gap:6px;}
+.pd-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;flex-wrap:wrap;gap:6px;justify-content:space-between;}
 .qv-photo{aspect-ratio:3/4;max-width:440px;margin:0 auto;}
 .qv-code{font-family:var(--mono);font-size:clamp(22px,6vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink);}
 .pd-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
@@ -431,14 +431,18 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 
 /* ---------- LINE-UP ---------- */
 .lineup-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
-.lineup-filter-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.lineup-filter-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:20px;}
 .lineup-filter-row .lineup-filters{margin-bottom:0;}
-.lu-gender-view{display:flex;align-items:center;gap:7px;margin-bottom:20px;}
+.lu-gender-view{display:flex;align-items:center;gap:7px;}
 .lu-gv-label{font-family:var(--mono);font-size:10.5px;color:var(--muted);}
 .lu-gv-btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);cursor:pointer;}
 .lu-gv-btn.active{background:var(--indigo);color:#fff;border-color:var(--indigo);}
 .lchip{font-family:var(--mono);font-size:11px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);cursor:pointer;}
 .lchip.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.lchip-sub{font-family:var(--mono);font-size:12px;font-weight:600;padding:8px 3px;border:none;border-bottom:2px solid transparent;background:none;color:var(--muted);cursor:pointer;letter-spacing:.02em;}
+.lchip-sub:hover{color:var(--ink);}
+.lchip-sub.active{color:var(--ink);border-bottom-color:var(--indigo);}
+.lineup-filter-row .lineup-filters{gap:18px;}
 .lineup-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;}
 .lu-empty{grid-column:1 / -1;text-align:center;padding:50px 20px;color:var(--muted);font-size:13.5px;background:var(--card);border:1px dashed var(--line);border-radius:14px;}
 @media(max-width:960px){.lineup-grid{grid-template-columns:repeat(4,1fr);}}
@@ -1475,16 +1479,18 @@ document.addEventListener('click', e=>{
     {p:BOTTOMS[4], bg:'images/hero/daily-nature-1.jpeg', copy:'허리 밴드부터 무릎 가동 범위까지, 로우 스쿼트 자세에서도 걸림 없는 절개 설계.', tags:['STRETCH','VERYCOOL DRY']},
     {p:TOPS[1], bg:'images/hero/daily-nature-2.jpeg', copy:'연습부터 실전까지 이어 입을 수 있는 유니섹스 실루엣과 뉴트럴 컬러웨이.', tags:['UV REDUCTION','Y-COOL']},
   ];
-  document.getElementById('pdGrid').innerHTML = picks.map(({p,bg,copy,tags})=>`
+  document.getElementById('pdGrid').innerHTML = picks.map(({p,bg,copy,tags})=>{
+    const subtitle = [groupLabelOf(p), p.collection].filter((v,i,a)=> v && a.indexOf(v)===i).join(' · ');
+    return `
     <div class="pd-card">
       <div class="pd-photo" style="background-image:url('${bg}')">
         <span class="pd-ghost-label">MODEL CUT + GHOST CUT</span>
         <div class="pd-cutout"><img src="${p.img}" alt="${p.code}"></div>
       </div>
       <div class="pd-body">
-        <h3>${p.name}</h3>
-        <div class="pd-code">${p.code} · ${p.collection}</div>
-        <p class="pd-copy">${copy}</p>
+        <h3 class="qv-code">${p.code}</h3>
+        <div class="pd-code">${subtitle}${genderToggleHTML(p)}</div>
+        <p class="pd-copy"><b>${p.name}</b> — ${copy}</p>
         <div class="pd-tags">${tags.map(t=>`<span>${t}</span>`).join('')}</div>
         <div class="pd-specs">
           <div><span>컬러</span><b>${p.color}</b></div>
@@ -1493,7 +1499,8 @@ document.addEventListener('click', e=>{
           <div><span>가격</span><b>${p.price.toLocaleString()}원</b></div>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 })();
 
 /* =============== COLOR STORY =============== */
@@ -1530,7 +1537,7 @@ document.addEventListener('click', e=>{
   const ALL = TOPS.map(t=>({...t,cat:'top'})).concat(BOTTOMS.map(b=>({...b,cat:'bottom'}))).concat(ACCESSORIES.map(a=>({...a,cat:'acc'})));
   document.getElementById('lineupCount').textContent = `총 ${ALL.length}개 SKU`;
   const filters = [{k:'all',label:'전체'},{k:'top',label:'TOP'},{k:'bottom',label:'BOTTOM'}];
-  document.getElementById('lineupFilters').innerHTML = filters.map((f,i)=>`<button class="lchip ${i===0?'active':''}" data-cat="${f.k}">${f.label}</button>`).join('');
+  document.getElementById('lineupFilters').innerHTML = filters.map((f,i)=>`<button class="lchip-sub ${i===0?'active':''}" data-cat="${f.k}">${f.label}</button>`).join('');
   const groupFilters = [{k:'all',label:'전체 카테고리'}].concat(CATEGORY_GROUPS);
   document.getElementById('lineupGroupFilters').innerHTML = groupFilters.map((f,i)=>`<button class="lchip ${i===0?'active':''}" data-group="${f.key||f.k}">${f.label}</button>`).join('');
   let currentCat = 'all';
@@ -1584,9 +1591,9 @@ document.addEventListener('click', e=>{
     applyGlobalGenderView();
   });
   document.getElementById('lineupFilters').addEventListener('click', e=>{
-    const btn = e.target.closest('.lchip'); if(!btn) return;
+    const btn = e.target.closest('.lchip-sub'); if(!btn) return;
     currentCat = btn.dataset.cat;
-    document.querySelectorAll('#lineupFilters .lchip').forEach(b=>b.classList.toggle('active', b===btn));
+    document.querySelectorAll('#lineupFilters .lchip-sub').forEach(b=>b.classList.toggle('active', b===btn));
     draw();
   });
   document.getElementById('lineupGroupFilters').addEventListener('click', e=>{
@@ -1612,12 +1619,12 @@ document.addEventListener('click', e=>{
   window.showLineupGroup = function(group){
     currentGroup = group; currentCat = 'all';
     document.querySelectorAll('#lineupGroupFilters .lchip').forEach(b=>b.classList.toggle('active', b.dataset.group===group));
-    document.querySelectorAll('#lineupFilters .lchip').forEach(b=>b.classList.toggle('active', b.dataset.cat==='all'));
+    document.querySelectorAll('#lineupFilters .lchip-sub').forEach(b=>b.classList.toggle('active', b.dataset.cat==='all'));
     draw();
   };
   window.showProductInLineup = function(code){
     currentCat = 'all'; currentGroup = 'all';
-    document.querySelectorAll('#lineupFilters .lchip').forEach(b=>b.classList.toggle('active', b.dataset.cat==='all'));
+    document.querySelectorAll('#lineupFilters .lchip-sub').forEach(b=>b.classList.toggle('active', b.dataset.cat==='all'));
     document.querySelectorAll('#lineupGroupFilters .lchip').forEach(b=>b.classList.toggle('active', b.dataset.group==='all'));
     draw();
     requestAnimationFrame(()=>{
