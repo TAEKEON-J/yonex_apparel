@@ -274,13 +274,22 @@ section{padding:74px 0;}
 .outfit-ground{width:104px;height:12px;border-radius:50%;background:radial-gradient(ellipse,rgba(27,26,31,.14),transparent 72%);margin-top:6px;}
 .mm-canvas .mm-empty{color:var(--muted);font-size:12.5px;text-align:center;font-family:var(--sans);}
 
+.mm-editorial{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:var(--indigo-deep);}
+.mm-editorial img{width:100%;height:100%;object-fit:cover;display:block;}
+.mm-editorial .me-scrim{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.55),transparent 55%);}
+.mm-editorial .me-cap{position:absolute;left:11px;bottom:10px;color:#fff;}
+.mm-editorial .me-cap .me-eyebrow{display:block;font-family:var(--mono);font-size:8.5px;font-weight:700;letter-spacing:.06em;color:var(--mint);margin-bottom:2px;}
+.mm-editorial .me-cap b{font-size:12.5px;font-family:var(--sans);}
+
 .mm-piece-list{display:flex;flex-direction:column;gap:0;margin:10px 0 8px;}
-.mr-piece{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--line);}
+.mr-piece{padding:8px 0;border-top:1px solid var(--line);}
 .mr-piece:first-child{border-top:none;}
+.mr-piece .mrp-top{display:flex;align-items:center;gap:8px;}
 .mr-piece .mrp-tag{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.05em;color:var(--coral);background:#FDE3E7;padding:2px 6px;border-radius:5px;flex:none;}
 .mr-piece .mrp-code{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--ink);flex:none;}
 .mr-piece .mrp-color{font-size:11px;color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mr-piece .mrp-price{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--indigo);flex:none;}
+.mr-piece .mrp-spec{font-size:10px;color:var(--muted);margin-top:3px;padding-left:2px;}
 .mm-result{background:#fff;color:var(--ink);border-radius:12px;padding:14px 16px;}
 .mm-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:5px 10px;border-radius:999px;margin-bottom:9px;}
 .mm-badge.tonal{background:#EAE3FF;color:#4B2FBF;}
@@ -520,6 +529,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
       </div>
       <div class="mm-preview">
         <div class="mm-canvas" id="mmCanvas"></div>
+        <div class="mm-editorial" id="mmEditorial"></div>
         <div class="mm-result" id="mmResult"></div>
         <div class="mm-cta-row">
           <button class="btn-block on" id="mmAddBtn">비교함에 담기</button>
@@ -661,6 +671,18 @@ const FABRIC_TECH = [
  {en:'UV REDUCTION',kr:'UV 감소',desc:'적외선·자외선의 약 92%를 차단해 플레이 중 열 축적을 최소화합니다. (BOKEN 연구소 테스트 기준)'},
 ];
 
+/* =============== COLLECTION MOOD (editorial photo per collection) =============== */
+const COLLECTION_MOOD = {
+  'Korea National Team': {img:'images/hero/cover-coral-1.jpeg', label:'대한민국 국가대표팀 유니폼 화보컷'},
+  'Japan National Team': {img:'images/hero/cover-coral-2.jpeg', label:'내셔널팀 유니폼 화보컷'},
+  'Game Wear': {img:'images/hero/keyvisual-blue-1.jpeg', label:'Game Wear 화보컷'},
+  'Daily Wear': {img:'images/hero/daily-nature-1.jpeg', label:'Daily Wear 화보컷'},
+  'World Collection · Practice': {img:'images/hero/wearmap-divider.jpeg', label:'World Collection · Practice 화보컷'},
+  'World Collection · Tournament': {img:'images/hero/keyvisual-blue-2.jpeg', label:'World Collection · Tournament 화보컷'},
+  'World Collection · LCW': {img:'images/hero/easywear-divider.jpeg', label:'World Collection · LCW 화보컷'},
+};
+function moodFor(p){ return COLLECTION_MOOD[p.collection] || {img:'images/hero/daily-nature-2.jpeg', label:'YONEX 26 F/W 화보컷'}; }
+
 /* =============== MATCH ENGINE =============== */
 function matchType(topFam, bottomFam){
   const neutral = ['white','black','navy','gray'];
@@ -779,12 +801,20 @@ function renderPreview(){
      </div>
      <div class="outfit-ground"></div>` :
     `<span class="mm-empty">상의와 하의를 각각 선택해주세요</span>`;
-  if(!top || !bottom){ document.getElementById('mmResult').innerHTML=''; return; }
+  if(!top || !bottom){ document.getElementById('mmResult').innerHTML=''; document.getElementById('mmEditorial').innerHTML=''; return; }
+  const mood = moodFor(top);
+  document.getElementById('mmEditorial').innerHTML = `
+    <img src="${mood.img}" alt="${top.collection}">
+    <div class="me-scrim"></div>
+    <div class="me-cap"><span class="me-eyebrow">EDITORIAL</span><b>${mood.label}</b></div>`;
   const mt = matchType(top.family, bottom.family);
   const curated = findCurated(top.code, bottom.code);
   const comment = curated ? curated.comment : `${top.color} ${top.name}와(과) ${bottom.color} ${bottom.name}의 조합 — ${mt.kr}.`;
   function pieceRow(p, catLabel){
-    return `<div class="mr-piece"><span class="mrp-tag">${catLabel}</span><span class="mrp-code">${p.code}</span><span class="mrp-color">${p.color}</span><span class="mrp-price">${p.price.toLocaleString()}원</span></div>`;
+    return `<div class="mr-piece">
+      <div class="mrp-top"><span class="mrp-tag">${catLabel}</span><span class="mrp-code">${p.code}</span><span class="mrp-color">${p.color}</span><span class="mrp-price">${p.price.toLocaleString()}원</span></div>
+      <div class="mrp-spec">소재 ${p.material} · 사이즈 ${p.size}</div>
+    </div>`;
   }
   document.getElementById('mmResult').innerHTML = `
     <span class="mm-badge ${mt.key}">${mt.en}</span>${curated?'<span class="mm-pick">EDITOR PICK</span>':''}
