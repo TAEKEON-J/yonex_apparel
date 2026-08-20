@@ -429,6 +429,9 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 .lu-price{font-family:var(--mono);font-size:10.5px;font-weight:600;margin-top:3px;}
 @keyframes highlightPulse{0%,100%{box-shadow:0 0 0 0 rgba(222,58,80,0);}30%{box-shadow:0 0 0 4px rgba(222,58,80,.5);}}
 .lu-card.lu-highlight{animation:highlightPulse 1.8s ease;border-color:var(--coral);}
+.lu-sizecheck{font-family:var(--mono);font-size:9px;font-weight:700;margin-top:4px;}
+.lu-sizecheck.ok{color:#2E8B47;}
+.lu-sizecheck.no{color:var(--coral);}
 
 /* ---------- BACK COVER ---------- */
 .back{position:relative;background:var(--indigo-deep);color:#fff;padding:0;border-bottom:none;overflow:hidden;}
@@ -454,9 +457,9 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
       <div class="search-results" id="searchResults"></div>
     </div>
     <nav class="pills" id="navPills">
-      <button data-tab="match">MIX&amp;MATCH</button>
       <button data-tab="looks">LOOKS</button>
       <button data-tab="lineup">LINE-UP</button>
+      <button data-tab="match">MIX&amp;MATCH</button>
       <button data-tab="season">SEASON</button>
       <button data-tab="closing">CLOSING</button>
     </nav>
@@ -480,7 +483,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
     <img src="images/products/10756yx.png" alt="10756YX">
     <span class="cs-txt"><span class="cs-eyebrow">FEATURED IN THIS LOOK</span><b>10756YX · Team Raglan Tee</b><span class="cs-cta">이 상의로 Mix &amp; Match 시작하기 →</span></span>
   </button>
-  <button class="cover-scroll" id="coverNext"><span>매칭 시작하기</span><span>→</span></button>
+  <button class="cover-scroll" id="coverNext"><span>룩 살펴보기</span><span>→</span></button>
 </section>
 
 <main>
@@ -956,6 +959,7 @@ function updateSizeFinder(){
   }
   document.getElementById('sfResult').textContent = text;
   renderPreview();
+  if(window.refreshLineupSizes) window.refreshLineupSizes();
 }
 document.getElementById('sfGender').addEventListener('click', e=>{
   const btn = e.target.closest('.sf-g-btn'); if(!btn) return;
@@ -1090,15 +1094,27 @@ document.addEventListener('click', e=>{
   document.getElementById('lineupCount').textContent = `총 ${ALL.length}개 SKU`;
   const filters = [{k:'all',label:'전체'},{k:'top',label:'TOP'},{k:'bottom',label:'BOTTOM'}];
   document.getElementById('lineupFilters').innerHTML = filters.map((f,i)=>`<button class="lchip ${i===0?'active':''}" data-cat="${f.k}">${f.label}</button>`).join('');
+  let currentCat = 'all';
   function draw(cat){
+    currentCat = cat;
     const list = cat==='all' ? ALL : ALL.filter(p=>p.cat===cat);
-    document.getElementById('lineupGrid').innerHTML = list.map(p=>`
+    const rec = recommendSize(state.myGender, state.myHeight, state.myWeight);
+    document.getElementById('lineupGrid').innerHTML = list.map(p=>{
+      let badge = '';
+      if(rec){
+        const fits = checkSizeFit(p, rec.size);
+        if(fits===true) badge = `<div class="lu-sizecheck ok">추천 ${rec.size} 있음 ✓</div>`;
+        else if(fits===false) badge = `<div class="lu-sizecheck no">추천 ${rec.size} 없음</div>`;
+      }
+      return `
       <div class="lu-card" data-code="${p.code}">
         <div class="lu-photo"><img src="${p.img}" alt="${p.code}"></div>
         <div class="lu-code">${p.code}</div>
         <div class="lu-color">${p.color}</div>
         <div class="lu-price">${p.price.toLocaleString()}원</div>
-      </div>`).join('');
+        ${badge}
+      </div>`;
+    }).join('');
   }
   draw('all');
   document.getElementById('lineupFilters').addEventListener('click', e=>{
@@ -1106,6 +1122,7 @@ document.addEventListener('click', e=>{
     document.querySelectorAll('#lineupFilters .lchip').forEach(b=>b.classList.toggle('active', b===btn));
     draw(btn.dataset.cat);
   });
+  window.refreshLineupSizes = function(){ draw(currentCat); };
   window.showProductInLineup = function(code){
     document.querySelectorAll('#lineupFilters .lchip').forEach(b=>b.classList.toggle('active', b.dataset.cat==='all'));
     draw('all');
@@ -1121,9 +1138,9 @@ document.addEventListener('click', e=>{
 /* =============== TAB NAVIGATION =============== */
 const TAB_ORDER = [
   {id:'cover', label:'COVER'},
-  {id:'match', label:'MIX & MATCH'},
   {id:'looks', label:'LOOKS'},
   {id:'lineup', label:'LINE-UP'},
+  {id:'match', label:'MIX & MATCH'},
   {id:'season', label:'SEASON'},
   {id:'closing', label:'CLOSING'},
 ];
@@ -1158,7 +1175,7 @@ document.getElementById('navPills').addEventListener('click', e=>{
   switchTab(btn.dataset.tab);
 });
 document.getElementById('logoHome').addEventListener('click', ()=> switchTab('cover'));
-document.getElementById('coverNext').addEventListener('click', ()=> switchTab('match'));
+document.getElementById('coverNext').addEventListener('click', ()=> switchTab('looks'));
 document.getElementById('coverShopBtn').addEventListener('click', ()=>{
   state.selTop = '10756YX'; state.colorFilter='all';
   renderPickers(); renderPreview(); renderBest();
