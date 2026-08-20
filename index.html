@@ -14,7 +14,7 @@
   --paper:#FFFFFF; --paper-2:#F2F2F0;
   --ink:#101012; --ink-soft:#3D3D40; --muted:#75757A;
   --line:rgba(16,16,18,.12);
-  --accent:#9C7714; --accent-deep:#77590E;
+  --accent:#0C8F3D; --accent-deep:#086B2E;
   --indigo:var(--accent); --indigo-deep:var(--accent-deep);
   --coral:var(--accent);
   --navy:#1B2740; --gray:#8993A6; --white-sw:#EFEDE3; --black-sw:#17181C;
@@ -100,7 +100,7 @@ nav.pills button.active{background:var(--ink);color:var(--paper);}
 /* ---------- COVER ---------- */
 .cover{position:relative;min-height:calc(100svh - 100px);display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--coral);}
 .cover > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 15%;}
-.cover .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(156,119,20,.06) 0%,rgba(20,16,8,.18) 55%,rgba(12,10,6,.86) 100%);}
+.cover .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,143,61,.06) 0%,rgba(10,18,12,.18) 55%,rgba(8,12,9,.86) 100%);}
 .cover-inner{position:relative;z-index:2;max-width:1180px;margin:0 auto;width:100%;padding:0 24px 56px;color:#fff;}
 .cover-tags{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
 .cover-tags span{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;border:1px solid rgba(255,255,255,.55);padding:5px 11px;border-radius:999px;}
@@ -145,13 +145,8 @@ main::after{
   content:'';position:absolute;top:0;left:0;bottom:0;width:26px;z-index:1;pointer-events:none;
   background:linear-gradient(90deg,rgba(27,26,31,.1),rgba(27,26,31,.02) 60%,transparent);
 }
-.page-corner{
-  position:absolute;right:26px;bottom:20px;z-index:3;
-  font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em;
-  background:var(--card);padding:2px 0 0 10px;
-}
 main section[data-tab]{padding:58px 40px 64px;border-bottom:none;position:relative;z-index:2;}
-@media(max-width:640px){main section[data-tab]{padding:44px 20px 52px;} .page-corner{right:16px;bottom:14px;}}
+@media(max-width:640px){main section[data-tab]{padding:44px 20px 52px;}}
 section{padding:74px 0;}
 .section-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:34px;}
 .section-head h2{font-size:clamp(28px,4.2vw,42px);letter-spacing:-.01em;}
@@ -373,7 +368,7 @@ section{padding:74px 0;}
 .mm-cta-row{display:flex;gap:8px;}
 .btn-block{flex:1;font-family:var(--mono);font-size:11.5px;font-weight:700;padding:11px;border-radius:9px;border:none;cursor:pointer;letter-spacing:.03em;transition:opacity .15s ease;}
 .btn-block:hover{opacity:.88;}
-.btn-block.on{background:var(--mint);color:var(--indigo-deep);}
+.btn-block.on{background:var(--mint);color:#fff;}
 .btn-block.ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.3);}
 
 .mm-best{margin-top:22px;}
@@ -402,7 +397,7 @@ section{padding:74px 0;}
 .cmp-tray.show{opacity:1;transform:translateY(0);pointer-events:auto;}
 .cmp-tray .ct-label{font-family:var(--mono);font-size:12px;font-weight:600;white-space:nowrap;}
 .cmp-tray .ct-actions{display:flex;gap:8px;align-items:center;}
-.cmp-tray button.ct-view{background:var(--mint);color:var(--indigo-deep);border:none;font-family:var(--mono);font-weight:700;font-size:11.5px;padding:9px 15px;border-radius:999px;cursor:pointer;}
+.cmp-tray button.ct-view{background:var(--mint);color:#fff;border:none;font-family:var(--mono);font-weight:700;font-size:11.5px;padding:9px 15px;border-radius:999px;cursor:pointer;}
 .cmp-tray button.ct-clear{background:transparent;border:none;color:rgba(255,255,255,.55);font-size:17px;cursor:pointer;padding:6px 8px;}
 .cmp-tray button.ct-clear:hover{color:#fff;}
 
@@ -512,7 +507,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 .mrp-code .g-toggle{margin-left:5px;}
 .code-text + .g-toggle{margin-left:6px;}
 .lu-price{font-family:var(--mono);font-size:10.5px;font-weight:600;margin-top:3px;}
-@keyframes highlightPulse{0%,100%{box-shadow:0 0 0 0 rgba(156,119,20,0);}30%{box-shadow:0 0 0 4px rgba(156,119,20,.5);}}
+@keyframes highlightPulse{0%,100%{box-shadow:0 0 0 0 rgba(12,143,61,0);}30%{box-shadow:0 0 0 4px rgba(12,143,61,.5);}}
 .lu-card.lu-highlight{animation:highlightPulse 1.8s ease;border-color:var(--coral);}
 .lu-sizecheck{font-family:var(--mono);font-size:9px;font-weight:700;margin-top:4px;}
 .lu-sizecheck.ok{color:#2E8B47;}
@@ -576,7 +571,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 <section data-tab="season" id="season">
   <div class="section-head">
     <div>
-      <p class="eyebrow">P.02 — <b>OPENING</b></p>
+      <p class="eyebrow"><b>OPENING</b></p>
       <h2>Season Message</h2>
     </div>
   </div>
@@ -592,7 +587,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 
 <section data-tab="season" id="keyvisual">
   <div class="section-head">
-    <div><p class="eyebrow">P.03–04 — <b>KEY VISUAL</b></p><h2>이 시즌을 갖고 싶게 만드는 순간</h2></div>
+    <div><p class="eyebrow"><b>KEY VISUAL</b></p><h2>이 시즌을 갖고 싶게 만드는 순간</h2></div>
     <p class="section-note">제품 설명보다 무드가 먼저. 코트 위 가장 대표적인 두 장면으로 시즌을 엽니다.</p>
   </div>
   <div class="kv-spread">
@@ -603,7 +598,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 
 <section data-tab="looks" id="overview">
   <div class="section-head">
-    <div><p class="eyebrow">P.05 — <b>COLLECTION OVERVIEW</b></p><h2>이번 시즌 라인업</h2></div>
+    <div><p class="eyebrow"><b>COLLECTION OVERVIEW</b></p><h2>이번 시즌 라인업</h2></div>
     <p class="section-note">게임 웨어부터 데일리·이지 웨어까지, 26 F/W 웨어맵 기준 카테고리 요약.</p>
   </div>
   <div class="overview-grid" id="overviewGrid"></div>
@@ -611,7 +606,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 
 <section data-tab="looks" id="looks">
   <div class="section-head">
-    <div><p class="eyebrow">P.06–09 — <b>STYLE STORIES</b></p><h2>Coordinated Looks</h2></div>
+    <div><p class="eyebrow"><b>STYLE STORIES</b></p><h2>Coordinated Looks</h2></div>
     <p class="section-note">"예쁘다"에서 끝나지 않도록 — 상의 · 하의 · 코멘트까지 세트로 제안합니다.</p>
   </div>
   <div class="look-grid" id="lookGrid"></div>
@@ -619,7 +614,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 
 <section data-tab="match" id="match">
   <div class="section-head">
-    <div><p class="eyebrow">P.10–13 — <b>DIFFERENTIATOR</b></p><h2>Mix &amp; Match Guide</h2></div>
+    <div><p class="eyebrow"><b>DIFFERENTIATOR</b></p><h2>Mix &amp; Match Guide</h2></div>
     <p class="section-note">상의·하의 고스트컷을 직접 골라 조합하고, 최대 4세트까지 비교함에 담아 비교해보세요.</p>
   </div>
   <div class="mm-wrap">
@@ -679,7 +674,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 
 <section data-tab="looks" id="products">
   <div class="section-head">
-    <div><p class="eyebrow">P.14–17 — <b>KEY PRODUCT DETAIL</b></p><h2>Performance Detail</h2></div>
+    <div><p class="eyebrow"><b>KEY PRODUCT DETAIL</b></p><h2>Performance Detail</h2></div>
     <p class="section-note">기능을 나열하는 대신, 코트 위 움직임과 연결된 언어로.</p>
   </div>
   <div class="pd-grid" id="pdGrid"></div>
@@ -687,14 +682,14 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 
 <section data-tab="season" id="color">
   <div class="section-head">
-    <div><p class="eyebrow">P.18–19 — <b>COLOR STORY</b></p><h2>시즌 컬러가 곧 전략입니다</h2></div>
+    <div><p class="eyebrow"><b>COLOR STORY</b></p><h2>시즌 컬러가 곧 전략입니다</h2></div>
   </div>
   <div class="color-grid" id="colorGrid"></div>
 </section>
 
 <section data-tab="season" id="fabric">
   <div class="section-head">
-    <div><p class="eyebrow">P.20 — <b>FABRIC / DETAIL</b></p><h2>YONEX Technologies</h2></div>
+    <div><p class="eyebrow"><b>FABRIC / DETAIL</b></p><h2>YONEX Technologies</h2></div>
     <p class="section-note">요넥스 자체 개발 기능성 원단 — 26 F/W 컬렉션 실제 적용 기술.</p>
   </div>
   <div class="fab-grid" id="fabGrid"></div>
@@ -702,7 +697,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 
 <section data-tab="lineup" id="lineup">
   <div class="section-head">
-    <div><p class="eyebrow">P.21–23 — <b>FULL LINE-UP</b></p><h2>전체 라인업</h2></div>
+    <div><p class="eyebrow"><b>FULL LINE-UP</b></p><h2>전체 라인업</h2></div>
     <p class="section-note" id="lineupCount"></p>
   </div>
   <div class="lineup-filters" id="lineupGroupFilters"></div>
@@ -717,14 +712,13 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
   <div class="lineup-grid" id="lineupGrid"></div>
 </section>
 
-<span class="page-corner" id="pageCorner">P.02–04</span>
 </main>
 
 <section class="back" data-tab="closing" id="backcover">
   <img src="images/hero/easywear-divider.jpeg" alt="">
   <div class="scrim2"></div>
   <div class="back-inner">
-    <p class="back-tag">P.24 — BACK COVER</p>
+    <p class="back-tag">BACK COVER</p>
     <h2>YONEX<br>2026 FALL / WINTER</h2>
     <p>이 페이지는 요넥스 2026 F/W 의류 카탈로그를 기반으로 재구성한 디지털 목업입니다. 실제 구매·주문 및 전국 대리점 정보는 공식 카탈로그와 요넥스 채널을 참고해 주세요.</p>
     <p class="back-note">YONEX APPAREL E-CATALOGUE · Mix &amp; Match Prototype</p>
@@ -1740,7 +1734,6 @@ const TAB_ORDER = [
   {id:'closing', label:'CLOSING'},
 ];
 let currentTabIndex = 0;
-const PAGE_LABELS = {cover:'P.01',match:'P.10–13',looks:'P.05–09, 14–17',lineup:'P.21–23',season:'P.02–04, 18–20',closing:'P.24'};
 const MAIN_TABS = ['match','looks','lineup','season'];
 
 function switchTab(tabId){
@@ -1755,7 +1748,6 @@ function switchTab(tabId){
     if(active){ el.classList.remove('tab-enter'); void el.offsetWidth; el.classList.add('tab-enter'); }
   });
   if(MAIN_TABS.includes(tabId)){ mainEl.classList.remove('tab-enter'); void mainEl.offsetWidth; mainEl.classList.add('tab-enter'); }
-  document.getElementById('pageCorner').textContent = PAGE_LABELS[tabId] + ' / 24P';
   document.querySelectorAll('#navPills button').forEach(b=> b.classList.toggle('active', b.dataset.tab===tabId));
   document.getElementById('pgLabel').textContent = TAB_ORDER[idx].label;
   document.getElementById('pgIndex').textContent = (idx+1)+' / '+TAB_ORDER.length;
