@@ -429,8 +429,19 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 .lu-empty{grid-column:1 / -1;text-align:center;padding:50px 20px;color:var(--muted);font-size:13.5px;background:var(--card);border:1px dashed var(--line);border-radius:14px;}
 @media(max-width:960px){.lineup-grid{grid-template-columns:repeat(4,1fr);}}
 @media(max-width:640px){.lineup-grid{grid-template-columns:repeat(3,1fr);}}
-.lu-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 8px 10px;}
-.lu-photo{aspect-ratio:1/1.05;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:8px;margin-bottom:7px;}
+.lu-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 8px 10px;position:relative;transition:box-shadow .15s ease,border-color .15s ease;}
+.lu-card.cmp-selected{border-color:var(--indigo);box-shadow:0 0 0 2px var(--indigo);}
+.lu-photo{aspect-ratio:1/1.05;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:8px;margin-bottom:7px;position:relative;}
+.lu-cmp-toggle{
+  position:absolute;top:6px;right:6px;z-index:2;width:22px;height:22px;border-radius:50%;
+  background:rgba(255,255,255,.92);border:1.5px solid var(--line);color:var(--ink);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;
+  transition:background .15s ease,border-color .15s ease,transform .1s ease;
+}
+.lu-cmp-toggle:hover{border-color:var(--indigo);}
+.lu-cmp-toggle:active{transform:scale(.9);}
+.lu-cmp-toggle.active{background:var(--indigo);border-color:var(--indigo);color:#fff;}
+.lu-cmp-toggle svg{width:12px;height:12px;}
 .lu-photo img{max-height:100%;object-fit:contain;}
 .lu-code{font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--ink);}
 .lu-color{font-size:10.5px;color:var(--muted);}
@@ -1003,12 +1014,24 @@ document.getElementById('sfWeightInput').addEventListener('input', e=>{
   updateSizeFinder();
 });
 
-/* =============== COMPARE TRAY =============== */
+/* =============== COMPARE TRAY (holds Mix&Match pairs and single Line-up items together) =============== */
 function addToCompare(topCode, bottomCode){
-  if(state.compare.some(c=>c.top===topCode && c.bottom===bottomCode)) return renderTray();
+  if(state.compare.some(c=>c.type==='pair' && c.top===topCode && c.bottom===bottomCode)) return renderTray();
   if(state.compare.length>=4){ state.compare.shift(); }
-  state.compare.push({top:topCode, bottom:bottomCode});
+  state.compare.push({type:'pair', top:topCode, bottom:bottomCode});
   renderTray();
+}
+function addSingleToCompare(code){
+  if(state.compare.some(c=>c.type==='single' && c.code===code)) return renderTray();
+  if(state.compare.length>=4){ state.compare.shift(); }
+  state.compare.push({type:'single', code});
+  renderTray();
+  if(window.syncLineupCompareSelection) window.syncLineupCompareSelection();
+}
+function removeFromCompare(idx){
+  state.compare.splice(idx,1);
+  renderTray();
+  if(window.syncLineupCompareSelection) window.syncLineupCompareSelection();
 }
 function renderTray(){
   const n = state.compare.length;
@@ -1016,33 +1039,58 @@ function renderTray(){
   document.getElementById('cmpTray').classList.toggle('show', n>0);
   document.getElementById('ctView').disabled = n===0;
 }
-document.getElementById('ctClear').addEventListener('click', ()=>{ state.compare=[]; renderTray(); });
+document.getElementById('ctClear').addEventListener('click', ()=>{ state.compare=[]; renderTray(); if(window.syncLineupCompareSelection) window.syncLineupCompareSelection(); });
 document.getElementById('ctView').addEventListener('click', openCompareModal);
 document.getElementById('cmpClose').addEventListener('click', ()=> document.getElementById('cmpOverlay').classList.remove('open'));
 document.getElementById('cmpOverlay').addEventListener('click', e=>{ if(e.target.id==='cmpOverlay') e.currentTarget.classList.remove('open'); });
 
+function compareEntryData(entry){
+  if(entry.type==='pair'){
+    const top=byCode(entry.top), bottom=byCode(entry.bottom);
+    const mt = matchType(top.family, bottom.family);
+    const curated = findCurated(top.code, bottom.code);
+    return {
+      imgs:[top.img, bottom.img],
+      category:'TOP + BOTTOM',
+      product:`${top.code} · ${top.color}<br>${bottom.code} · ${bottom.color}`,
+      material:`${top.material}<br>${bottom.material}`,
+      size:`${top.size}<br>${bottom.size}`,
+      matchType: mt.en + (curated?' · EDITOR PICK':''),
+      comment: curated? curated.comment : `${top.color} × ${bottom.color} — ${mt.kr}`,
+      price:(top.price+bottom.price).toLocaleString()+'원',
+    };
+  }
+  const p = byCode(entry.code);
+  const cat = TOPS.some(t=>t.code===entry.code) ? 'TOP' : 'BOTTOM';
+  return {
+    imgs:[p.img],
+    category:cat,
+    product:`${p.code} · ${p.color}`,
+    material:p.material,
+    size:p.size,
+    matchType:'—',
+    comment:'—',
+    price:p.price.toLocaleString()+'원',
+  };
+}
 function openCompareModal(){
   if(state.compare.length===0) return;
-  const rows = ['TOP','BOTTOM','컬러','매치 타입','코멘트','합계 가격'];
-  let thead = '<tr><th></th>' + state.compare.map((c,i)=>{
-    const top=byCode(c.top), bottom=byCode(c.bottom);
-    return `<th><div class="cmp-col-head"><div class="cc-imgs"><img src="${top.img}"><img src="${bottom.img}"></div><button class="cc-remove" data-rm="${i}">제거</button></div></th>`;
-  }).join('') + '</tr>';
-  function rowHTML(label, fn){
-    return `<tr><td>${label}</td>` + state.compare.map(c=>{
-      const top=byCode(c.top), bottom=byCode(c.bottom);
-      return `<td>${fn(top,bottom,c)}</td>`;
-    }).join('') + '</tr>';
+  const data = state.compare.map(compareEntryData);
+  let thead = '<tr><th></th>' + data.map((d,i)=>`<th><div class="cmp-col-head"><div class="cc-imgs">${d.imgs.map(src=>`<img src="${src}">`).join('')}</div><button class="cc-remove" data-rm="${i}">제거</button></div></th>`).join('') + '</tr>';
+  function rowHTML(label, key){
+    return `<tr><td>${label}</td>` + data.map(d=>`<td>${d[key]}</td>`).join('') + '</tr>';
   }
   let tbody = '';
-  tbody += rowHTML('TOP', (t,b)=>`${t.code}<br>${t.color}`);
-  tbody += rowHTML('BOTTOM', (t,b)=>`${b.code}<br>${b.color}`);
-  tbody += rowHTML('매치 타입', (t,b)=>{ const mt=matchType(t.family,b.family); const cur=findCurated(t.code,b.code); return mt.en + (cur? ' · EDITOR PICK':''); });
-  tbody += rowHTML('코멘트', (t,b)=>{ const cur=findCurated(t.code,b.code); const mt=matchType(t.family,b.family); return cur? cur.comment : `${t.color} × ${b.color} — ${mt.kr}`; });
-  tbody += rowHTML('합계 가격', (t,b)=>(t.price+b.price).toLocaleString()+'원');
+  tbody += rowHTML('카테고리','category');
+  tbody += rowHTML('상품','product');
+  tbody += rowHTML('소재','material');
+  tbody += rowHTML('사이즈','size');
+  tbody += rowHTML('매치 타입','matchType');
+  tbody += rowHTML('코멘트','comment');
+  tbody += rowHTML('가격','price');
   document.getElementById('cmpTable').innerHTML = thead + tbody;
   document.getElementById('cmpTable').querySelectorAll('[data-rm]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{ state.compare.splice(+btn.dataset.rm,1); renderTray(); if(state.compare.length) openCompareModal(); else document.getElementById('cmpOverlay').classList.remove('open'); });
+    btn.addEventListener('click', ()=>{ removeFromCompare(+btn.dataset.rm); if(state.compare.length) openCompareModal(); else document.getElementById('cmpOverlay').classList.remove('open'); });
   });
   document.getElementById('cmpOverlay').classList.add('open');
 }
@@ -1140,9 +1188,15 @@ document.addEventListener('click', e=>{
         if(fits===true) badge = `<div class="lu-sizecheck ok">추천 ${rec.size} 있음 ✓</div>`;
         else if(fits===false) badge = `<div class="lu-sizecheck no">추천 ${rec.size} 없음</div>`;
       }
+      const selected = state.compare.some(c=>c.type==='single' && c.code===p.code);
       return `
-      <div class="lu-card" data-code="${p.code}">
-        <div class="lu-photo"><img src="${p.img}" alt="${p.code}"></div>
+      <div class="lu-card ${selected?'cmp-selected':''}" data-code="${p.code}">
+        <div class="lu-photo">
+          <img src="${p.img}" alt="${p.code}">
+          <button class="lu-cmp-toggle ${selected?'active':''}" data-cmp="${p.code}" title="비교함에 담기">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </div>
         <div class="lu-code">${p.code}</div>
         <div class="lu-color">${p.color}</div>
         <div class="lu-price">${p.price.toLocaleString()}원</div>
@@ -1163,7 +1217,14 @@ document.addEventListener('click', e=>{
     document.querySelectorAll('#lineupGroupFilters .lchip').forEach(b=>b.classList.toggle('active', b===btn));
     draw();
   });
+  document.getElementById('lineupGrid').addEventListener('click', e=>{
+    const btn = e.target.closest('[data-cmp]'); if(!btn) return;
+    const code = btn.dataset.cmp;
+    const idx = state.compare.findIndex(c=>c.type==='single' && c.code===code);
+    if(idx>-1){ removeFromCompare(idx); } else { addSingleToCompare(code); }
+  });
   window.refreshLineupSizes = function(){ draw(); };
+  window.syncLineupCompareSelection = function(){ draw(); };
   window.showLineupGroup = function(group){
     currentGroup = group; currentCat = 'all';
     document.querySelectorAll('#lineupGroupFilters .lchip').forEach(b=>b.classList.toggle('active', b.dataset.group===group));
