@@ -186,6 +186,10 @@ section{padding:74px 0;}
 .ov-card .ov-num{font-family:var(--mono);font-size:11px;color:var(--muted);}
 .ov-card h3{font-size:20px;}
 .ov-card .ov-count{font-family:var(--mono);font-size:12.5px;color:var(--indigo);font-weight:600;}
+.ov-card .ov-note{font-size:10.5px;color:var(--muted);margin-top:2px;}
+.ov-card.soon{background:transparent;border-style:dashed;}
+.ov-card.soon h3{color:var(--muted);}
+.ov-card.soon .ov-count{color:var(--muted);}
 
 /* ---------- LOOK CARDS ---------- */
 .look-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
@@ -787,17 +791,20 @@ const state = { colorFilter:'all', selTop: TOPS[0].code, selBottom: BOTTOMS[0].c
 
 /* =============== RENDER: overview =============== */
 (function renderOverview(){
+  const GAME_WEAR_COLLECTIONS = ['Korea National Team','Japan National Team','Game Wear','World Collection · Practice','World Collection · Tournament','World Collection · LCW'];
+  const gameCount = TOPS.filter(t=>GAME_WEAR_COLLECTIONS.includes(t.collection)).length + BOTTOMS.filter(b=>GAME_WEAR_COLLECTIONS.includes(b.collection)).length;
+  const dailyCount = TOPS.filter(t=>t.collection==='Daily Wear').length + BOTTOMS.filter(b=>b.collection==='Daily Wear').length;
   const cats = [
-    {n:'01',name:'Game Wear',count: TOPS.filter(t=>t.collection.includes('Game')||t.collection.includes('National')).length + BOTTOMS.filter(b=>b.collection.includes('Game')||b.collection.includes('National')).length, sample:TOPS[5]},
-    {n:'02',name:'Daily Wear',count: BOTTOMS.filter(b=>b.collection==='Daily Wear').length, sample:BOTTOMS[3]},
-    {n:'03',name:'World Collection',count: TOPS.filter(t=>t.collection.includes('World')).length + BOTTOMS.filter(b=>b.collection.includes('World')).length, sample:TOPS[1]},
-    {n:'04',name:'Wear Map (전체)',count: TOPS.length+BOTTOMS.length, sample:BOTTOMS[6]},
+    {n:'01',name:'Game Wear',count: gameCount, note:'World Collection 포함'},
+    {n:'02',name:'Daily Wear',count: dailyCount},
+    {n:'03',name:'Easy Wear',count: 0, soon:true},
+    {n:'04',name:'Acc / Bag',count: 0, soon:true},
   ];
   document.getElementById('overviewGrid').innerHTML = cats.map(c=>`
-    <div class="ov-card">
+    <div class="ov-card ${c.soon?'soon':''}">
       <div class="ov-num">${c.n}</div>
-      <h3>${c.name}</h3>
-      <div class="ov-count">${c.count} ITEMS</div>
+      <div><h3>${c.name}</h3>${c.note?`<div class="ov-note">${c.note}</div>`:''}</div>
+      <div class="ov-count">${c.soon ? '확장 예정' : c.count+' ITEMS'}</div>
     </div>`).join('');
 })();
 
