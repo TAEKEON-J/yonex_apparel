@@ -43,17 +43,36 @@ header.nav{
   border-bottom:1px solid var(--line);
 }
 .nav-row{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 20px;}
-.wordmark{font-family:var(--serif);font-weight:700;font-size:17px;letter-spacing:-.01em;display:flex;align-items:center;gap:9px;white-space:nowrap;}
+.wordmark{font-family:var(--serif);font-weight:700;font-size:17px;letter-spacing:-.01em;display:flex;align-items:center;gap:9px;white-space:nowrap;background:none;border:none;cursor:pointer;color:var(--ink);padding:0;}
 .wordmark .dot{width:7px;height:7px;border-radius:50%;background:var(--coral);}
 .season-pill{font-family:var(--mono);font-size:10px;font-weight:600;background:var(--indigo);color:var(--paper);padding:4px 9px;border-radius:999px;letter-spacing:.05em;}
 nav.pills{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;}
 nav.pills::-webkit-scrollbar{display:none;}
-nav.pills a{
+nav.pills button{
   flex:none;font-size:12.5px;font-weight:600;color:var(--ink-soft);padding:8px 12px;border-radius:999px;
-  white-space:nowrap;transition:background .15s ease,color .15s ease;
+  white-space:nowrap;transition:background .15s ease,color .15s ease;background:none;border:none;cursor:pointer;font-family:var(--sans);
 }
-nav.pills a:hover{background:rgba(54,43,107,.08);color:var(--ink);}
-nav.pills a.active{background:var(--ink);color:var(--paper);}
+nav.pills button:hover{background:rgba(54,43,107,.08);color:var(--ink);}
+nav.pills button.active{background:var(--ink);color:var(--paper);}
+
+/* ---------- PAGER ---------- */
+.pager-row{
+  max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:0 20px 12px;
+}
+.pager-row .pg-btn{
+  font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.04em;background:none;border:1px solid var(--line);
+  color:var(--ink-soft);padding:7px 13px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:6px;
+  transition:border-color .15s ease,color .15s ease;
+}
+.pager-row .pg-btn:hover:not(:disabled){border-color:var(--ink);color:var(--ink);}
+.pager-row .pg-btn:disabled{opacity:.32;cursor:default;}
+.pager-row .pg-mid{font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.pager-row .pg-mid b{color:var(--ink);font-weight:700;}
+.pager-dots{display:flex;gap:5px;}
+.pager-dots i{width:5px;height:5px;border-radius:50%;background:var(--line);display:inline-block;}
+.pager-dots i.on{background:var(--indigo);}
+@media(max-width:560px){.pager-dots{display:none;}}
 
 /* ---------- COVER ---------- */
 .cover{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--coral);}
@@ -66,12 +85,15 @@ nav.pills a.active{background:var(--ink);color:var(--paper);}
 .cover h1 em{font-style:italic;color:var(--mint);}
 .cover .cover-sub{font-size:15.5px;color:rgba(255,255,255,.82);max-width:460px;margin:18px 0 0;line-height:1.7;}
 .cover-scroll{
-  position:absolute;right:24px;bottom:24px;z-index:2;color:rgba(255,255,255,.8);
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;display:flex;flex-direction:column;align-items:center;gap:8px;
+  position:absolute;right:24px;bottom:24px;z-index:2;
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;
+  display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.5);
+  color:#fff;padding:11px 18px;border-radius:999px;cursor:pointer;backdrop-filter:blur(4px);
+  transition:background .15s ease;
 }
-.cover-scroll .line{width:1px;height:34px;background:rgba(255,255,255,.5);animation:grow 1.8s ease-in-out infinite;}
-@keyframes grow{0%,100%{transform:scaleY(.4);opacity:.5;}50%{transform:scaleY(1);opacity:1;}}
+.cover-scroll:hover{background:rgba(255,255,255,.26);}
 
+section[data-tab]{display:none;}
 main{max-width:1180px;margin:0 auto;padding:0 20px;}
 section{padding:74px 0;border-bottom:1px solid var(--line);}
 section:last-of-type{border-bottom:none;}
@@ -289,19 +311,25 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 
 <header class="nav">
   <div class="nav-row">
-    <div class="wordmark"><span class="dot"></span>YONEX APPAREL<span class="season-pill">26 F/W</span></div>
+    <button class="wordmark" id="logoHome"><span class="dot"></span>YONEX APPAREL<span class="season-pill">26 F/W</span></button>
     <nav class="pills" id="navPills">
-      <a href="#season">SEASON</a>
-      <a href="#looks">LOOKS</a>
-      <a href="#match">MIX&amp;MATCH</a>
-      <a href="#products">PRODUCTS</a>
-      <a href="#color">COLOR</a>
-      <a href="#lineup">LINE-UP</a>
+      <button data-tab="season">SEASON</button>
+      <button data-tab="looks">LOOKS</button>
+      <button data-tab="match">MIX&amp;MATCH</button>
+      <button data-tab="products">PRODUCTS</button>
+      <button data-tab="color">COLOR</button>
+      <button data-tab="lineup">LINE-UP</button>
+      <button data-tab="closing">CLOSING</button>
     </nav>
+  </div>
+  <div class="pager-row">
+    <button class="pg-btn" id="pgPrev">← PREV</button>
+    <div class="pg-mid"><b id="pgLabel">COVER</b><span id="pgIndex">1 / 8</span><span class="pager-dots" id="pgDots"></span></div>
+    <button class="pg-btn" id="pgNext">NEXT →</button>
   </div>
 </header>
 
-<section class="cover" id="cover">
+<section class="cover" data-tab="cover" id="cover">
   <img src="images/hero/cover-coral-1.jpeg" alt="YONEX 2026 F/W 배드민턴 국가대표팀 유니폼">
   <div class="scrim"></div>
   <div class="cover-inner">
@@ -309,12 +337,12 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
     <h1>MOVE WITH<br><em>PRECISION.</em></h1>
     <p class="cover-sub">랠리마다 흔들림 없는 퍼포먼스를 위한 요넥스 2026 F/W 의류 컬렉션. 상의와 하의를 직접 매칭해보고, 나만의 코트 룩을 완성해보세요.</p>
   </div>
-  <div class="cover-scroll"><span>SCROLL</span><span class="line"></span></div>
+  <button class="cover-scroll" id="coverNext"><span>시즌 열어보기</span><span>→</span></button>
 </section>
 
 <main>
 
-<section id="season">
+<section data-tab="season" id="season">
   <div class="section-head">
     <div>
       <p class="eyebrow">P.02 — <b>OPENING</b></p>
@@ -331,7 +359,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
   </div>
 </section>
 
-<section id="keyvisual">
+<section data-tab="season" id="keyvisual">
   <div class="section-head">
     <div><p class="eyebrow">P.03–04 — <b>KEY VISUAL</b></p><h2>이 시즌을 갖고 싶게 만드는 순간</h2></div>
     <p class="section-note">제품 설명보다 무드가 먼저. 코트 위 가장 대표적인 두 장면으로 시즌을 엽니다.</p>
@@ -342,7 +370,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
   </div>
 </section>
 
-<section id="overview">
+<section data-tab="looks" id="overview">
   <div class="section-head">
     <div><p class="eyebrow">P.05 — <b>COLLECTION OVERVIEW</b></p><h2>이번 시즌 라인업</h2></div>
     <p class="section-note">게임 웨어부터 데일리·이지 웨어까지, 26 F/W 웨어맵 기준 카테고리 요약.</p>
@@ -350,7 +378,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
   <div class="overview-grid" id="overviewGrid"></div>
 </section>
 
-<section id="looks">
+<section data-tab="looks" id="looks">
   <div class="section-head">
     <div><p class="eyebrow">P.06–09 — <b>STYLE STORIES</b></p><h2>Coordinated Looks</h2></div>
     <p class="section-note">"예쁘다"에서 끝나지 않도록 — 상의 · 하의 · 코멘트까지 세트로 제안합니다.</p>
@@ -358,7 +386,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
   <div class="look-grid" id="lookGrid"></div>
 </section>
 
-<section id="match">
+<section data-tab="match" id="match">
   <div class="section-head">
     <div><p class="eyebrow">P.10–13 — <b>DIFFERENTIATOR</b></p><h2>Mix &amp; Match Guide</h2></div>
     <p class="section-note">상의·하의 고스트컷을 직접 골라 조합하고, 최대 4세트까지 비교함에 담아 비교해보세요.</p>
@@ -397,7 +425,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
   </div>
 </section>
 
-<section id="products">
+<section data-tab="products" id="products">
   <div class="section-head">
     <div><p class="eyebrow">P.14–17 — <b>KEY PRODUCT DETAIL</b></p><h2>Performance Detail</h2></div>
     <p class="section-note">기능을 나열하는 대신, 코트 위 움직임과 연결된 언어로.</p>
@@ -405,14 +433,14 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
   <div class="pd-grid" id="pdGrid"></div>
 </section>
 
-<section id="color">
+<section data-tab="color" id="color">
   <div class="section-head">
     <div><p class="eyebrow">P.18–19 — <b>COLOR STORY</b></p><h2>시즌 컬러가 곧 전략입니다</h2></div>
   </div>
   <div class="color-grid" id="colorGrid"></div>
 </section>
 
-<section id="fabric">
+<section data-tab="color" id="fabric">
   <div class="section-head">
     <div><p class="eyebrow">P.20 — <b>FABRIC / DETAIL</b></p><h2>YONEX Technologies</h2></div>
     <p class="section-note">요넥스 자체 개발 기능성 원단 — 26 F/W 컬렉션 실제 적용 기술.</p>
@@ -420,7 +448,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
   <div class="fab-grid" id="fabGrid"></div>
 </section>
 
-<section id="lineup">
+<section data-tab="lineup" id="lineup">
   <div class="section-head">
     <div><p class="eyebrow">P.21–23 — <b>FULL LINE-UP</b></p><h2>전체 라인업</h2></div>
     <p class="section-note" id="lineupCount"></p>
@@ -431,7 +459,7 @@ table.cmp th:first-child,table.cmp td:first-child{color:var(--muted);font-weight
 
 </main>
 
-<section class="back" id="backcover">
+<section class="back" data-tab="closing" id="backcover">
   <img src="images/hero/easywear-divider.jpeg" alt="">
   <div class="scrim2"></div>
   <div class="back-inner">
@@ -666,7 +694,6 @@ document.getElementById('bottomPicker').addEventListener('click', e=>{
 document.getElementById('mmBestRow').addEventListener('click', e=>{
   const el = e.target.closest('[data-pick]'); if(!el) return;
   const [t,b] = el.dataset.pick.split('|'); selectPair(t,b);
-  document.getElementById('match').scrollIntoView({behavior:'smooth', block:'start'});
 });
 document.getElementById('mmRandomBtn').addEventListener('click', ()=>{
   const t = TOPS[Math.floor(Math.random()*TOPS.length)];
@@ -724,7 +751,7 @@ document.addEventListener('click', e=>{
   const pick = e.target.closest('[data-pick]');
   if(pick && pick.closest('.look-actions')){
     const [t,b] = pick.dataset.pick.split('|'); selectPair(t,b);
-    document.getElementById('match').scrollIntoView({behavior:'smooth', block:'start'});
+    switchTab('match');
   }
   const add = e.target.closest('[data-cmpadd]');
   if(add){ const [t,b] = add.dataset.cmpadd.split('|'); addToCompare(t,b); }
@@ -808,20 +835,44 @@ document.addEventListener('click', e=>{
   });
 })();
 
-/* =============== NAV ACTIVE STATE =============== */
-(function navObserver(){
-  const links = Array.from(document.querySelectorAll('#navPills a'));
-  const targets = links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(en=>{
-      if(en.isIntersecting){
-        const id = '#'+en.target.id;
-        links.forEach(a=>a.classList.toggle('active', a.getAttribute('href')===id));
-      }
-    });
-  }, {rootMargin:'-40% 0px -50% 0px'});
-  targets.forEach(t=>io.observe(t));
-})();
+/* =============== TAB NAVIGATION =============== */
+const TAB_ORDER = [
+  {id:'cover', label:'COVER'},
+  {id:'season', label:'SEASON'},
+  {id:'looks', label:'LOOKS'},
+  {id:'match', label:'MIX & MATCH'},
+  {id:'products', label:'PRODUCTS'},
+  {id:'color', label:'COLOR'},
+  {id:'lineup', label:'LINE-UP'},
+  {id:'closing', label:'CLOSING'},
+];
+let currentTabIndex = 0;
+
+function switchTab(tabId){
+  const idx = TAB_ORDER.findIndex(t=>t.id===tabId);
+  if(idx===-1) return;
+  currentTabIndex = idx;
+  document.querySelectorAll('section[data-tab]').forEach(el=>{
+    const active = el.dataset.tab===tabId;
+    el.style.display = active ? (el.classList.contains('cover') ? 'flex' : 'block') : 'none';
+  });
+  document.querySelectorAll('#navPills button').forEach(b=> b.classList.toggle('active', b.dataset.tab===tabId));
+  document.getElementById('pgLabel').textContent = TAB_ORDER[idx].label;
+  document.getElementById('pgIndex').textContent = (idx+1)+' / '+TAB_ORDER.length;
+  document.getElementById('pgDots').innerHTML = TAB_ORDER.map((t,i)=>`<i class="${i===idx?'on':''}"></i>`).join('');
+  document.getElementById('pgPrev').disabled = idx===0;
+  document.getElementById('pgNext').disabled = idx===TAB_ORDER.length-1;
+  window.scrollTo({top:0, behavior:'auto'});
+}
+
+document.getElementById('navPills').addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-tab]'); if(!btn) return;
+  switchTab(btn.dataset.tab);
+});
+document.getElementById('logoHome').addEventListener('click', ()=> switchTab('cover'));
+document.getElementById('coverNext').addEventListener('click', ()=> switchTab('season'));
+document.getElementById('pgPrev').addEventListener('click', ()=>{ if(currentTabIndex>0) switchTab(TAB_ORDER[currentTabIndex-1].id); });
+document.getElementById('pgNext').addEventListener('click', ()=>{ if(currentTabIndex<TAB_ORDER.length-1) switchTab(TAB_ORDER[currentTabIndex+1].id); });
 
 /* =============== INIT =============== */
 renderFilters();
@@ -829,6 +880,7 @@ renderPickers();
 renderPreview();
 renderBest();
 renderTray();
+switchTab('cover');
 </script>
 </body>
 </html>
