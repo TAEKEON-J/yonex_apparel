@@ -104,6 +104,30 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 @media(max-width:760px){.look-grid{grid-template-columns:1fr 1fr;gap:28px 16px !important;} .cat-hero{padding:52px 18px 10px;} .look-grid{padding:26px 18px 80px;}}
 @media(max-width:480px){.look-grid{grid-template-columns:1fr;}}
 
+/* ===== CAMPAIGN (editorial carousel) ===== */
+.editorial-carousel{max-width:1440px;margin:0 auto;padding:44px 28px 0;}
+.ec-head{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:18px;}
+.ec-head h4{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--ink);font-weight:700;}
+.ec-count{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.ec-featured{position:relative;aspect-ratio:16/7;overflow:hidden;cursor:pointer;background:var(--paper-3);}
+.ec-featured img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .5s var(--ease);}
+.ec-featured:hover img{transform:scale(1.02);}
+.ec-scrim{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.45) 0%,rgba(0,0,0,0) 35%);pointer-events:none;}
+.ec-featured-cap{position:absolute;left:24px;bottom:22px;color:#fff;z-index:2;}
+.ec-featured-cap .eyebrow{color:rgba(255,255,255,.75);}
+.ec-featured-cap h3{color:#fff;font-size:24px;margin-top:6px;letter-spacing:-.01em;}
+.ec-strip{display:flex;gap:14px;margin-top:14px;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.ec-strip::-webkit-scrollbar{display:none;}
+.ec-thumb{flex:0 0 auto;width:150px;aspect-ratio:4/5;cursor:pointer;scroll-snap-align:start;overflow:hidden;background:var(--paper-3);border:1px solid transparent;transition:border-color .2s;}
+.ec-thumb.active{border-color:var(--ink);}
+.ec-thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;}
+@media(max-width:760px){
+  .editorial-carousel{padding:34px 18px 0;}
+  .ec-featured{aspect-ratio:4/5;}
+  .ec-featured-cap h3{font-size:20px;}
+  .ec-thumb{width:110px;}
+}
+
 /* ===== FULL LINE-UP (all SKUs in a category) ===== */
 .full-lineup{max-width:1320px;margin:0 auto;padding:0 28px 120px;border-top:1px solid var(--line-soft);}
 .fl-head{display:flex;align-items:baseline;justify-content:space-between;padding:46px 0 30px;}
@@ -483,8 +507,12 @@ const HS_DEFAULT = {top:{x:24,y:13,w:52,h:39},bottom:{x:22,y:50,w:56,h:31}};
    gender before the other. Casual/Easy stay single-gender for now since we only
    have photography for one gender in each of those categories. */
 const LOOKS = [
-  {id:'g1',cat:'game',num:1,img:'images/looks/263TS001M_261PH001M_editorial.jpg',fitImg:'images/looks/263TS001M_261PH001M_model.jpg',model:'Men',caption:'Match Point',
-    /* Model is wearing 261PH001M-1 — an exceptional/previous-season code
+  {id:'g1',cat:'game',num:1,img:'images/looks/263TS001M_261PH001M_editorial.jpg',fitImg:'images/looks/263TS001M_261PH001M_model.jpg',hasEditorial:true,model:'Men',caption:'Match Point',
+    /* hasEditorial: only set once a real, dedicated 화보컷 shoot exists for
+       this look — drives the editorial carousel on the category page. Most
+       looks only get a 모델컷, so leave this unset for those; the main LOOK
+       grid and detail pages use the model cut regardless.
+       Model is wearing 261PH001M-1 — an exceptional/previous-season code
        (per brand, this exact item's product code), styled on set under the
        current 263TS001M top. BOTTOM points at that exact code so the panel
        shows what's really in the photo, not this season's 263PH001M.
@@ -595,6 +623,26 @@ function renderCategory(key){
   const c = CATEGORIES[key];
   if(!c) return renderCover();
   const looks = LOOKS.filter(l=>l.cat===key);
+  const editorialLooks = looks.filter(l=>l.hasEditorial);
+  const featured = editorialLooks[0];
+  /* CAMPAIGN carousel: a small, curated strip of looks that got a real
+     화보컷 (editorial/campaign) shoot — most looks only get a 모델컷, so
+     this section only appears once at least one look has hasEditorial set,
+     and only lists those looks. It's a mood/campaign moment, separate from
+     the LOOK grid below (which is the comprehensive, model-cut-driven way
+     to browse every look regardless of whether it has an editorial shot). */
+  const carouselHtml = editorialLooks.length ? `
+    <section class="editorial-carousel">
+      <div class="ec-head"><h4>CAMPAIGN</h4><span class="ec-count">${String(editorialLooks.length).padStart(2,'0')}</span></div>
+      <div class="ec-featured" onclick="go('look','${featured.id}')">
+        ${lookImgTag(featured.items, 'editorial', featured.img, `alt="${featured.caption}"`)}
+        <div class="ec-scrim"></div>
+        <div class="ec-featured-cap"><div class="eyebrow">${c.label} — LOOK ${String(featured.num).padStart(2,'0')}</div><h3>${featured.caption}</h3></div>
+      </div>
+      <div class="ec-strip">
+        ${editorialLooks.map((l,i)=>`<div class="ec-thumb${i===0?' active':''}" onclick="event.stopPropagation();go('look','${l.id}')">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>`).join('')}
+      </div>
+    </section>` : '';
   return `<div class="view">
     <section class="cat-hero">
       <div class="cat-tags">${c.keywords.map(k=>`<span>${k}</span>`).join('')}</div>
@@ -602,13 +650,14 @@ function renderCategory(key){
       <p>${c.tagline} ${c.desc}</p>
       <div class="cat-count">${String(looks.length).padStart(2,'0')} LOOKS</div>
     </section>
+    ${carouselHtml}
     <section class="look-grid">
       ${looks.map(l=>`
         <article class="look-card reveal" onclick="go('look','${l.id}')">
-          <div class="lc-frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${c.label} ${l.caption}" loading="lazy"`)}</div>
+          <div class="lc-frame">${lookImgTag(l.items, 'model', l.fitImg, `alt="${c.label} ${l.caption}" loading="lazy"`)}</div>
           <div class="lc-meta">
             <div>
-              <div class="lc-num">MODEL 0${l.num} — LOOK 0${l.num}</div>
+              <div class="lc-num">MODEL ${String(l.num).padStart(2,'0')} — LOOK ${String(l.num).padStart(2,'0')}</div>
               <div class="lc-cap">${l.caption}</div>
             </div>
             <div class="lc-view">VIEW &rarr;</div>
@@ -750,7 +799,7 @@ function renderLook(id){
     <section class="look-detail" data-prev="${prev.id}" data-next="${next.id}" data-id="${id}">
       <div class="ld-crumb">
         <a href="#category/${look.cat}" onclick="event.preventDefault();go('category','${look.cat}')">${c.label}</a>
-        <span class="sep">/</span><b>LOOK 0${look.num}</b>
+        <span class="sep">/</span><b>LOOK ${String(look.num).padStart(2,'0')}</b>
         ${lookToggleHtml}
       </div>
       <div class="ld-split">
@@ -761,7 +810,7 @@ function renderLook(id){
           <span class="swipe-hint right">&rsaquo;</span>
           ${hotspotsHtml}
           <div class="ld-caption">
-            <div class="eyebrow">${c.label} — LOOK 0${look.num}</div>
+            <div class="eyebrow">${c.label} — LOOK ${String(look.num).padStart(2,'0')}</div>
             <h3>${look.caption}</h3>
           </div>
         </div>
@@ -775,7 +824,7 @@ function renderLook(id){
       </button>
       <div class="ld-nav-mid">
         <div class="eyebrow">${c.label}</div>
-        <div class="lm-num">LOOK 0${look.num}</div>
+        <div class="lm-num">LOOK ${String(look.num).padStart(2,'0')}</div>
       </div>
       <button class="ld-nav-btn next" onclick="go('look','${next.id}')">
         <span><span class="lb-lbl">NEXT LOOK</span><span class="lb-cap">${next.caption}</span></span>
@@ -800,7 +849,7 @@ function renderWornWithSection(look){
       ${related.map(l=>`
         <div class="ww-card" onclick="go('look','${l.id}')">
           <div class="ww-frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>
-          <div class="ww-lbl">${CATEGORIES[l.cat].label} — LOOK 0${l.num}</div>
+          <div class="ww-lbl">${CATEGORIES[l.cat].label} — LOOK ${String(l.num).padStart(2,'0')}</div>
         </div>`).join('')}
     </div>
   </section>`;
@@ -889,7 +938,7 @@ function openProduct(code, lookId){
     ${related.length ? `<div class="pm-ww"><h5>WORN WITH</h5><div class="pm-ww-row">
       ${related.map(l=>`<div class="ww-mini" onclick="go('look','${l.id}')">
         <div class="frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}"`)}</div>
-        <div class="lbl">LOOK 0${l.num}</div>
+        <div class="lbl">LOOK ${String(l.num).padStart(2,'0')}</div>
       </div>`).join('')}
     </div></div>` : ''}
   `;
@@ -957,7 +1006,7 @@ function paintMix(){
     </div>`;
   const match = mixMatchLook();
   cta.innerHTML = match
-    ? `<button onclick="go('look','${match.id}')">VIEW STYLING &rarr;</button><div class="mc-note">Styled as ${CATEGORIES[match.cat].label} — LOOK 0${match.num}</div>`
+    ? `<button onclick="go('look','${match.id}')">VIEW STYLING &rarr;</button><div class="mc-note">Styled as ${CATEGORIES[match.cat].label} — LOOK ${String(match.num).padStart(2,'0')}</div>`
     : `<button disabled>VIEW STYLING</button><div class="mc-note">No styled photo for this pairing yet</div>`;
 }
 function shiftMix(which, dir){
