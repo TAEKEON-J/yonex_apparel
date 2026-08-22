@@ -192,7 +192,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ii-gtoggle button.active{background:var(--ink);color:var(--paper);}
 .ii-related{display:flex;gap:8px;margin-top:14px;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .ii-related::-webkit-scrollbar{display:none;}
-.ii-related-thumb{flex:0 0 auto;width:44px;aspect-ratio:4/5;cursor:pointer;scroll-snap-align:start;overflow:hidden;background:var(--paper-3);border:1px solid var(--line-soft);transition:border-color .2s;}
+.ii-related-thumb{flex:0 0 auto;width:56px;aspect-ratio:4/5;cursor:pointer;scroll-snap-align:start;overflow:hidden;background:var(--paper-3);border:1px solid var(--line-soft);transition:border-color .2s;}
 .ii-related-thumb:hover{border-color:var(--ink-soft);}
 .ii-related-thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;}
 
@@ -861,9 +861,11 @@ function renderLook(id){
       ? `<div class="ii-gtoggle"><button type="button" class="${gi.active==='M'?'active':''}" data-g="M">M</button><button type="button" class="${gi.active==='W'?'active':''}" data-g="W">W</button></div>`
       : '';
     const priceLine = p ? (isBottom ? fmtPrice(p.price) : `${fmtPrice(p.price)} · ${p.color}`) : '';
-    /* Other looks styled with this same bottom — a quick, swipeable way to
-       jump between them now that the M/W toggle is gone from bottoms. */
-    const relatedLooks = isBottom ? wornWithFor(it.code, id) : [];
+    /* All other looks in this category — a quick, swipeable way to jump
+       between them (instead of clicking PREV/NEXT LOOK many times) now
+       that the M/W toggle is gone from bottoms. Not filtered to looks
+       sharing this exact bottom — just every other look. */
+    const relatedLooks = isBottom ? LOOKS.filter(l=>l.cat===look.cat && l.id!==id) : [];
     const relatedHtml = relatedLooks.length ? `<div class="ii-related">
         ${relatedLooks.map(l=>`<div class="ii-related-thumb" onclick="event.stopPropagation();go('look','${l.id}')">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>`).join('')}
       </div>` : '';
