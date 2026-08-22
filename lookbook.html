@@ -155,6 +155,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-item:hover .ii-figure img{transform:translateY(-3px) scale(1.02);}
 .ld-item .ii-name{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.02em;}
 .ld-item .ii-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px;}
+.ld-item[data-slot="bottom"] .ii-figure{display:none;}
 .ii-gtoggle{display:inline-flex;margin-top:12px;border:1px solid var(--line);}
 .ii-gtoggle button{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;width:26px;height:22px;background:none;border:none;cursor:pointer;color:var(--muted);transition:background .18s,color .18s;}
 .ii-gtoggle button:first-child{border-right:1px solid var(--line);}
@@ -168,10 +169,8 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .swipe-hint.right{right:2px;animation:swipeHintR 2.2s ease-in-out infinite;}
   @keyframes swipeHintL{0%,100%{opacity:.32;transform:translate(0,-50%);}50%{opacity:.85;transform:translate(-5px,-50%);}}
   @keyframes swipeHintR{0%,100%{opacity:.32;transform:translate(0,-50%);}50%{opacity:.85;transform:translate(5px,-50%);}}
-  .ld-items{border-left:none;border-top:1px solid var(--line-soft);display:grid;grid-template-columns:repeat(2,1fr);}
-  .ld-item{border-bottom:none;border-right:1px solid var(--line-soft);padding:20px 16px;}
-  .ld-item:nth-child(2n){border-right:none;}
-  .ld-item:nth-child(n+3){border-top:1px solid var(--line-soft);}
+  .ld-items{border-left:none;border-top:1px solid var(--line-soft);}
+  .ld-item{padding:20px 16px;}
   .ld-item .ii-figure{min-height:0;padding:8px 0;}
   .ld-item .ii-figure img{max-height:96px;}
   .ld-item .ii-name{font-size:12.5px;}
@@ -870,7 +869,6 @@ function openProduct(code, lookId){
     <div class="pm-code">${p.gender.toUpperCase()}</div>
     <div class="pm-name">${p.code}</div>
     <div class="pm-row"><span>COLOR</span><span>${p.color}</span></div>
-    <div class="pm-row"><span>SIZE</span><span>${p.size}</span></div>
     <div class="pm-row"><span>COLLECTION</span><span>${p.collection}</span></div>
     <div class="pm-detail-lbl">DETAIL</div>
     <div class="pm-detail-txt">${p.material}</div>
