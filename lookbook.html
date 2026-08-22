@@ -195,11 +195,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ii-gtoggle button{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;width:26px;height:22px;background:none;border:none;cursor:pointer;color:var(--muted);transition:background .18s,color .18s;}
 .ii-gtoggle button:first-child{border-right:1px solid var(--line);}
 .ii-gtoggle button.active{background:var(--ink);color:var(--paper);}
-.ii-related{display:flex;gap:8px;margin-top:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-.ii-related::-webkit-scrollbar{display:none;}
-.ii-related-thumb{flex:0 0 calc((100% - 32px)/5);aspect-ratio:4/5;cursor:pointer;scroll-snap-align:start;overflow:hidden;background:var(--paper-3);border:1px solid var(--line-soft);transition:border-color .2s;}
-.ii-related-thumb:hover{border-color:var(--ink-soft);}
-.ii-related-thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;}
 
 @media(max-width:980px){
   .ld-split{grid-template-columns:1fr;min-height:0;}
@@ -218,21 +213,14 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .ld-item .ii-code{font-size:10px;}
 }
 
-.ld-nav{max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:28px 28px 90px;}
-.ld-nav-btn{display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;color:var(--ink);font-family:var(--sans);}
-.ld-nav-btn .lb-lbl{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em;}
-.ld-nav-btn .lb-cap{font-size:14px;font-weight:600;margin-top:3px;}
-.ld-nav-btn.next{text-align:right;flex-direction:row-reverse;}
-.ld-nav-btn:hover .lb-cap{text-decoration:underline;text-underline-offset:4px;}
-.ld-nav-mid{text-align:center;}
-.ld-nav-mid .eyebrow{margin-bottom:4px;}
-.ld-nav-mid .lm-num{font-family:var(--mono);font-size:13px;font-weight:700;}
+.ld-nav{max-width:1440px;margin:0 auto;padding:28px 28px 90px;}
+.ld-related-strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.ld-related-strip::-webkit-scrollbar{display:none;}
+.ld-related-thumb{flex:0 0 calc((100% - 40px)/5);aspect-ratio:4/5;cursor:pointer;scroll-snap-align:start;overflow:hidden;background:var(--paper-3);border:1px solid var(--line-soft);transition:border-color .2s;}
+.ld-related-thumb:hover{border-color:var(--ink-soft);}
+.ld-related-thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;}
 @media(max-width:640px){
   .ld-nav{padding:22px 18px 60px;}
-  .ld-nav-mid{display:none;}
-  .ld-nav-btn{gap:8px;}
-  .ld-nav-btn .lb-lbl{font-size:11px;}
-  .ld-nav-btn .lb-cap{font-size:12.5px;}
 }
 
 /* ===== WORN WITH ===== */
@@ -877,14 +865,6 @@ function renderLook(id){
       ? `<div class="ii-gtoggle"><button type="button" class="${gi.active==='M'?'active':''}" data-g="M">M</button><button type="button" class="${gi.active==='W'?'active':''}" data-g="W">W</button></div>`
       : '';
     const priceLine = p ? (isBottom ? fmtPrice(p.price) : `${fmtPrice(p.price)} · ${p.color}`) : '';
-    /* All other looks in this category — a quick, swipeable way to jump
-       between them (instead of clicking PREV/NEXT LOOK many times) now
-       that the M/W toggle is gone from bottoms. Not filtered to looks
-       sharing this exact bottom — just every other look. */
-    const relatedLooks = isBottom ? LOOKS.filter(l=>l.cat===look.cat && l.id!==id) : [];
-    const relatedHtml = relatedLooks.length ? `<div class="ii-related">
-        ${relatedLooks.map(l=>`<div class="ii-related-thumb" onclick="event.stopPropagation();go('look','${l.id}')">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>`).join('')}
-      </div>` : '';
     return `<div class="ld-item" data-slot="${it.slot.toLowerCase()}" data-active-code="${it.code}" data-code-m="${gi?gi.m:''}" data-code-w="${gi?gi.w:''}">
       <div class="ii-top"><span class="ii-slot">${it.slot}</span><span class="ii-idx">0${i+1} / 0${variant.items.length}</span></div>
       <div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>
@@ -893,9 +873,15 @@ function renderLook(id){
         <div class="ii-code">${priceLine}</div>
       </div>
       ${toggleHtml}
-      ${relatedHtml}
     </div>`;
   }).join('');
+
+  /* All other looks in this category — replaces PREV/NEXT LOOK with a
+     swipeable strip so jumping to any other look is one tap, not a
+     click-through-them-all-in-order chain. */
+  const otherLooksHtml = catLooks.filter(l=>l.id!==id).map(l=>
+    `<div class="ld-related-thumb" onclick="go('look','${l.id}')">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>`
+  ).join('');
 
   const lookToggleHtml = look.pair ? `<div class="ld-look-gtoggle">
       <button type="button" class="${showW?'':'active'}" data-lg="M">MEN</button>
@@ -924,18 +910,7 @@ function renderLook(id){
       </div>
     </section>
     <nav class="ld-nav">
-      <button class="ld-nav-btn prev" onclick="go('look','${prev.id}')">
-        <span>&larr;</span>
-        <span><span class="lb-lbl">PREV LOOK</span><span class="lb-cap">${prev.caption}</span></span>
-      </button>
-      <div class="ld-nav-mid">
-        <div class="eyebrow">${c.label}</div>
-        <div class="lm-num">LOOK ${String(look.num).padStart(2,'0')}</div>
-      </div>
-      <button class="ld-nav-btn next" onclick="go('look','${next.id}')">
-        <span><span class="lb-lbl">NEXT LOOK</span><span class="lb-cap">${next.caption}</span></span>
-        <span>&rarr;</span>
-      </button>
+      <div class="ld-related-strip">${otherLooksHtml}</div>
     </nav>
     ${renderWornWithSection(look)}
   </div>`;
@@ -971,7 +946,7 @@ function bindLookInteractions(id){
     el.addEventListener('mouseleave', ()=>hs && hs.classList.remove('active'));
 
     el.addEventListener('click', e=>{
-      if(e.target.closest('.ii-gtoggle') || e.target.closest('.ii-related')) return;
+      if(e.target.closest('.ii-gtoggle')) return;
       openProduct(el.dataset.activeCode, id);
     });
     el.querySelectorAll('.ii-gtoggle button').forEach(btn=>{
