@@ -214,6 +214,10 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .pm-body{padding:74px 34px 50px;}
 .pm-figure{background:var(--paper-2);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;margin-bottom:28px;}
 .pm-figure img{max-width:74%;max-height:74%;object-fit:contain;filter:drop-shadow(0 16px 24px rgba(20,20,15,.12));}
+.pm-view-toggle{display:flex;justify-self:center;width:fit-content;margin:-14px auto 24px;border:1px solid var(--line);}
+.pm-view-toggle button{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;padding:7px 16px;background:none;border:none;cursor:pointer;color:var(--ink-soft);transition:background .18s,color .18s;}
+.pm-view-toggle button:first-child{border-right:1px solid var(--line);}
+.pm-view-toggle button.active{background:var(--ink);color:var(--paper);}
 .pm-code{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em;}
 .pm-name{font-size:24px;font-weight:700;margin-top:8px;letter-spacing:-.01em;}
 .pm-row{display:flex;justify-content:space-between;padding:13px 0;border-top:1px solid var(--line-soft);font-size:13px;}
@@ -753,12 +757,18 @@ function lookKeyNav(e){
 }
 
 /* ---------------- PRODUCT MODAL ---------------- */
+let currentPmCode = null;
 function openProduct(code, lookId){
   const p = PRODUCTS[code];
   if(!p) return;
+  currentPmCode = code;
   const related = wornWithFor(code, lookId).slice(0,3);
   document.getElementById('pmBody').innerHTML = `
-    <div class="pm-figure"><img src="${p.img}" alt="${p.name}"></div>
+    <div class="pm-figure"><img src="${p.img}" alt="${p.name}" id="pmFigImg"></div>
+    ${p.imgBack ? `<div class="pm-view-toggle">
+      <button type="button" class="active" data-view="front" onclick="setPmView('front')">FRONT</button>
+      <button type="button" data-view="back" onclick="setPmView('back')">BACK</button>
+    </div>` : ''}
     <div class="pm-code">${p.code}</div>
     <div class="pm-name">${p.name.toUpperCase()}</div>
     <div class="pm-row"><span>COLOR</span><span>${p.color}</span></div>
@@ -775,6 +785,12 @@ function openProduct(code, lookId){
   `;
   document.getElementById('pmBackdrop').classList.add('show');
   document.getElementById('pmPanel').classList.add('show');
+}
+function setPmView(view){
+  const p = PRODUCTS[currentPmCode];
+  if(!p) return;
+  document.getElementById('pmFigImg').src = view==='back' ? (p.imgBack || p.img) : p.img;
+  document.querySelectorAll('.pm-view-toggle button').forEach(b=>b.classList.toggle('active', b.dataset.view===view));
 }
 function closeProduct(){
   document.getElementById('pmBackdrop')?.classList.remove('show');
