@@ -107,6 +107,11 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 /* ===== LOOK DETAIL ===== */
 .look-detail{max-width:1440px;margin:0 auto;padding:28px 28px 0;}
 .ld-crumb{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;padding:14px 0 26px;}
+.ld-look-gtoggle{margin-left:auto;display:inline-flex;border:1px solid var(--ink);}
+.ld-look-gtoggle button{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;padding:7px 14px;background:none;border:none;cursor:pointer;color:var(--ink-soft);transition:background .18s,color .18s;}
+.ld-look-gtoggle button:first-child{border-right:1px solid var(--ink);}
+.ld-look-gtoggle button.active{background:var(--ink);color:var(--paper);}
+@media(max-width:640px){.ld-look-gtoggle button{padding:6px 11px;font-size:9.5px;}}
 .ld-crumb b{color:var(--ink);font-weight:700;}
 .ld-crumb .sep{opacity:.4;}
 .ld-split{display:grid;grid-template-columns:65fr 35fr;gap:0;align-items:stretch;min-height:78vh;border:1px solid var(--line-soft);}
@@ -269,26 +274,26 @@ footer.lb-foot .eyebrow{justify-content:center;display:flex;}
 /* ---------------- DATA ---------------- */
 const PRODUCTS = {
   '263TS001':{name:'Game Tee',color:'Blue Gray',price:82000,gender:'Men',pairCode:'263TS002',material:'PE 100% / 배색 PE92%,PU8%',size:'95–120',collection:'Game Wear',img:'images/products/263ts001.png'},
-  '263TS002':{name:'Game Tee',color:'Blue Gray',price:82000,gender:'Women',material:'PE 100% / 배색 PE92%,PU8%',size:'85–105',collection:'Game Wear',img:'images/products/placeholder.png'},
+  '263TS002':{name:'Game Tee',color:'Blue Gray',price:82000,gender:'Women',pairCode:'263TS001',material:'PE 100% / 배색 PE92%,PU8%',size:'85–105',collection:'Game Wear',img:'images/products/placeholder.png'},
   '263TS003':{name:'Game Tee',color:'Midnight Black',price:82000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts003.png'},
   '263TS005':{name:'Game Tee',color:'White',price:82000,gender:'Couple',material:'PE 100% / 배색 PE92%,PU8%',size:'95–120',collection:'Game Wear',img:'images/products/263ts005.png'},
   '263TS007':{name:'Game Tee',color:'White',price:82000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts007.png'},
   '263TS009':{name:'Game Tee',color:'Pale Mint',price:82000,gender:'Couple',material:'PE 100% / 배색 PE95%,PU5%',size:'95–120',collection:'Game Wear',img:'images/products/263ts009.png'},
   '263TS011':{name:'Game Tee',color:'Black',price:82000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts011.png'},
   '263TS013':{name:'Game Tee',color:'Dark Navy',price:82000,gender:'Men',pairCode:'263TS014',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts013.png'},
-  '263TS014':{name:'Game Tee',color:'Dark Navy',price:82000,gender:'Women',material:'PE 100%',size:'85–105',collection:'Game Wear',img:'images/products/placeholder.png'},
+  '263TS014':{name:'Game Tee',color:'Dark Navy',price:82000,gender:'Women',pairCode:'263TS013',material:'PE 100%',size:'85–105',collection:'Game Wear',img:'images/products/placeholder.png'},
   '263TS015':{name:'Game Tee',color:'White / Coral',price:82000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts015.png'},
   '263TS017':{name:'Game Tee',color:'Black',price:72000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts017.png'},
   '263TS019':{name:'Game Tee',color:'Dark Green',price:72000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts019.png'},
   '263TS025':{name:'Game Tee',color:'White',price:72000,gender:'Men',pairCode:'263TS026',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts025.png'},
-  '263TS026':{name:'Game Tee',color:'White',price:72000,gender:'Women',material:'PE 100%',size:'85–105',collection:'Game Wear',img:'images/products/placeholder.png'},
+  '263TS026':{name:'Game Tee',color:'White',price:72000,gender:'Women',pairCode:'263TS025',material:'PE 100%',size:'85–105',collection:'Game Wear',img:'images/products/placeholder.png'},
   '263TR001':{name:'Sleeveless Game Tee',color:'Blue Gray',price:69000,gender:'Men',material:'PE 100% / 배색 PE92%,PU8%',size:'95–110',collection:'Game Wear',img:'images/products/263tr001.png'},
   '263TR002':{name:'Sleeveless Game Tee',color:'Midnight Black',price:69000,gender:'Men',material:'PE 100% / 배색 PE92%,PU8%',size:'95–110',collection:'Game Wear',img:'images/products/263tr002.png'},
   '263PH001':{name:'Knit Shorts (4부)',color:'Midnight Black / Dark Green',price:59000,gender:'Couple',material:'PE 100%',size:'95–110',collection:'Game Wear',img:'images/products/263ph001.png'},
   '261PH005':{name:'Shorts (4부)',color:'Black',price:69000,gender:'Men',pairCode:'261PH006',material:'PE 100%',size:'95–110',collection:'Game Wear',img:'images/products/261ph005.png'},
-  '261PH006':{name:'Shorts (4부)',color:'Black',price:69000,gender:'Women',material:'PE 100%',size:'85–100',collection:'Game Wear',img:'images/products/placeholder.png'},
+  '261PH006':{name:'Shorts (4부)',color:'Black',price:69000,gender:'Women',pairCode:'261PH005',material:'PE 100%',size:'85–100',collection:'Game Wear',img:'images/products/placeholder.png'},
   '261PH007':{name:'Ankle Pants (7부)',color:'Charcoal Gray / Black',price:69000,gender:'Men',pairCode:'261PH008',material:'NY 77%, PU 23%',size:'95–110',collection:'Game Wear',img:'images/products/261ph007.png'},
-  '261PH008':{name:'Ankle Pants (7부)',color:'Charcoal Gray / Black',price:69000,gender:'Women',material:'NY 77%, PU 23%',size:'85–100',collection:'Game Wear',img:'images/products/placeholder.png'},
+  '261PH008':{name:'Ankle Pants (7부)',color:'Charcoal Gray / Black',price:69000,gender:'Women',pairCode:'261PH007',material:'NY 77%, PU 23%',size:'85–100',collection:'Game Wear',img:'images/products/placeholder.png'},
   '261PH009':{name:'Shorts (5부)',color:'Black / Gray / Dark Green',price:59000,gender:'Unisex',material:'NY 91%, PU 9%',size:'85–110',collection:'Game Wear',img:'images/products/261ph009.png'},
   '261PS001':{name:'Pleats Skirt',color:'White',price:65000,gender:'Women',material:'NY 77%, PU 23%',size:'85–100',collection:'Game Wear',img:'images/products/261ps001.png'},
   '261PS002':{name:'Pleats Skirt',color:'Navy',price:65000,gender:'Women',material:'NY 78%, PU 22%',size:'85–100',collection:'Game Wear',img:'images/products/261ps002.png'},
@@ -314,15 +319,20 @@ const HS_DEFAULT = {top:{x:24,y:13,w:52,h:39},bottom:{x:22,y:50,w:56,h:31}};
 const LOOKS = [
   {id:'g1',cat:'game',num:1,img:'images/hero/cover-coral-1.jpeg',model:'Men',caption:'Match Point',
     items:[{slot:'TOP',code:'263TS001'},{slot:'BOTTOM',code:'261PH005'}],
-    hotspots:{top:{x:27,y:15,w:46,h:36},bottom:{x:26,y:50,w:50,h:30}}},
+    hotspots:{top:{x:27,y:15,w:46,h:36},bottom:{x:26,y:50,w:50,h:30}},
+    /* TEMP: pair.img reuses an existing photo as a placeholder for the real women's-cut
+       shoot — swap this for the actual paired photography when it's ready. */
+    pair:{img:'images/hero/keyvisual-blue-2.jpeg',model:'Women',
+      items:[{slot:'TOP',code:'263TS002'},{slot:'BOTTOM',code:'261PH006'}],
+      hotspots:HS_DEFAULT}},
   {id:'g2',cat:'game',num:2,img:'images/hero/cover-coral-2.jpeg',model:'Men',caption:'Center Court',
     items:[{slot:'TOP',code:'263TS013'},{slot:'BOTTOM',code:'261PH007'}],
     hotspots:{top:{x:24,y:14,w:52,h:37},bottom:{x:22,y:50,w:56,h:30}}},
   {id:'g3',cat:'game',num:3,img:'images/hero/keyvisual-blue-1.jpeg',model:'Women',caption:'Full Swing',
-    items:[{slot:'TOP',code:'263TS001'},{slot:'BOTTOM',code:'261PS002'}],
+    items:[{slot:'TOP',code:'263TS002'},{slot:'BOTTOM',code:'261PS002'}],
     hotspots:{top:{x:30,y:16,w:44,h:34},bottom:{x:28,y:50,w:46,h:28}}},
   {id:'g4',cat:'game',num:4,img:'images/hero/keyvisual-blue-2.jpeg',model:'Women',caption:'Rally Ready',
-    items:[{slot:'TOP',code:'263TS025'},{slot:'BOTTOM',code:'261PS001'}],
+    items:[{slot:'TOP',code:'263TS026'},{slot:'BOTTOM',code:'261PS001'}],
     hotspots:HS_DEFAULT},
   {id:'c1',cat:'casual',num:1,img:'images/hero/daily-nature-1.jpeg',model:'Men',caption:'Off Duty',
     items:[{slot:'TOP',code:'16945EX'},{slot:'BOTTOM',code:'15284EX'}],
@@ -343,6 +353,7 @@ const MIX_BOTTOMS = ['263PH001','261PH005','261PH007','261PH009','261PS001','261
 
 /* ---------------- STATE / ROUTER ---------------- */
 let mixTopIdx = 0, mixBottomIdx = 0;
+let lookGenderView = 'M';
 
 function go(view, param){
   location.hash = param ? `${view}/${param}` : view;
@@ -365,6 +376,8 @@ function render(){
   window.scrollTo({top:0,behavior:'instant'});
   closeProduct();
 
+  if(view==='look') lookGenderView = 'M';
+
   const app = document.getElementById('app');
   if(view==='category') app.innerHTML = renderCategory(param);
   else if(view==='look') app.innerHTML = renderLook(param);
@@ -375,6 +388,15 @@ function render(){
   observeReveal();
   if(view==='look') bindLookInteractions(param);
   if(view==='mix') paintMix();
+}
+
+/* re-paints the look view in place (no scroll reset, no hash change) — used by the
+   whole-look M/W toggle so switching gender doesn't jump the page */
+function paintLook(id){
+  const app = document.getElementById('app');
+  app.innerHTML = renderLook(id);
+  app.querySelector('.view')?.classList.add('view');
+  bindLookInteractions(id);
 }
 
 /* ---------------- VIEWS ---------------- */
@@ -430,6 +452,19 @@ function itemFig(code){
   return p ? p.img : 'images/products/placeholder.png';
 }
 
+/* resolves the M/W code pair for an item regardless of which side it.code points to */
+function genderInfo(code){
+  const p = PRODUCTS[code];
+  if(!p || !p.pairCode) return null;
+  const q = PRODUCTS[p.pairCode];
+  if(!q) return null;
+  return {
+    m: p.gender==='Men' ? code : p.pairCode,
+    w: p.gender==='Women' ? code : p.pairCode,
+    active: p.gender==='Women' ? 'W' : 'M',
+  };
+}
+
 function renderLook(id){
   const look = LOOKS.find(l=>l.id===id);
   if(!look) return renderCover();
@@ -439,17 +474,21 @@ function renderLook(id){
   const prev = catLooks[(idx-1+catLooks.length)%catLooks.length];
   const next = catLooks[(idx+1)%catLooks.length];
 
-  const hotspotsHtml = Object.entries(look.hotspots).map(([slot,r])=>
+  const showW = lookGenderView==='W' && look.pair;
+  const variant = showW ? {img:look.pair.img, model:look.pair.model, items:look.pair.items, hotspots:look.pair.hotspots||look.hotspots} : look;
+
+  const hotspotsHtml = Object.entries(variant.hotspots).map(([slot,r])=>
     `<div class="ld-hotspot" data-slot="${slot}" style="left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%;"><span class="ring"></span></div>`
   ).join('');
 
-  const itemsHtml = look.items.map((it,i)=>{
+  const itemsHtml = variant.items.map((it,i)=>{
     const p = PRODUCTS[it.code];
-    const toggleHtml = p && p.pairCode
-      ? `<div class="ii-gtoggle"><button type="button" class="active" data-g="M">M</button><button type="button" data-g="W">W</button></div>`
+    const gi = !look.pair ? genderInfo(it.code) : null;
+    const toggleHtml = gi
+      ? `<div class="ii-gtoggle"><button type="button" class="${gi.active==='M'?'active':''}" data-g="M">M</button><button type="button" class="${gi.active==='W'?'active':''}" data-g="W">W</button></div>`
       : '';
-    return `<div class="ld-item" data-slot="${it.slot.toLowerCase()}" data-active-code="${it.code}" data-code-m="${it.code}" data-code-w="${p&&p.pairCode?p.pairCode:''}">
-      <div class="ii-top"><span class="ii-slot">${it.slot}</span><span class="ii-idx">0${i+1} / 0${look.items.length}</span></div>
+    return `<div class="ld-item" data-slot="${it.slot.toLowerCase()}" data-active-code="${it.code}" data-code-m="${gi?gi.m:''}" data-code-w="${gi?gi.w:''}">
+      <div class="ii-top"><span class="ii-slot">${it.slot}</span><span class="ii-idx">0${i+1} / 0${variant.items.length}</span></div>
       <div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>
       <div class="ii-name">${it.code}</div>
       <div class="ii-code">${p?`${p.price.toLocaleString()}원 · ${p.color}`:''}</div>
@@ -457,15 +496,21 @@ function renderLook(id){
     </div>`;
   }).join('');
 
+  const lookToggleHtml = look.pair ? `<div class="ld-look-gtoggle">
+      <button type="button" class="${showW?'':'active'}" data-lg="M">MEN</button>
+      <button type="button" class="${showW?'active':''}" data-lg="W">WOMEN</button>
+    </div>` : '';
+
   return `<div class="view">
-    <section class="look-detail" data-prev="${prev.id}" data-next="${next.id}">
+    <section class="look-detail" data-prev="${prev.id}" data-next="${next.id}" data-id="${id}">
       <div class="ld-crumb">
         <a href="#category/${look.cat}" onclick="event.preventDefault();go('category','${look.cat}')">${c.label}</a>
         <span class="sep">/</span><b>LOOK 0${look.num}</b>
+        ${lookToggleHtml}
       </div>
       <div class="ld-split">
         <div class="ld-visual" id="ldVisual">
-          <img src="${look.img}" alt="${look.caption}">
+          <img src="${variant.img}" alt="${look.caption}">
           <div class="vscrim"></div>
           <span class="swipe-hint left">&lsaquo;</span>
           <span class="swipe-hint right">&rsaquo;</span>
@@ -546,6 +591,13 @@ function bindLookInteractions(id){
   document.addEventListener('keydown', lookKeyNav);
 
   const detail = document.querySelector('.look-detail');
+  detail.querySelectorAll('.ld-look-gtoggle button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      lookGenderView = btn.dataset.lg;
+      paintLook(id);
+    });
+  });
+
   let swipeX = null, swipeY = null;
   visual.addEventListener('touchstart', e=>{
     swipeX = e.touches[0].clientX; swipeY = e.touches[0].clientY;
