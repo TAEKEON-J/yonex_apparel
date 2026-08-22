@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>YONEX 2026 F/W DIGITAL LOOKBOOK</title>
+<meta name="description" content="YONEX 2026 Fall/Winter digital lookbook — model looks across Game Wear, Casual Wear and Easy Wear, with linked product ghost cuts.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23121212'/><text x='50' y='68' font-family='Georgia,serif' font-weight='700' font-size='58' fill='%23F5F4F0' text-anchor='middle'>Y</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFFFFF; --paper-2:#F6F5F1; --paper-3:#EFEDE6;
+  --ink:#131313; --ink-soft:#4A4A46; --muted:#8C8B84;
+  --line:rgba(19,19,19,.12); --line-soft:rgba(19,19,19,.07);
+  --accent:#0C8F3D;
+  --game:#C0402C; --casual:#33456B; --easy:#6E7A54;
+  --sans:'Inter','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --ease:cubic-bezier(.16,.8,.24,1);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:var(--sans);overflow-x:hidden;}
+body{-webkit-font-smoothing:antialiased;}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+button{font-family:var(--sans);}
+::selection{background:var(--ink);color:var(--paper);}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important;}}
+
+h1,h2,h3{font-weight:700;margin:0;letter-spacing:-.02em;text-wrap:balance;}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.serifnum{font-family:var(--mono);}
+
+/* ===== TOP NAV ===== */
+header.topnav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft);}
+.topnav-row{max-width:1320px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 28px;}
+.brand{display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;padding:0;}
+.brand .mark{width:26px;height:26px;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:700;font-size:15px;flex:none;}
+.brand .name{font-size:13px;font-weight:700;letter-spacing:.03em;color:var(--ink);}
+.brand .season{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.06em;display:block;margin-top:1px;}
+nav.catnav{display:flex;gap:2px;flex:1 1 auto;min-width:0;}
+nav.catnav button{background:none;border:none;cursor:pointer;font-size:11.5px;font-weight:600;letter-spacing:.06em;color:var(--ink-soft);padding:9px 14px;transition:color .2s;position:relative;font-family:var(--sans);white-space:nowrap;}
+nav.catnav button::after{content:'';position:absolute;left:14px;right:14px;bottom:5px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .28s var(--ease);}
+nav.catnav button:hover,nav.catnav button.active{color:var(--ink);}
+nav.catnav button.active::after{transform:scaleX(1);}
+.mix-link{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.08em;border:1px solid var(--ink);padding:8px 14px;cursor:pointer;background:none;color:var(--ink);transition:background .2s,color .2s;white-space:nowrap;flex:none;}
+.mix-link:hover{background:var(--ink);color:var(--paper);}
+@media(max-width:820px){.topnav-row{padding:13px 16px;gap:6px;flex-wrap:nowrap;} nav.catnav{gap:0;overflow-x:auto;scrollbar-width:none;justify-content:flex-end;} nav.catnav::-webkit-scrollbar{display:none;} nav.catnav button{padding:8px 7px;font-size:9.5px;} .brand{flex:none;} .brand .name{display:none;} .mix-link{padding:7px 9px;font-size:9px;}}
+@media(max-width:400px){nav.catnav button{padding:6px 4px;font-size:8.6px;} .mix-link{padding:6px 7px;font-size:8.1px;} .brand .season{display:none;}}
+
+main#app{min-height:70vh;}
+.view{animation:viewIn .5s var(--ease) both;}
+@keyframes viewIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+/* ===== COVER ===== */
+.cover{position:relative;height:100svh;min-height:560px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:#141414;}
+.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%;}
+.cover .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,0) 0%,rgba(8,8,8,.12) 45%,rgba(6,6,6,.88) 100%);}
+.cover-in{position:relative;z-index:2;max-width:1320px;margin:0 auto;width:100%;padding:0 28px 64px;color:#fff;}
+.cover-eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:rgba(255,255,255,.78);margin-bottom:18px;}
+.cover h1{font-size:clamp(38px,7.4vw,92px);line-height:.98;color:#fff;letter-spacing:-.03em;text-transform:uppercase;max-width:980px;}
+.cover-cats{display:flex;gap:0;margin-top:44px;border-top:1px solid rgba(255,255,255,.28);flex-wrap:wrap;}
+.cover-cats button{flex:1 1 200px;text-align:left;background:none;border:none;border-right:1px solid rgba(255,255,255,.28);cursor:pointer;padding:20px 22px 22px;color:#fff;transition:background .25s;font-family:var(--sans);}
+.cover-cats button:last-child{border-right:none;}
+.cover-cats button:hover{background:rgba(255,255,255,.08);}
+.cover-cats .cc-num{font-family:var(--mono);font-size:10.5px;color:rgba(255,255,255,.6);letter-spacing:.08em;}
+.cover-cats .cc-name{display:block;font-size:19px;font-weight:700;margin-top:8px;letter-spacing:-.01em;}
+.cover-cats .cc-arrow{display:inline-block;margin-left:8px;transition:transform .25s var(--ease);}
+.cover-cats button:hover .cc-arrow{transform:translateX(4px);}
+@media(max-width:640px){.cover{min-height:640px;} .cover-cats button{flex:1 1 100%;border-right:none;border-top:1px solid rgba(255,255,255,.2);} .cover-cats button:first-child{border-top:none;}}
+
+/* ===== CATEGORY PAGE ===== */
+.cat-hero{padding:72px 28px 20px;max-width:1320px;margin:0 auto;}
+.cat-tags{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap;}
+.cat-tags span{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;color:var(--accent-cat);border:1px solid currentColor;padding:5px 11px;}
+.cat-hero h2{font-size:clamp(34px,6vw,64px);letter-spacing:-.03em;text-transform:uppercase;}
+.cat-hero p{font-size:15px;color:var(--ink-soft);margin-top:14px;max-width:480px;line-height:1.7;font-weight:300;}
+.cat-count{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:26px;}
+
+.look-grid{max-width:1320px;margin:0 auto;padding:36px 28px 110px;display:grid;grid-template-columns:repeat(2,1fr);gap:56px 32px;}
+.look-card{cursor:pointer;opacity:0;transform:translateY(24px);transition:opacity .6s var(--ease),transform .6s var(--ease);}
+.look-card.in{opacity:1;transform:translateY(0);}
+.look-card .lc-frame{position:relative;overflow:hidden;background:var(--paper-2);aspect-ratio:4/5;}
+.look-card .lc-frame img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .7s var(--ease);}
+.look-card:hover .lc-frame img{transform:scale(1.035);}
+.look-card .lc-meta{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px;}
+.look-card .lc-num{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em;}
+.look-card .lc-cap{font-size:15px;font-weight:600;margin-top:5px;}
+.look-card .lc-view{font-family:var(--mono);font-size:10px;color:var(--accent-cat);letter-spacing:.06em;opacity:0;transition:opacity .25s;}
+.look-card:hover .lc-view{opacity:1;}
+
+/* category rhythm variants */
+body[data-cat="game"] .look-grid{gap:44px 22px;}
+body[data-cat="game"] .look-card .lc-frame{aspect-ratio:3/4;}
+body[data-cat="casual"] .look-grid{gap:70px 44px;grid-template-columns:repeat(2,1fr);}
+body[data-cat="casual"] .look-card .lc-frame{aspect-ratio:4/5;}
+body[data-cat="casual"] .look-card .lc-cap{font-weight:400;}
+body[data-cat="easy"] .look-grid{gap:64px 40px;}
+body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
+@media(max-width:760px){.look-grid{grid-template-columns:1fr 1fr;gap:28px 16px !important;} .cat-hero{padding:52px 18px 10px;} .look-grid{padding:26px 18px 80px;}}
+@media(max-width:480px){.look-grid{grid-template-columns:1fr;}}
+
+/* ===== LOOK DETAIL ===== */
+.look-detail{max-width:1440px;margin:0 auto;padding:28px 28px 0;}
+.ld-crumb{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;padding:14px 0 26px;}
+.ld-crumb b{color:var(--ink);font-weight:700;}
+.ld-crumb .sep{opacity:.4;}
+.ld-split{display:grid;grid-template-columns:65fr 35fr;gap:0;align-items:stretch;min-height:78vh;border:1px solid var(--line-soft);}
+.ld-visual{position:relative;background:var(--paper-3);overflow:hidden;min-height:420px;}
+.ld-visual img{width:100%;height:100%;object-fit:cover;object-position:top center;}
+.ld-hotspot{position:absolute;pointer-events:none;opacity:0;transition:opacity .45s ease;border-radius:50%;background:radial-gradient(ellipse at center,var(--accent-cat-a) 0%,transparent 72%);filter:blur(2px);}
+.ld-hotspot.active{opacity:1;}
+.ld-hotspot .ring{position:absolute;inset:8%;border:1px solid var(--accent-cat);border-radius:46% 54% 52% 48%/50% 46% 54% 50%;opacity:0;transition:opacity .45s ease;}
+.ld-hotspot.active .ring{opacity:.55;}
+.ld-caption{position:absolute;left:24px;bottom:24px;color:#fff;z-index:2;}
+.ld-caption .eyebrow{color:rgba(255,255,255,.75);}
+.ld-caption h3{color:#fff;font-size:26px;margin-top:6px;letter-spacing:-.01em;}
+.ld-visual .vscrim{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,0) 30%);pointer-events:none;}
+
+.ld-items{background:var(--paper);display:flex;flex-direction:column;border-left:1px solid var(--line-soft);}
+.ld-item{flex:1;display:flex;flex-direction:column;padding:28px 30px;border-bottom:1px solid var(--line-soft);cursor:pointer;transition:background .25s;position:relative;}
+.ld-item:last-child{border-bottom:none;}
+.ld-item:hover,.ld-item.hover-active{background:var(--paper-2);}
+.ld-item .ii-top{display:flex;justify-content:space-between;align-items:baseline;}
+.ld-item .ii-slot{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--accent-cat);}
+.ld-item .ii-idx{font-family:var(--mono);font-size:10.5px;color:var(--muted);}
+.ld-item .ii-figure{flex:1;display:flex;align-items:center;justify-content:center;padding:16px 0;min-height:120px;}
+.ld-item .ii-figure img{max-height:150px;width:auto;max-width:88%;object-fit:contain;filter:drop-shadow(0 14px 22px rgba(20,20,15,.10));transition:transform .35s var(--ease);}
+.ld-item:hover .ii-figure img{transform:translateY(-3px) scale(1.02);}
+.ld-item .ii-name{font-size:14px;font-weight:600;}
+.ld-item .ii-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px;}
+
+@media(max-width:980px){
+  .ld-split{grid-template-columns:1fr;min-height:0;}
+  .ld-visual{aspect-ratio:4/5;min-height:0;}
+  .ld-items{border-left:none;border-top:1px solid var(--line-soft);flex-direction:row;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
+  .ld-items::-webkit-scrollbar{display:none;}
+  .ld-item{flex:0 0 76%;scroll-snap-align:start;border-bottom:none;border-right:1px solid var(--line-soft);}
+  .ld-item:last-child{border-right:none;}
+}
+
+.ld-nav{max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:28px 28px 90px;}
+.ld-nav-btn{display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;color:var(--ink);font-family:var(--sans);}
+.ld-nav-btn .lb-lbl{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em;}
+.ld-nav-btn .lb-cap{font-size:14px;font-weight:600;margin-top:3px;}
+.ld-nav-btn.next{text-align:right;flex-direction:row-reverse;}
+.ld-nav-btn:hover .lb-cap{text-decoration:underline;text-underline-offset:4px;}
+.ld-nav-mid{text-align:center;}
+.ld-nav-mid .eyebrow{margin-bottom:4px;}
+.ld-nav-mid .lm-num{font-family:var(--mono);font-size:13px;font-weight:700;}
+@media(max-width:640px){.ld-nav{padding:20px 18px 64px;} .ld-nav-btn .lb-cap{font-size:12.5px;}}
+
+/* ===== WORN WITH ===== */
+.worn-with{max-width:1440px;margin:0 auto;padding:0 28px 100px;}
+.worn-with h4{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);margin-bottom:20px;}
+.ww-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;}
+.ww-card{cursor:pointer;}
+.ww-card .ww-frame{aspect-ratio:4/5;overflow:hidden;background:var(--paper-2);}
+.ww-card .ww-frame img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .5s var(--ease);}
+.ww-card:hover .ww-frame img{transform:scale(1.04);}
+.ww-card .ww-lbl{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:9px;}
+
+/* ===== PRODUCT MODAL ===== */
+.pm-backdrop{position:fixed;inset:0;background:rgba(15,14,12,.5);z-index:500;opacity:0;pointer-events:none;transition:opacity .3s ease;}
+.pm-backdrop.show{opacity:1;pointer-events:auto;}
+.pm-panel{position:fixed;right:0;top:0;bottom:0;width:min(420px,92vw);background:var(--paper);z-index:501;transform:translateX(100%);transition:transform .4s var(--ease);overflow-y:auto;box-shadow:-20px 0 50px rgba(0,0,0,.14);}
+.pm-panel.show{transform:translateX(0);}
+.pm-close{position:absolute;top:22px;right:24px;background:none;border:none;cursor:pointer;font-size:22px;line-height:1;color:var(--ink-soft);}
+.pm-body{padding:74px 34px 50px;}
+.pm-figure{background:var(--paper-2);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;margin-bottom:28px;}
+.pm-figure img{max-width:74%;max-height:74%;object-fit:contain;filter:drop-shadow(0 16px 24px rgba(20,20,15,.12));}
+.pm-code{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em;}
+.pm-name{font-size:24px;font-weight:700;margin-top:8px;letter-spacing:-.01em;}
+.pm-row{display:flex;justify-content:space-between;padding:13px 0;border-top:1px solid var(--line-soft);font-size:13px;}
+.pm-row span:first-child{color:var(--muted);}
+.pm-detail-lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--muted);margin:26px 0 10px;}
+.pm-detail-txt{font-size:13.5px;color:var(--ink-soft);line-height:1.75;font-weight:300;}
+.pm-ww{margin-top:34px;}
+.pm-ww h5{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--muted);margin-bottom:14px;}
+.pm-ww-row{display:flex;gap:12px;}
+.pm-ww-row .ww-mini{flex:1;cursor:pointer;}
+.pm-ww-row .ww-mini .frame{aspect-ratio:4/5;background:var(--paper-2);overflow:hidden;}
+.pm-ww-row .ww-mini .frame img{width:100%;height:100%;object-fit:cover;object-position:top center;}
+.pm-ww-row .ww-mini .lbl{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:6px;}
+
+/* ===== MIX & MATCH ===== */
+.mix-hero{max-width:1000px;margin:0 auto;padding:74px 28px 10px;text-align:center;}
+.mix-hero .eyebrow{justify-content:center;display:flex;}
+.mix-hero h2{font-size:clamp(30px,5vw,48px);letter-spacing:-.03em;margin-top:14px;text-transform:uppercase;}
+.mix-hero p{font-size:14.5px;color:var(--ink-soft);margin-top:14px;font-weight:300;}
+.mix-stage{max-width:920px;margin:56px auto 0;padding:0 28px;}
+.mix-slot{display:grid;grid-template-columns:56px 1fr 56px;align-items:center;gap:10px;padding:34px 0;border-top:1px solid var(--line-soft);}
+.mix-slot:last-of-type{border-bottom:1px solid var(--line-soft);}
+.mix-arrow{width:44px;height:44px;border:1px solid var(--line);background:var(--paper);cursor:pointer;font-size:16px;color:var(--ink-soft);transition:border-color .2s,color .2s;justify-self:center;}
+.mix-arrow:hover{border-color:var(--ink);color:var(--ink);}
+.mix-figure{text-align:center;}
+.mix-figure .ms-label{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted);margin-bottom:14px;}
+.mix-figure .ms-imgwrap{height:220px;display:flex;align-items:center;justify-content:center;}
+.mix-figure img{max-height:100%;max-width:70%;object-fit:contain;filter:drop-shadow(0 18px 26px rgba(20,20,15,.12));}
+.mix-figure .ms-name{font-size:14px;font-weight:600;margin-top:14px;}
+.mix-figure .ms-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px;}
+.mix-plus{text-align:center;font-family:var(--mono);font-size:18px;color:var(--muted);padding:6px 0;}
+.mix-cta{text-align:center;padding:46px 28px 110px;}
+.mix-cta button{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;padding:16px 38px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;transition:opacity .2s;}
+.mix-cta button:disabled{background:none;color:var(--muted);border-color:var(--line);cursor:default;}
+.mix-cta button:not(:disabled):hover{opacity:.8;}
+.mix-cta .mc-note{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:14px;}
+@media(max-width:640px){.mix-slot{grid-template-columns:40px 1fr 40px;padding:24px 0;} .mix-arrow{width:36px;height:36px;}}
+
+footer.lb-foot{border-top:1px solid var(--line-soft);padding:34px 28px;text-align:center;}
+footer.lb-foot .eyebrow{justify-content:center;display:flex;}
+</style>
+</head>
+<body data-cat="">
+
+<header class="topnav">
+  <div class="topnav-row">
+    <button class="brand" onclick="go('cover')">
+      <span class="mark">Y</span>
+      <span><span class="name">YONEX LOOKBOOK</span><span class="season">2026 FALL / WINTER</span></span>
+    </button>
+    <nav class="catnav" id="catnav">
+      <button data-cat="game" onclick="go('category','game')">GAME WEAR</button>
+      <button data-cat="casual" onclick="go('category','casual')">CASUAL WEAR</button>
+      <button data-cat="easy" onclick="go('category','easy')">EASY WEAR</button>
+    </nav>
+    <button class="mix-link" onclick="go('mix')">STYLE MIX</button>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer class="lb-foot">
+  <span class="eyebrow">YONEX &middot; 2026 FALL / WINTER &middot; DIGITAL LOOKBOOK</span>
+</footer>
+
+<div class="pm-backdrop" id="pmBackdrop" onclick="closeProduct()"></div>
+<aside class="pm-panel" id="pmPanel">
+  <button class="pm-close" onclick="closeProduct()">&times;</button>
+  <div class="pm-body" id="pmBody"></div>
+</aside>
+
+<script>
+/* ---------------- DATA ---------------- */
+const PRODUCTS = {
+  '263TS001':{name:'Game Tee',color:'Blue Gray',gender:'Couple',material:'PE 100% / 배색 PE92%,PU8%',size:'95–120',collection:'Game Wear',img:'images/products/263ts001.png'},
+  '263TS003':{name:'Game Tee',color:'Midnight Black',gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts003.png'},
+  '263TS005':{name:'Game Tee',color:'White',gender:'Couple',material:'PE 100% / 배색 PE92%,PU8%',size:'95–120',collection:'Game Wear',img:'images/products/263ts005.png'},
+  '263TS007':{name:'Game Tee',color:'White',gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts007.png'},
+  '263TS009':{name:'Game Tee',color:'Pale Mint',gender:'Couple',material:'PE 100% / 배색 PE95%,PU5%',size:'95–120',collection:'Game Wear',img:'images/products/263ts009.png'},
+  '263TS011':{name:'Game Tee',color:'Black',gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts011.png'},
+  '263TS013':{name:'Game Tee',color:'Dark Navy',gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts013.png'},
+  '263TS015':{name:'Game Tee',color:'White / Coral',gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts015.png'},
+  '263TS017':{name:'Game Tee',color:'Black',gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts017.png'},
+  '263TS019':{name:'Game Tee',color:'Dark Green',gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts019.png'},
+  '263TS025':{name:'Game Tee',color:'White',gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts025.png'},
+  '263TR001':{name:'Sleeveless Game Tee',color:'Blue Gray',gender:'Men',material:'PE 100% / 배색 PE92%,PU8%',size:'95–110',collection:'Game Wear',img:'images/products/263tr001.png'},
+  '263TR002':{name:'Sleeveless Game Tee',color:'Midnight Black',gender:'Men',material:'PE 100% / 배색 PE92%,PU8%',size:'95–110',collection:'Game Wear',img:'images/products/263tr002.png'},
+  '263PH001':{name:'Knit Shorts (4부)',color:'Midnight Black / Dark Green',gender:'Couple',material:'PE 100%',size:'95–110',collection:'Game Wear',img:'images/products/263ph001.png'},
+  '261PH005':{name:'Shorts (4부)',color:'Black',gender:'Couple',material:'PE 100%',size:'95–110',collection:'Game Wear',img:'images/products/261ph005.png'},
+  '261PH007':{name:'Ankle Pants (7부)',color:'Charcoal Gray / Black',gender:'Couple',material:'NY 77%, PU 23%',size:'95–110',collection:'Game Wear',img:'images/products/261ph007.png'},
+  '261PH009':{name:'Shorts (5부)',color:'Black / Gray / Dark Green',gender:'Unisex',material:'NY 91%, PU 9%',size:'85–110',collection:'Game Wear',img:'images/products/261ph009.png'},
+  '261PS001':{name:'Pleats Skirt',color:'White',gender:'Women',material:'NY 77%, PU 23%',size:'85–100',collection:'Game Wear',img:'images/products/261ps001.png'},
+  '261PS002':{name:'Pleats Skirt',color:'Navy',gender:'Women',material:'NY 78%, PU 22%',size:'85–100',collection:'Game Wear',img:'images/products/261ps002.png'},
+  '261PS003':{name:'Pleats Skirt',color:'Black',gender:'Women',material:'NY 77%, PU 23%',size:'85–100',collection:'Game Wear',img:'images/products/261ps003.png'},
+  '16945EX':{name:'World Collection Nature Tee',color:'Pearl Beige / Dark Navy',gender:'Men',material:'PE 100%',size:'S–4XL',collection:'Casual Wear',img:'images/products/placeholder.png'},
+  '15284EX':{name:'World Collection Shorts',color:'Pearl Beige / Dark Navy',gender:'Men',material:'PE 91%, PU 9%',size:'S–3XL',collection:'Casual Wear',img:'images/products/placeholder.png'},
+  '263TS041':{name:'Over Fit Graphic Tee',color:'Dark Navy',gender:'Unisex',material:'PE 100%',size:'80–115',collection:'Casual Wear',img:'images/products/placeholder.png'},
+  '261PH003':{name:'Shorts (우븐 4부)',color:'Black / Dark Navy / Beige',gender:'Couple',material:'NY 84%, PU 16%',size:'95–110',collection:'Casual Wear',img:'images/products/placeholder.png'},
+  '269TR013':{name:'Easy Wear Graphic Tee',color:'Black',gender:'Couple',material:'PE 92%, PU 8%',size:'95–110',collection:'Easy Wear',img:'images/products/placeholder.png'},
+  '269PH001':{name:'Easy Wear Shorts (우븐 3부)',color:'Pale Green',gender:'Couple',material:'NY 77%, PU 23%',size:'95–110',collection:'Easy Wear',img:'images/products/placeholder.png'},
+  '263TS052':{name:'Over Fit Graphic Tee',color:'Pale Mint',gender:'Unisex',material:'PE 100%',size:'85–110',collection:'Easy Wear',img:'images/products/placeholder.png'},
+  '269BA029U':{name:'슬링백 (Sling Bag)',color:'Gray',gender:'Unisex',material:'겉감 NY 100%, 안감 PE 100%',size:'18 x 31 x 12cm',collection:'Easy Wear',img:'images/products/placeholder.png'},
+};
+
+const CATEGORIES = {
+  game:{label:'GAME WEAR',accent:'#C0402C',keywords:['PERFORMANCE','DYNAMIC','TECHNICAL'],tagline:'Built for performance.',desc:'On-court silhouettes tuned for movement — matched from center line to sideline.'},
+  casual:{label:'CASUAL WEAR',accent:'#33456B',keywords:['STYLE','DAILY','MODERN'],tagline:'Style, off the court.',desc:'Everyday pieces styled for the walk between the club and the street.'},
+  easy:{label:'EASY WEAR',accent:'#6E7A54',keywords:['COMFORT','RELAX','LIFESTYLE'],tagline:'Comfort, every day.',desc:'Soft, relaxed layers for downtime — before the game, after, and in between.'},
+};
+
+const HS_DEFAULT = {top:{x:24,y:13,w:52,h:39},bottom:{x:22,y:50,w:56,h:31}};
+
+const LOOKS = [
+  {id:'g1',cat:'game',num:1,img:'images/hero/cover-coral-1.jpeg',model:'Men',caption:'Match Point',
+    items:[{slot:'TOP',code:'263TS001'},{slot:'BOTTOM',code:'261PH005'}],
+    hotspots:{top:{x:27,y:15,w:46,h:36},bottom:{x:26,y:50,w:50,h:30}}},
+  {id:'g2',cat:'game',num:2,img:'images/hero/cover-coral-2.jpeg',model:'Men',caption:'Center Court',
+    items:[{slot:'TOP',code:'263TS013'},{slot:'BOTTOM',code:'261PH007'}],
+    hotspots:{top:{x:24,y:14,w:52,h:37},bottom:{x:22,y:50,w:56,h:30}}},
+  {id:'g3',cat:'game',num:3,img:'images/hero/keyvisual-blue-1.jpeg',model:'Women',caption:'Full Swing',
+    items:[{slot:'TOP',code:'263TS001'},{slot:'BOTTOM',code:'261PS002'}],
+    hotspots:{top:{x:30,y:16,w:44,h:34},bottom:{x:28,y:50,w:46,h:28}}},
+  {id:'g4',cat:'game',num:4,img:'images/hero/keyvisual-blue-2.jpeg',model:'Women',caption:'Rally Ready',
+    items:[{slot:'TOP',code:'263TS025'},{slot:'BOTTOM',code:'261PS001'}],
+    hotspots:HS_DEFAULT},
+  {id:'c1',cat:'casual',num:1,img:'images/hero/daily-nature-1.jpeg',model:'Men',caption:'Off Duty',
+    items:[{slot:'TOP',code:'16945EX'},{slot:'BOTTOM',code:'15284EX'}],
+    hotspots:HS_DEFAULT},
+  {id:'c2',cat:'casual',num:2,img:'images/hero/daily-nature-2.jpeg',model:'Men',caption:'Weekend Walk',
+    items:[{slot:'TOP',code:'263TS041'},{slot:'BOTTOM',code:'261PH003'}],
+    hotspots:HS_DEFAULT},
+  {id:'e1',cat:'easy',num:1,img:'images/hero/easywear-model-crop.jpg',model:'Women',caption:'Home Court',
+    items:[{slot:'TOP',code:'269TR013'},{slot:'BOTTOM',code:'269PH001'}],
+    hotspots:{top:{x:8,y:14,w:82,h:52},bottom:{x:6,y:66,w:84,h:30}}},
+  {id:'e2',cat:'easy',num:2,img:'images/hero/wearmap-model-crop.jpg',model:'Women',caption:'Light Layer',
+    items:[{slot:'TOP',code:'263TS052'},{slot:'BAG',code:'269BA029U'}],
+    hotspots:{top:{x:16,y:15,w:68,h:66},bag:{x:0,y:24,w:42,h:58}}},
+];
+
+const MIX_TOPS = ['263TS001','263TS003','263TS005','263TS007','263TS009','263TS011','263TS013','263TS015','263TS017','263TS019','263TS025','263TR001','263TR002'];
+const MIX_BOTTOMS = ['263PH001','261PH005','261PH007','261PH009','261PS001','261PS002','261PS003'];
+
+/* ---------------- STATE / ROUTER ---------------- */
+let mixTopIdx = 0, mixBottomIdx = 0;
+
+function go(view, param){
+  location.hash = param ? `${view}/${param}` : view;
+}
+window.addEventListener('hashchange', render);
+window.addEventListener('DOMContentLoaded', render);
+
+function parseHash(){
+  const h = location.hash.replace('#','').split('/').filter(Boolean);
+  return {view:h[0]||'cover', param:h[1]||null};
+}
+
+function render(){
+  const {view, param} = parseHash();
+  document.querySelectorAll('#catnav button').forEach(b=>b.classList.toggle('active', view==='category' && b.dataset.cat===param));
+  document.body.dataset.cat = view==='category'||view==='look' ? (view==='category'?param:LOOKS.find(l=>l.id===param)?.cat) : '';
+  const cat = document.body.dataset.cat;
+  if(cat) document.documentElement.style.setProperty('--accent-cat', CATEGORIES[cat].accent);
+  if(cat) document.documentElement.style.setProperty('--accent-cat-a', CATEGORIES[cat].accent+'33');
+  window.scrollTo({top:0,behavior:'instant'});
+  closeProduct();
+
+  const app = document.getElementById('app');
+  if(view==='category') app.innerHTML = renderCategory(param);
+  else if(view==='look') app.innerHTML = renderLook(param);
+  else if(view==='mix') app.innerHTML = renderMix();
+  else app.innerHTML = renderCover();
+
+  app.querySelector('.view')?.classList.add('view');
+  observeReveal();
+  if(view==='look') bindLookInteractions(param);
+  if(view==='mix') paintMix();
+}
+
+/* ---------------- VIEWS ---------------- */
+function renderCover(){
+  return `<div class="view">
+    <section class="cover">
+      <img src="images/hero/cover-coral-1.jpeg" alt="YONEX 2026 Fall/Winter model look">
+      <div class="scrim"></div>
+      <div class="cover-in">
+        <div class="cover-eyebrow">2026 FALL / WINTER</div>
+        <h1>Performance<br>in Motion</h1>
+        <div class="cover-cats">
+          ${Object.entries(CATEGORIES).map(([k,c],i)=>`
+            <button onclick="go('category','${k}')">
+              <span class="cc-num">0${i+1}</span>
+              <span class="cc-name">${c.label} <span class="cc-arrow">&rarr;</span></span>
+            </button>`).join('')}
+        </div>
+      </div>
+    </section>
+  </div>`;
+}
+
+function renderCategory(key){
+  const c = CATEGORIES[key];
+  if(!c) return renderCover();
+  const looks = LOOKS.filter(l=>l.cat===key);
+  return `<div class="view">
+    <section class="cat-hero">
+      <div class="cat-tags">${c.keywords.map(k=>`<span>${k}</span>`).join('')}</div>
+      <h2>${c.label}</h2>
+      <p>${c.tagline} ${c.desc}</p>
+      <div class="cat-count">${String(looks.length).padStart(2,'0')} LOOKS</div>
+    </section>
+    <section class="look-grid">
+      ${looks.map(l=>`
+        <article class="look-card reveal" onclick="go('look','${l.id}')">
+          <div class="lc-frame"><img src="${l.img}" alt="${c.label} ${l.caption}" loading="lazy"></div>
+          <div class="lc-meta">
+            <div>
+              <div class="lc-num">MODEL 0${l.num} — LOOK 0${l.num}</div>
+              <div class="lc-cap">${l.caption}</div>
+            </div>
+            <div class="lc-view">VIEW &rarr;</div>
+          </div>
+        </article>`).join('')}
+    </section>
+  </div>`;
+}
+
+function itemFig(code){
+  const p = PRODUCTS[code];
+  return p ? p.img : 'images/products/placeholder.png';
+}
+
+function renderLook(id){
+  const look = LOOKS.find(l=>l.id===id);
+  if(!look) return renderCover();
+  const c = CATEGORIES[look.cat];
+  const catLooks = LOOKS.filter(l=>l.cat===look.cat);
+  const idx = catLooks.findIndex(l=>l.id===id);
+  const prev = catLooks[(idx-1+catLooks.length)%catLooks.length];
+  const next = catLooks[(idx+1)%catLooks.length];
+
+  const hotspotsHtml = Object.entries(look.hotspots).map(([slot,r])=>
+    `<div class="ld-hotspot" data-slot="${slot}" style="left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%;"><span class="ring"></span></div>`
+  ).join('');
+
+  const itemsHtml = look.items.map((it,i)=>{
+    const p = PRODUCTS[it.code];
+    return `<div class="ld-item" data-slot="${it.slot.toLowerCase()}" onclick="openProduct('${it.code}','${look.id}')">
+      <div class="ii-top"><span class="ii-slot">${it.slot}</span><span class="ii-idx">0${i+1} / 0${look.items.length}</span></div>
+      <div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>
+      <div class="ii-name">${p?p.name:''}</div>
+      <div class="ii-code">${it.code}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="view">
+    <section class="look-detail">
+      <div class="ld-crumb">
+        <a href="#category/${look.cat}" onclick="event.preventDefault();go('category','${look.cat}')">${c.label}</a>
+        <span class="sep">/</span><b>LOOK 0${look.num}</b>
+      </div>
+      <div class="ld-split">
+        <div class="ld-visual" id="ldVisual">
+          <img src="${look.img}" alt="${look.caption}">
+          <div class="vscrim"></div>
+          ${hotspotsHtml}
+          <div class="ld-caption">
+            <div class="eyebrow">${c.label} — LOOK 0${look.num}</div>
+            <h3>${look.caption}</h3>
+          </div>
+        </div>
+        <div class="ld-items">${itemsHtml}</div>
+      </div>
+    </section>
+    <nav class="ld-nav">
+      <button class="ld-nav-btn prev" onclick="go('look','${prev.id}')">
+        <span>&larr;</span>
+        <span><span class="lb-lbl">PREV LOOK</span><span class="lb-cap">${prev.caption}</span></span>
+      </button>
+      <div class="ld-nav-mid">
+        <div class="eyebrow">${c.label}</div>
+        <div class="lm-num">LOOK 0${look.num}</div>
+      </div>
+      <button class="ld-nav-btn next" onclick="go('look','${next.id}')">
+        <span><span class="lb-lbl">NEXT LOOK</span><span class="lb-cap">${next.caption}</span></span>
+        <span>&rarr;</span>
+      </button>
+    </nav>
+    ${renderWornWithSection(look)}
+  </div>`;
+}
+
+function wornWithFor(code, excludeLookId){
+  return LOOKS.filter(l=>l.id!==excludeLookId && l.items.some(it=>it.code===code));
+}
+
+function renderWornWithSection(look){
+  const codes = [...new Set(look.items.map(i=>i.code))];
+  const related = [...new Map(codes.flatMap(code=>wornWithFor(code, look.id)).map(l=>[l.id,l])).values()];
+  if(!related.length) return '';
+  return `<section class="worn-with">
+    <h4>WORN WITH — SAME PIECES, OTHER LOOKS</h4>
+    <div class="ww-grid">
+      ${related.map(l=>`
+        <div class="ww-card" onclick="go('look','${l.id}')">
+          <div class="ww-frame"><img src="${l.img}" alt="${l.caption}" loading="lazy"></div>
+          <div class="ww-lbl">${CATEGORIES[l.cat].label} — LOOK 0${l.num}</div>
+        </div>`).join('')}
+    </div>
+  </section>`;
+}
+
+function bindLookInteractions(id){
+  const visual = document.getElementById('ldVisual');
+  if(!visual) return;
+  document.querySelectorAll('.ld-item').forEach(el=>{
+    const slot = el.dataset.slot;
+    const hs = visual.querySelector(`.ld-hotspot[data-slot="${slot}"]`);
+    el.addEventListener('mouseenter', ()=>hs && hs.classList.add('active'));
+    el.addEventListener('mouseleave', ()=>hs && hs.classList.remove('active'));
+  });
+  document.addEventListener('keydown', lookKeyNav);
+}
+function lookKeyNav(e){
+  const {view, param} = parseHash();
+  if(view!=='look') return;
+  const look = LOOKS.find(l=>l.id===param); if(!look) return;
+  const catLooks = LOOKS.filter(l=>l.cat===look.cat);
+  const idx = catLooks.findIndex(l=>l.id===param);
+  if(e.key==='ArrowRight') go('look', catLooks[(idx+1)%catLooks.length].id);
+  if(e.key==='ArrowLeft') go('look', catLooks[(idx-1+catLooks.length)%catLooks.length].id);
+}
+
+/* ---------------- PRODUCT MODAL ---------------- */
+function openProduct(code, lookId){
+  const p = PRODUCTS[code];
+  if(!p) return;
+  const related = wornWithFor(code, lookId).slice(0,3);
+  document.getElementById('pmBody').innerHTML = `
+    <div class="pm-figure"><img src="${p.img}" alt="${p.name}"></div>
+    <div class="pm-code">${code}</div>
+    <div class="pm-name">${p.name.toUpperCase()}</div>
+    <div class="pm-row"><span>COLOR</span><span>${p.color}</span></div>
+    <div class="pm-row"><span>SIZE</span><span>${p.size}</span></div>
+    <div class="pm-row"><span>COLLECTION</span><span>${p.collection}</span></div>
+    <div class="pm-detail-lbl">DETAIL</div>
+    <div class="pm-detail-txt">${p.material}</div>
+    ${related.length ? `<div class="pm-ww"><h5>WORN WITH</h5><div class="pm-ww-row">
+      ${related.map(l=>`<div class="ww-mini" onclick="go('look','${l.id}')">
+        <div class="frame"><img src="${l.img}" alt="${l.caption}"></div>
+        <div class="lbl">LOOK 0${l.num}</div>
+      </div>`).join('')}
+    </div></div>` : ''}
+  `;
+  document.getElementById('pmBackdrop').classList.add('show');
+  document.getElementById('pmPanel').classList.add('show');
+}
+function closeProduct(){
+  document.getElementById('pmBackdrop')?.classList.remove('show');
+  document.getElementById('pmPanel')?.classList.remove('show');
+}
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeProduct(); });
+
+/* ---------------- MIX & MATCH ---------------- */
+function renderMix(){
+  return `<div class="view">
+    <section class="mix-hero">
+      <span class="eyebrow">STYLE MIX</span>
+      <h2>Build Your Own Look</h2>
+      <p>Pair a top with a bottom from the Game Wear collection. If the combination exists as a styled look, you can jump straight to it.</p>
+    </section>
+    <section class="mix-stage" id="mixStage"></section>
+    <section class="mix-cta" id="mixCta"></section>
+  </div>`;
+}
+function mixTopCode(){ return MIX_TOPS[mixTopIdx]; }
+function mixBottomCode(){ return MIX_BOTTOMS[mixBottomIdx]; }
+function mixMatchLook(){
+  return LOOKS.find(l=>{
+    const codes = l.items.map(i=>i.code);
+    return codes.includes(mixTopCode()) && codes.includes(mixBottomCode());
+  });
+}
+function paintMix(){
+  const stage = document.getElementById('mixStage');
+  const cta = document.getElementById('mixCta');
+  if(!stage) return;
+  const top = PRODUCTS[mixTopCode()], bottom = PRODUCTS[mixBottomCode()];
+  stage.innerHTML = `
+    <div class="mix-slot">
+      <button class="mix-arrow" onclick="shiftMix('top',-1)">&larr;</button>
+      <div class="mix-figure">
+        <div class="ms-label">TOP</div>
+        <div class="ms-imgwrap"><img src="${top.img}" alt="${top.name}"></div>
+        <div class="ms-name">${top.name}</div>
+        <div class="ms-code">${mixTopCode()} — ${top.color}</div>
+      </div>
+      <button class="mix-arrow" onclick="shiftMix('top',1)">&rarr;</button>
+    </div>
+    <div class="mix-plus">+</div>
+    <div class="mix-slot">
+      <button class="mix-arrow" onclick="shiftMix('bottom',-1)">&larr;</button>
+      <div class="mix-figure">
+        <div class="ms-label">BOTTOM</div>
+        <div class="ms-imgwrap"><img src="${bottom.img}" alt="${bottom.name}"></div>
+        <div class="ms-name">${bottom.name}</div>
+        <div class="ms-code">${mixBottomCode()} — ${bottom.color}</div>
+      </div>
+      <button class="mix-arrow" onclick="shiftMix('bottom',1)">&rarr;</button>
+    </div>`;
+  const match = mixMatchLook();
+  cta.innerHTML = match
+    ? `<button onclick="go('look','${match.id}')">VIEW STYLING &rarr;</button><div class="mc-note">Styled as ${CATEGORIES[match.cat].label} — LOOK 0${match.num}</div>`
+    : `<button disabled>VIEW STYLING</button><div class="mc-note">No styled photo for this pairing yet</div>`;
+}
+function shiftMix(which, dir){
+  if(which==='top') mixTopIdx = (mixTopIdx + dir + MIX_TOPS.length) % MIX_TOPS.length;
+  else mixBottomIdx = (mixBottomIdx + dir + MIX_BOTTOMS.length) % MIX_BOTTOMS.length;
+  paintMix();
+}
+/* touch swipe on mix figures */
+let touchX = null;
+document.addEventListener('touchstart', e=>{
+  if(e.target.closest('.mix-figure')) touchX = e.touches[0].clientX;
+});
+document.addEventListener('touchend', e=>{
+  if(touchX===null) return;
+  const dx = e.changedTouches[0].clientX - touchX;
+  const fig = e.target.closest('.mix-figure');
+  if(fig && Math.abs(dx) > 40){
+    const which = fig.querySelector('.ms-label').textContent === 'TOP' ? 'top' : 'bottom';
+    shiftMix(which, dx < 0 ? 1 : -1);
+  }
+  touchX = null;
+});
+
+/* ---------------- REVEAL ON SCROLL ---------------- */
+function observeReveal(){
+  const items = document.querySelectorAll('.reveal:not(.in)');
+  if(!items.length) return;
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  },{threshold:.12});
+  items.forEach(el=>io.observe(el));
+}
+</script>
+</body>
+</html>
