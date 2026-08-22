@@ -120,6 +120,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-caption .eyebrow{color:rgba(255,255,255,.75);}
 .ld-caption h3{color:#fff;font-size:26px;margin-top:6px;letter-spacing:-.01em;}
 .ld-visual .vscrim{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,0) 30%);pointer-events:none;}
+.swipe-hint{display:none;}
 
 .ld-items{background:var(--paper);display:flex;flex-direction:column;border-left:1px solid var(--line-soft);}
 .ld-item{flex:1;display:flex;flex-direction:column;padding:28px 30px;border-bottom:1px solid var(--line-soft);cursor:pointer;transition:background .25s;position:relative;}
@@ -137,6 +138,11 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 @media(max-width:980px){
   .ld-split{grid-template-columns:1fr;min-height:0;}
   .ld-visual{aspect-ratio:4/5;min-height:0;touch-action:pan-y;}
+  .swipe-hint{display:flex;position:absolute;top:50%;width:30px;height:30px;align-items:center;justify-content:center;color:#fff;font-size:20px;line-height:1;z-index:3;pointer-events:none;}
+  .swipe-hint.left{left:2px;animation:swipeHintL 2.2s ease-in-out infinite;}
+  .swipe-hint.right{right:2px;animation:swipeHintR 2.2s ease-in-out infinite;}
+  @keyframes swipeHintL{0%,100%{opacity:.32;transform:translate(0,-50%);}50%{opacity:.85;transform:translate(-5px,-50%);}}
+  @keyframes swipeHintR{0%,100%{opacity:.32;transform:translate(0,-50%);}50%{opacity:.85;transform:translate(5px,-50%);}}
   .ld-items{border-left:none;border-top:1px solid var(--line-soft);display:grid;grid-template-columns:repeat(2,1fr);}
   .ld-item{border-bottom:none;border-right:1px solid var(--line-soft);padding:20px 16px;}
   .ld-item:nth-child(2n){border-right:none;}
@@ -156,7 +162,13 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-nav-mid{text-align:center;}
 .ld-nav-mid .eyebrow{margin-bottom:4px;}
 .ld-nav-mid .lm-num{font-family:var(--mono);font-size:13px;font-weight:700;}
-@media(max-width:640px){.ld-nav{padding:20px 18px 64px;} .ld-nav-btn .lb-cap{font-size:12.5px;}}
+@media(max-width:640px){
+  .ld-nav{padding:22px 18px 60px;}
+  .ld-nav-mid{display:none;}
+  .ld-nav-btn .lb-cap{display:none;}
+  .ld-nav-btn{gap:8px;}
+  .ld-nav-btn .lb-lbl{font-size:11px;}
+}
 
 /* ===== WORN WITH ===== */
 .worn-with{max-width:1440px;margin:0 auto;padding:0 28px 100px;}
@@ -441,6 +453,8 @@ function renderLook(id){
         <div class="ld-visual" id="ldVisual">
           <img src="${look.img}" alt="${look.caption}">
           <div class="vscrim"></div>
+          <span class="swipe-hint left">&lsaquo;</span>
+          <span class="swipe-hint right">&rsaquo;</span>
           ${hotspotsHtml}
           <div class="ld-caption">
             <div class="eyebrow">${c.label} — LOOK 0${look.num}</div>
