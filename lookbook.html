@@ -136,11 +136,15 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 
 @media(max-width:980px){
   .ld-split{grid-template-columns:1fr;min-height:0;}
-  .ld-visual{aspect-ratio:4/5;min-height:0;}
-  .ld-items{border-left:none;border-top:1px solid var(--line-soft);flex-direction:row;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
-  .ld-items::-webkit-scrollbar{display:none;}
-  .ld-item{flex:0 0 76%;scroll-snap-align:start;border-bottom:none;border-right:1px solid var(--line-soft);}
-  .ld-item:last-child{border-right:none;}
+  .ld-visual{aspect-ratio:4/5;min-height:0;touch-action:pan-y;}
+  .ld-items{border-left:none;border-top:1px solid var(--line-soft);display:grid;grid-template-columns:repeat(2,1fr);}
+  .ld-item{border-bottom:none;border-right:1px solid var(--line-soft);padding:20px 16px;}
+  .ld-item:nth-child(2n){border-right:none;}
+  .ld-item:nth-child(n+3){border-top:1px solid var(--line-soft);}
+  .ld-item .ii-figure{min-height:0;padding:8px 0;}
+  .ld-item .ii-figure img{max-height:96px;}
+  .ld-item .ii-name{font-size:12.5px;}
+  .ld-item .ii-code{font-size:10px;}
 }
 
 .ld-nav{max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:28px 28px 90px;}
@@ -428,7 +432,7 @@ function renderLook(id){
   }).join('');
 
   return `<div class="view">
-    <section class="look-detail">
+    <section class="look-detail" data-prev="${prev.id}" data-next="${next.id}">
       <div class="ld-crumb">
         <a href="#category/${look.cat}" onclick="event.preventDefault();go('category','${look.cat}')">${c.label}</a>
         <span class="sep">/</span><b>LOOK 0${look.num}</b>
@@ -494,6 +498,21 @@ function bindLookInteractions(id){
     el.addEventListener('mouseleave', ()=>hs && hs.classList.remove('active'));
   });
   document.addEventListener('keydown', lookKeyNav);
+
+  const detail = document.querySelector('.look-detail');
+  let swipeX = null, swipeY = null;
+  visual.addEventListener('touchstart', e=>{
+    swipeX = e.touches[0].clientX; swipeY = e.touches[0].clientY;
+  }, {passive:true});
+  visual.addEventListener('touchend', e=>{
+    if(swipeX===null) return;
+    const dx = e.changedTouches[0].clientX - swipeX;
+    const dy = e.changedTouches[0].clientY - swipeY;
+    if(Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy)*1.5){
+      go('look', dx < 0 ? detail.dataset.next : detail.dataset.prev);
+    }
+    swipeX = null; swipeY = null;
+  }, {passive:true});
 }
 function lookKeyNav(e){
   const {view, param} = parseHash();
