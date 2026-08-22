@@ -134,6 +134,10 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-item:hover .ii-figure img{transform:translateY(-3px) scale(1.02);}
 .ld-item .ii-name{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.02em;}
 .ld-item .ii-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px;}
+.ii-gtoggle{display:inline-flex;margin-top:12px;border:1px solid var(--line);}
+.ii-gtoggle button{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;width:26px;height:22px;background:none;border:none;cursor:pointer;color:var(--muted);transition:background .18s,color .18s;}
+.ii-gtoggle button:first-child{border-right:1px solid var(--line);}
+.ii-gtoggle button.active{background:var(--ink);color:var(--paper);}
 
 @media(max-width:980px){
   .ld-split{grid-template-columns:1fr;min-height:0;}
@@ -264,22 +268,27 @@ footer.lb-foot .eyebrow{justify-content:center;display:flex;}
 <script>
 /* ---------------- DATA ---------------- */
 const PRODUCTS = {
-  '263TS001':{name:'Game Tee',color:'Blue Gray',price:82000,gender:'Couple',material:'PE 100% / 배색 PE92%,PU8%',size:'95–120',collection:'Game Wear',img:'images/products/263ts001.png'},
+  '263TS001':{name:'Game Tee',color:'Blue Gray',price:82000,gender:'Men',pairCode:'263TS002',material:'PE 100% / 배색 PE92%,PU8%',size:'95–120',collection:'Game Wear',img:'images/products/263ts001.png'},
+  '263TS002':{name:'Game Tee',color:'Blue Gray',price:82000,gender:'Women',material:'PE 100% / 배색 PE92%,PU8%',size:'85–105',collection:'Game Wear',img:'images/products/placeholder.png'},
   '263TS003':{name:'Game Tee',color:'Midnight Black',price:82000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts003.png'},
   '263TS005':{name:'Game Tee',color:'White',price:82000,gender:'Couple',material:'PE 100% / 배색 PE92%,PU8%',size:'95–120',collection:'Game Wear',img:'images/products/263ts005.png'},
   '263TS007':{name:'Game Tee',color:'White',price:82000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts007.png'},
   '263TS009':{name:'Game Tee',color:'Pale Mint',price:82000,gender:'Couple',material:'PE 100% / 배색 PE95%,PU5%',size:'95–120',collection:'Game Wear',img:'images/products/263ts009.png'},
   '263TS011':{name:'Game Tee',color:'Black',price:82000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts011.png'},
-  '263TS013':{name:'Game Tee',color:'Dark Navy',price:82000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts013.png'},
+  '263TS013':{name:'Game Tee',color:'Dark Navy',price:82000,gender:'Men',pairCode:'263TS014',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts013.png'},
+  '263TS014':{name:'Game Tee',color:'Dark Navy',price:82000,gender:'Women',material:'PE 100%',size:'85–105',collection:'Game Wear',img:'images/products/placeholder.png'},
   '263TS015':{name:'Game Tee',color:'White / Coral',price:82000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts015.png'},
   '263TS017':{name:'Game Tee',color:'Black',price:72000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts017.png'},
   '263TS019':{name:'Game Tee',color:'Dark Green',price:72000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts019.png'},
-  '263TS025':{name:'Game Tee',color:'White',price:72000,gender:'Couple',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts025.png'},
+  '263TS025':{name:'Game Tee',color:'White',price:72000,gender:'Men',pairCode:'263TS026',material:'PE 100%',size:'95–120',collection:'Game Wear',img:'images/products/263ts025.png'},
+  '263TS026':{name:'Game Tee',color:'White',price:72000,gender:'Women',material:'PE 100%',size:'85–105',collection:'Game Wear',img:'images/products/placeholder.png'},
   '263TR001':{name:'Sleeveless Game Tee',color:'Blue Gray',price:69000,gender:'Men',material:'PE 100% / 배색 PE92%,PU8%',size:'95–110',collection:'Game Wear',img:'images/products/263tr001.png'},
   '263TR002':{name:'Sleeveless Game Tee',color:'Midnight Black',price:69000,gender:'Men',material:'PE 100% / 배색 PE92%,PU8%',size:'95–110',collection:'Game Wear',img:'images/products/263tr002.png'},
   '263PH001':{name:'Knit Shorts (4부)',color:'Midnight Black / Dark Green',price:59000,gender:'Couple',material:'PE 100%',size:'95–110',collection:'Game Wear',img:'images/products/263ph001.png'},
-  '261PH005':{name:'Shorts (4부)',color:'Black',price:69000,gender:'Couple',material:'PE 100%',size:'95–110',collection:'Game Wear',img:'images/products/261ph005.png'},
-  '261PH007':{name:'Ankle Pants (7부)',color:'Charcoal Gray / Black',price:69000,gender:'Couple',material:'NY 77%, PU 23%',size:'95–110',collection:'Game Wear',img:'images/products/261ph007.png'},
+  '261PH005':{name:'Shorts (4부)',color:'Black',price:69000,gender:'Men',pairCode:'261PH006',material:'PE 100%',size:'95–110',collection:'Game Wear',img:'images/products/261ph005.png'},
+  '261PH006':{name:'Shorts (4부)',color:'Black',price:69000,gender:'Women',material:'PE 100%',size:'85–100',collection:'Game Wear',img:'images/products/placeholder.png'},
+  '261PH007':{name:'Ankle Pants (7부)',color:'Charcoal Gray / Black',price:69000,gender:'Men',pairCode:'261PH008',material:'NY 77%, PU 23%',size:'95–110',collection:'Game Wear',img:'images/products/261ph007.png'},
+  '261PH008':{name:'Ankle Pants (7부)',color:'Charcoal Gray / Black',price:69000,gender:'Women',material:'NY 77%, PU 23%',size:'85–100',collection:'Game Wear',img:'images/products/placeholder.png'},
   '261PH009':{name:'Shorts (5부)',color:'Black / Gray / Dark Green',price:59000,gender:'Unisex',material:'NY 91%, PU 9%',size:'85–110',collection:'Game Wear',img:'images/products/261ph009.png'},
   '261PS001':{name:'Pleats Skirt',color:'White',price:65000,gender:'Women',material:'NY 77%, PU 23%',size:'85–100',collection:'Game Wear',img:'images/products/261ps001.png'},
   '261PS002':{name:'Pleats Skirt',color:'Navy',price:65000,gender:'Women',material:'NY 78%, PU 22%',size:'85–100',collection:'Game Wear',img:'images/products/261ps002.png'},
@@ -436,11 +445,15 @@ function renderLook(id){
 
   const itemsHtml = look.items.map((it,i)=>{
     const p = PRODUCTS[it.code];
-    return `<div class="ld-item" data-slot="${it.slot.toLowerCase()}" onclick="openProduct('${it.code}','${look.id}')">
+    const toggleHtml = p && p.pairCode
+      ? `<div class="ii-gtoggle"><button type="button" class="active" data-g="M">M</button><button type="button" data-g="W">W</button></div>`
+      : '';
+    return `<div class="ld-item" data-slot="${it.slot.toLowerCase()}" data-active-code="${it.code}" data-code-m="${it.code}" data-code-w="${p&&p.pairCode?p.pairCode:''}">
       <div class="ii-top"><span class="ii-slot">${it.slot}</span><span class="ii-idx">0${i+1} / 0${look.items.length}</span></div>
       <div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>
       <div class="ii-name">${it.code}</div>
       <div class="ii-code">${p?`${p.price.toLocaleString()}원 · ${p.color}`:''}</div>
+      ${toggleHtml}
     </div>`;
   }).join('');
 
@@ -511,6 +524,24 @@ function bindLookInteractions(id){
     const hs = visual.querySelector(`.ld-hotspot[data-slot="${slot}"]`);
     el.addEventListener('mouseenter', ()=>hs && hs.classList.add('active'));
     el.addEventListener('mouseleave', ()=>hs && hs.classList.remove('active'));
+
+    el.addEventListener('click', e=>{
+      if(e.target.closest('.ii-gtoggle')) return;
+      openProduct(el.dataset.activeCode, id);
+    });
+    el.querySelectorAll('.ii-gtoggle button').forEach(btn=>{
+      btn.addEventListener('click', e=>{
+        e.stopPropagation();
+        const code = btn.dataset.g==='M' ? el.dataset.codeM : el.dataset.codeW;
+        const p = PRODUCTS[code];
+        if(!p) return;
+        el.dataset.activeCode = code;
+        el.querySelector('.ii-figure img').src = itemFig(code);
+        el.querySelector('.ii-name').textContent = code;
+        el.querySelector('.ii-code').textContent = `${p.price.toLocaleString()}원 · ${p.color}`;
+        el.querySelectorAll('.ii-gtoggle button').forEach(b=>b.classList.toggle('active', b===btn));
+      });
+    });
   });
   document.addEventListener('keydown', lookKeyNav);
 
