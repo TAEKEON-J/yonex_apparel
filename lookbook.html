@@ -165,16 +165,15 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-crumb{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;padding:14px 0 26px;}
 .ld-back{color:var(--ink);font-weight:700;text-decoration:none;transition:opacity .2s;}
 .ld-back:hover{opacity:.6;}
-.ld-look-gtoggle{margin-left:auto;display:inline-flex;border:1px solid var(--ink);}
-.ld-look-gtoggle button{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;padding:7px 14px;background:none;border:none;cursor:pointer;color:var(--ink-soft);transition:background .18s,color .18s;}
-.ld-look-gtoggle button:first-child{border-right:1px solid var(--ink);}
-.ld-look-gtoggle button.active{background:var(--ink);color:var(--paper);}
-@media(max-width:640px){.ld-look-gtoggle button{padding:6px 11px;font-size:9.5px;}}
 .ld-crumb b{color:var(--ink);font-weight:700;}
 .ld-crumb .sep{opacity:.4;}
 .ld-split{display:grid;grid-template-columns:65fr 35fr;gap:0;align-items:stretch;min-height:78vh;border:1px solid var(--line-soft);}
 .ld-visual{position:relative;background:var(--paper-3);overflow:hidden;min-height:420px;}
 .ld-visual img{width:100%;height:100%;object-fit:cover;object-position:top center;}
+.ld-visual-duo{display:grid;grid-template-columns:1fr 1fr;}
+.ld-visual-half{position:relative;overflow:hidden;}
+.ld-visual-half:first-child{border-right:1px solid rgba(255,255,255,.25);}
+.ld-half-label{position:absolute;left:16px;bottom:18px;z-index:2;color:#fff;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;}
 .ld-hotspot{position:absolute;pointer-events:none;opacity:0;transition:opacity .45s ease;border-radius:50%;background:radial-gradient(ellipse at center,var(--accent-cat-a) 0%,transparent 72%);filter:blur(2px);}
 .ld-hotspot.active{opacity:1;}
 .ld-hotspot .ring{position:absolute;inset:8%;border:1px solid var(--accent-cat);border-radius:46% 54% 52% 48%/50% 46% 54% 50%;opacity:0;transition:opacity .45s ease;}
@@ -210,6 +209,8 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 @media(max-width:980px){
   .ld-split{grid-template-columns:1fr;min-height:0;}
   .ld-visual{aspect-ratio:4/5;min-height:0;touch-action:pan-y;}
+  .ld-visual-duo{aspect-ratio:8/5;}
+  .ld-half-label{left:10px;bottom:12px;font-size:9.5px;}
   .swipe-hint{display:flex;position:absolute;top:50%;width:30px;height:30px;align-items:center;justify-content:center;color:#fff;font-size:20px;line-height:1;z-index:3;pointer-events:none;}
   .swipe-hint.left{left:2px;animation:swipeHintL 2.2s ease-in-out infinite;}
   .swipe-hint.right{right:2px;animation:swipeHintR 2.2s ease-in-out infinite;}
@@ -587,7 +588,6 @@ const MIX_BOTTOMS = ['263PH001','263PL001','263PL002','263WP001','263WP009'];
 
 /* ---------------- STATE / ROUTER ---------------- */
 let mixTopIdx = 0, mixBottomIdx = 0;
-let lookGenderView = 'M';
 
 const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 function go(view, param){
@@ -619,8 +619,6 @@ function render(){
   window.scrollTo({top:0,behavior:'instant'});
   closeProduct();
 
-  if(view==='look') lookGenderView = 'M';
-
   const app = document.getElementById('app');
   app.classList.remove('app-out');
   if(view==='category') app.innerHTML = renderCategory(param);
@@ -633,15 +631,6 @@ function render(){
   if(view==='look') bindLookInteractions(param);
   if(view==='category') bindCampaignInteractions(param);
   if(view==='mix') paintMix();
-}
-
-/* re-paints the look view in place (no scroll reset, no hash change) — used by the
-   whole-look M/W toggle so switching gender doesn't jump the page */
-function paintLook(id){
-  const app = document.getElementById('app');
-  app.innerHTML = renderLook(id);
-  app.querySelector('.view')?.classList.add('view');
-  bindLookInteractions(id);
 }
 
 /* ---------------- VIEWS ---------------- */
@@ -877,14 +866,31 @@ function renderLook(id){
   const prev = catLooks[(idx-1+catLooks.length)%catLooks.length];
   const next = catLooks[(idx+1)%catLooks.length];
 
-  const showW = lookGenderView==='W' && look.pair;
-  const variant = showW ? {img:look.pair.fitImg||look.pair.img, model:look.pair.model, items:look.pair.items, hotspots:look.pair.hotspots||look.hotspots} : {...look, img:look.fitImg||look.img};
-
-  const hotspotsHtml = Object.entries(variant.hotspots).map(([slot,r])=>
+  /* a "couple" look has a look.pair object — the same shape as the look
+     itself (img/fitImg/items/hotspots) but photographed on the opposite-
+     gender model for the same matching design. When present, both model
+     cuts are shown together in the hero instead of just one. */
+  const hotspotsHtml = look.pair ? '' : Object.entries(look.hotspots).map(([slot,r])=>
     `<div class="ld-hotspot" data-slot="${slot}" style="left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%;"><span class="ring"></span></div>`
   ).join('');
 
-  const itemsHtml = variant.items.map((it,i)=>{
+  const heroHtml = look.pair ? `
+    <div class="ld-visual-half">
+      ${lookImgTag(look.items, 'model', look.fitImg||look.img, `alt="${look.caption} — ${look.model}"`)}
+      <div class="vscrim"></div>
+      <div class="ld-half-label">${look.model==='Women'?'WOMEN':'MEN'}</div>
+    </div>
+    <div class="ld-visual-half">
+      ${lookImgTag(look.pair.items, 'model', look.pair.fitImg||look.pair.img, `alt="${look.caption} — ${look.pair.model}"`)}
+      <div class="vscrim"></div>
+      <div class="ld-half-label">${look.pair.model==='Women'?'WOMEN':'MEN'}</div>
+    </div>` : `
+    ${lookImgTag(look.items, 'model', look.fitImg||look.img, `alt="${look.caption}"`)}
+    <div class="vscrim"></div>
+    ${hotspotsHtml}
+    <div class="ld-caption"><div class="eyebrow">${c.label}</div></div>`;
+
+  const itemsHtml = look.items.map((it,i)=>{
     const p = PRODUCTS[it.code];
     const isBottom = it.slot.toLowerCase()==='bottom';
     const gi = (!look.pair && !look.noGenderToggle && !isBottom) ? genderInfo(it.code) : null;
@@ -893,7 +899,7 @@ function renderLook(id){
       : '';
     const priceLine = p ? (isBottom ? fmtPrice(p.price) : `${fmtPrice(p.price)} · ${p.color}`) : '';
     return `<div class="ld-item" data-slot="${it.slot.toLowerCase()}" data-active-code="${it.code}" data-code-m="${gi?gi.m:''}" data-code-w="${gi?gi.w:''}">
-      <div class="ii-top"><span class="ii-slot">${it.slot}</span><span class="ii-idx">0${i+1} / 0${variant.items.length}</span></div>
+      <div class="ii-top"><span class="ii-slot">${it.slot}</span><span class="ii-idx">0${i+1} / 0${look.items.length}</span></div>
       <div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>
       <div class="ii-info">
         <div class="ii-name">${p?p.code:it.code}</div>
@@ -910,28 +916,17 @@ function renderLook(id){
     `<div class="ld-related-thumb" onclick="go('look','${l.id}')">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>`
   ).join('');
 
-  const lookToggleHtml = look.pair ? `<div class="ld-look-gtoggle">
-      <button type="button" class="${showW?'':'active'}" data-lg="M">MEN</button>
-      <button type="button" class="${showW?'active':''}" data-lg="W">WOMEN</button>
-    </div>` : '';
-
   return `<div class="view">
     <section class="look-detail" data-prev="${prev.id}" data-next="${next.id}" data-id="${id}">
       <div class="ld-crumb">
         <a class="ld-back" href="#category/${look.cat}" onclick="event.preventDefault();go('category','${look.cat}')">&larr; ${c.label} — ALL LOOKS</a>
         <span class="sep">/</span><b>LOOK ${String(look.num).padStart(2,'0')}</b>
-        ${lookToggleHtml}
       </div>
       <div class="ld-split">
-        <div class="ld-visual" id="ldVisual">
-          ${lookImgTag(variant.items, 'model', variant.img, `alt="${look.caption}"`)}
-          <div class="vscrim"></div>
+        <div class="ld-visual${look.pair?' ld-visual-duo':''}" id="ldVisual">
+          ${heroHtml}
           <span class="swipe-hint left">&lsaquo;</span>
           <span class="swipe-hint right">&rsaquo;</span>
-          ${hotspotsHtml}
-          <div class="ld-caption">
-            <div class="eyebrow">${c.label}</div>
-          </div>
         </div>
         <div class="ld-items">${itemsHtml}</div>
       </div>
@@ -976,13 +971,6 @@ function bindLookInteractions(id){
   document.addEventListener('keydown', lookKeyNav);
 
   const detail = document.querySelector('.look-detail');
-  detail.querySelectorAll('.ld-look-gtoggle button').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      lookGenderView = btn.dataset.lg;
-      paintLook(id);
-    });
-  });
-
   let swipeX = null, swipeY = null;
   visual.addEventListener('touchstart', e=>{
     swipeX = e.touches[0].clientX; swipeY = e.touches[0].clientY;
