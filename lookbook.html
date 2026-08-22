@@ -147,6 +147,8 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 /* ===== LOOK DETAIL ===== */
 .look-detail{max-width:1440px;margin:0 auto;padding:28px 28px 0;}
 .ld-crumb{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;padding:14px 0 26px;}
+.ld-back{color:var(--ink);font-weight:700;text-decoration:none;transition:opacity .2s;}
+.ld-back:hover{opacity:.6;}
 .ld-look-gtoggle{margin-left:auto;display:inline-flex;border:1px solid var(--ink);}
 .ld-look-gtoggle button{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;padding:7px 14px;background:none;border:none;cursor:pointer;color:var(--ink-soft);transition:background .18s,color .18s;}
 .ld-look-gtoggle button:first-child{border-right:1px solid var(--ink);}
@@ -798,7 +800,7 @@ function renderLook(id){
   return `<div class="view">
     <section class="look-detail" data-prev="${prev.id}" data-next="${next.id}" data-id="${id}">
       <div class="ld-crumb">
-        <a href="#category/${look.cat}" onclick="event.preventDefault();go('category','${look.cat}')">${c.label}</a>
+        <a class="ld-back" href="#category/${look.cat}" onclick="event.preventDefault();go('category','${look.cat}')">&larr; ${c.label} — ALL LOOKS</a>
         <span class="sep">/</span><b>LOOK ${String(look.num).padStart(2,'0')}</b>
         ${lookToggleHtml}
       </div>
