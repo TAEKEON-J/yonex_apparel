@@ -328,17 +328,18 @@ const PRODUCTS = {
   '263TS026':{code:"263TS026F",name:"Game Tee",color:"White",price:72000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Game Wear",img:"images/products/263TS026F.jpg",pairCode:"263TS025",imgBack:"images/products/263TS026F_B.jpg"},
   '263TS027':{code:"263TS027M",name:"Game Tee",color:"Midnight",price:72000,gender:"Men",material:"PE 100%",size:"95–110(115–120)",collection:"Game Wear",img:"images/products/263TS027M.jpg",pairCode:"263TS028",imgBack:"images/products/263TS027M_B.jpg"},
   '263TS028':{code:"263TS028F",name:"Game Tee",color:"Midnight",price:72000,gender:"Women",material:"배색 PE 100%",size:"85–100",collection:"Game Wear",img:"images/products/263TS028F.jpg",pairCode:"263TS027",imgBack:"images/products/263TS028F_B.jpg"},
-  '263TS029':{code:"263TS029M",name:"Game Tee",color:"Pink",price:72000,gender:"Men",material:"PE 100% 배색 PE 100%",size:"95–110(115–120)",collection:"Game Wear",img:"images/products/263TS029M.jpg",pairCode:"263TS030",imgBack:"images/products/263TS029M_B.jpg"},
-  '263TS030':{code:"263TS030F",name:"Game Tee",color:"Pink",price:72000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Game Wear",img:"images/products/263TS030F.jpg",pairCode:"263TS029",imgBack:"images/products/263TS030F_B.jpg"},
-  '263TS031':{code:"263TS031M",name:"Game Tee",color:"Pale Blue",price:72000,gender:"Men",material:"PE 100%",size:"95–110(115–120)",collection:"Game Wear",img:"images/products/263TS031M.jpg",pairCode:"263TS032",imgBack:"images/products/263TS031M_B.jpg"},
-  '263TS032':{code:"263TS032F",name:"Game Tee",color:"Pale Blue",price:72000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Game Wear",img:"images/products/263TS032F.jpg",pairCode:"263TS031",imgBack:"images/products/263TS032F_B.jpg"},
   /* 263TS029M/030F and 263TS031M/032F are each sold in two colorways under the
-     same shared SKU number (a real quirk of the sheet, not a typo) — these
-     four extra entries are the second colorway of each, now that photos for
-     both exist. Same code as their sibling above, different color/photo. */
+     same shared SKU number (a real quirk of the sheet, not a typo) — the "-2"
+     entries are each style's second colorway, kept right next to its sibling
+     so the FULL LINE-UP grid reads as "one style, two colors" rather than a
+     duplicate. Same code as the sibling, different color/photo. */
+  '263TS029':{code:"263TS029M",name:"Game Tee",color:"Pink",price:72000,gender:"Men",material:"PE 100% 배색 PE 100%",size:"95–110(115–120)",collection:"Game Wear",img:"images/products/263TS029M.jpg",pairCode:"263TS030",imgBack:"images/products/263TS029M_B.jpg"},
   '263TS029-2':{code:"263TS029M",name:"Game Tee",color:"Blue",price:72000,gender:"Men",material:"PE 100% 배색 PE 100%",size:"95–110(115–120)",collection:"Game Wear",img:"images/products/263TS029M_1.jpg",pairCode:"263TS030-2",imgBack:"images/products/263TS029M_1_B.jpg"},
+  '263TS030':{code:"263TS030F",name:"Game Tee",color:"Pink",price:72000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Game Wear",img:"images/products/263TS030F.jpg",pairCode:"263TS029",imgBack:"images/products/263TS030F_B.jpg"},
   '263TS030-2':{code:"263TS030F",name:"Game Tee",color:"Blue",price:72000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Game Wear",img:"images/products/263TS030F_1.jpg",pairCode:"263TS029-2",imgBack:"images/products/263TS030F_1_B.jpg"},
+  '263TS031':{code:"263TS031M",name:"Game Tee",color:"Pale Blue",price:72000,gender:"Men",material:"PE 100%",size:"95–110(115–120)",collection:"Game Wear",img:"images/products/263TS031M.jpg",pairCode:"263TS032",imgBack:"images/products/263TS031M_B.jpg"},
   '263TS031-2':{code:"263TS031M",name:"Game Tee",color:"Pepper Mint",price:72000,gender:"Men",material:"PE 100%",size:"95–110(115–120)",collection:"Game Wear",img:"images/products/263TS031M_1.jpg",pairCode:"263TS032-2",imgBack:"images/products/263TS031M_1_B.jpg"},
+  '263TS032':{code:"263TS032F",name:"Game Tee",color:"Pale Blue",price:72000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Game Wear",img:"images/products/263TS032F.jpg",pairCode:"263TS031",imgBack:"images/products/263TS032F_B.jpg"},
   '263TS032-2':{code:"263TS032F",name:"Game Tee",color:"Pepper Mint",price:72000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Game Wear",img:"images/products/263TS032F_1.jpg",pairCode:"263TS031-2",imgBack:"images/products/263TS032F_1_B.jpg"},
   '263TR001':{code:"263TR001M",name:"Sleeveless Game Tee",color:"Blue Gray",price:69000,gender:"Men",material:"PE 100% 배색 PE 92%, PU 8%",size:"95–110",collection:"Game Wear",img:"images/products/263TR001M.jpg",imgBack:"images/products/263TR001M_B.jpg"},
   '263TR002':{code:"263TR002M",name:"Sleeveless Game Tee",color:"Midnight Black",price:69000,gender:"Men",material:"PE 100% 배색1 PE 92%, PU 8%, 배색2 PE 100%",size:"95–110",collection:"Game Wear",img:"images/products/263TR002M.jpg",imgBack:"images/products/263TR002M_B.jpg"},
@@ -369,6 +370,9 @@ const PRODUCTS = {
   '263TH003':{code:"263TH003U",name:"Hoodie (Zip-up)",color:"Stone Charcoal",price:129000,gender:"Unisex",material:"CO 65%, PE 35% 배색 PE 95%, PU 5%",size:"85–110",collection:"Casual Wear",img:"images/products/placeholder.png"},
   '263PH001':{code:"263PH001M",name:"Game Shorts (4부)",color:"Dark Green",price:59000,gender:"Men",material:"PE 100%",size:"95–110",collection:"Game Wear",img:"images/products/263ph001.png",pairCode:"263PH002"},
   '263PH002':{code:"263PH002F",name:"Game Shorts (4부)",color:"Dark Green",price:59000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Game Wear",img:"images/products/placeholder.png",pairCode:"263PH001"},
+  /* second colorway of the same shared code, per the sheet — see the 263TS029 note above */
+  '263PH001-2':{code:"263PH001M",name:"Game Shorts (4부)",color:"Midnight Black",price:59000,gender:"Men",material:"PE 100%",size:"95–110",collection:"Game Wear",img:"images/products/placeholder.png",pairCode:"263PH002-2"},
+  '263PH002-2':{code:"263PH002F",name:"Game Shorts (4부)",color:"Midnight Black",price:59000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Game Wear",img:"images/products/placeholder.png",pairCode:"263PH001-2"},
   '263PL001':{code:"263PL001U",name:"Wide Pants",color:"Melange White",price:125000,gender:"Unisex",material:"PE 100%",size:"85–110",collection:"Casual Wear",img:"images/products/placeholder.png"},
   '263PL002':{code:"263PL002U",name:"Wide Pants",color:"Black",price:125000,gender:"Unisex",material:"PE 91%, PU 9%",size:"85–110",collection:"Casual Wear",img:"images/products/placeholder.png"},
   '263WU001':{code:"263WU001M",name:"Warm-up Jacket (우븐)",color:"Black",price:155000,gender:"Men",material:"NY 77%, PU 23%",size:"95–110(115–120)",collection:"Game Wear",img:"images/products/placeholder.png",pairCode:"263WU002"},
@@ -405,17 +409,22 @@ const PRODUCTS = {
   '263JV001':{code:"263JV001U",name:"Padding Vest",color:"Dark Charcoal",price:169000,gender:"Unisex",material:"PE 100%, 안감 PE 100% 충전재 PE 100%",size:"85–110",collection:"Casual Wear",img:"images/products/placeholder.png"},
   '269TR011':{code:"269TR011M",name:"Easy Wear Tee",color:"Black",price:29000,gender:"Men",material:"PE 100%",size:"95–110",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269TR012"},
   '269TR012':{code:"269TR012F",name:"Easy Wear Tee",color:"Black",price:29000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269TR011"},
+  '269TR011-2':{code:"269TR011M",name:"Easy Wear Tee",color:"Dark Navy",price:29000,gender:"Men",material:"PE 100%",size:"95–110",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269TR012-2"},
+  '269TR012-2':{code:"269TR012F",name:"Easy Wear Tee",color:"Dark Navy",price:29000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269TR011-2"},
   '269TR013':{code:"269TR013M",name:"Easy Wear Tee",color:"Black",price:29000,gender:"Men",material:"PE 92%, PU 8%",size:"95–110",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269TR014"},
   '269TR014':{code:"269TR014F",name:"Easy Wear Tee",color:"Black",price:29000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269TR013"},
   '269TR015':{code:"269TR015M",name:"Easy Wear Tee",color:"Midnight",price:29000,gender:"Men",material:"PE 100%",size:"95–110",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269TR016"},
   '269TR016':{code:"269TR016F",name:"Easy Wear Tee",color:"Midnight",price:29000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269TR015"},
   '269TL001':{code:"269TL001M",name:"Easy Wear Long Sleeve",color:"Midnight Black",price:33000,gender:"Men",material:"PE 88%, PU 12%",size:"95–110",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269TL002"},
   '269TL002':{code:"269TL002F",name:"Easy Wear Long Sleeve",color:"Midnight Black",price:33000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269TL001"},
+  '269TL001-2':{code:"269TL001M",name:"Easy Wear Long Sleeve",color:"Navy",price:33000,gender:"Men",material:"PE 88%, PU 12%",size:"95–110",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269TL002-2"},
+  '269TL002-2':{code:"269TL002F",name:"Easy Wear Long Sleeve",color:"Navy",price:33000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269TL001-2"},
   '263TS050':{code:"263TS050U",name:"Over Fit Graphic Tee (Online Exclusive)",color:"White",price:59000,gender:"Unisex",material:"PE 100%",size:"85–110",collection:"Casual Wear",img:"images/products/placeholder.png"},
   '263TS051':{code:"263TS051U",name:"Over Fit Graphic Tee (Online Exclusive)",color:"Apricot",price:59000,gender:"Unisex",material:"PE 100%",size:"85–110",collection:"Casual Wear",img:"images/products/placeholder.png"},
   '263TS052':{code:"263TS052U",name:"Over Fit Graphic Tee (Online Exclusive)",color:"Pale Mint",price:59000,gender:"Unisex",material:"PE 100%",size:"85–110",collection:"Casual Wear",img:"images/products/placeholder.png"},
   '263TS053':{code:"263TS053U",name:"Over Fit Graphic Tee (Online Exclusive)",color:"Black",price:59000,gender:"Unisex",material:"PE 100%",size:"85–110",collection:"Casual Wear",img:"images/products/placeholder.png"},
   '263TS054':{code:"263TS054U",name:"Easy Wear Tee (Online Exclusive)",color:"Black",price:29000,gender:"Unisex",material:"PE 92%, PU 8%",size:"85–110",collection:"Easy Wear",img:"images/products/placeholder.png"},
+  '263TS054-2':{code:"263TS054U",name:"Easy Wear Tee (Online Exclusive)",color:"Midnight Navy",price:29000,gender:"Unisex",material:"PE 92%, PU 8%",size:"85–110",collection:"Easy Wear",img:"images/products/placeholder.png"},
 };
 
 const CATEGORIES = {
