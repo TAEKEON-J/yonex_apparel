@@ -672,13 +672,17 @@ function lookImgTag(items, type, fallbackSrc, attrs=''){
   /* file case is a common real-world mismatch (static hosts are case-sensitive),
      so this tries the codes as-uploaded for ghost cuts (UPPER, matching
      images/products/) before falling back to an all-lowercase guess. */
-  const upperBase = `images/looks/${lookFilenameBase(items, true)}_${type}`;
-  const lowerBase = `images/looks/${lookFilenameBase(items, false)}_${type}`;
-  const chain = [
-    `${upperBase}.jpg`, `${upperBase}.jpeg`, `${upperBase}.png`,
-    `${lowerBase}.jpg`, `${lowerBase}.jpeg`, `${lowerBase}.png`,
-    fallbackSrc,
-  ];
+  const chainFor = t => {
+    const upperBase = `images/looks/${lookFilenameBase(items, true)}_${t}`;
+    const lowerBase = `images/looks/${lookFilenameBase(items, false)}_${t}`;
+    return [`${upperBase}.jpg`, `${upperBase}.jpeg`, `${upperBase}.png`,
+             `${lowerBase}.jpg`, `${lowerBase}.jpeg`, `${lowerBase}.png`];
+  };
+  /* not every look has a separate 화보컷 (editorial) shoot yet — if one isn't
+     found, try the 모델컷 (model) cut before giving up on a real photo
+     entirely, so category grids/Worn With don't fall back to a placeholder
+     hero image just because the editorial-specific shot hasn't been taken. */
+  const chain = type==='editorial' ? [...chainFor('editorial'), ...chainFor('model'), fallbackSrc] : [...chainFor(type), fallbackSrc];
   return `<img src="${chain[0]}" data-chain='${JSON.stringify(chain.slice(1))}' onerror="imgChainNext(this)" ${attrs}>`;
 }
 function imgChainNext(img){

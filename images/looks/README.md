@@ -19,6 +19,11 @@ up automatically, no code change needed.
 - `model` = 모델피팅컷 (plain fitting cut, used on the LOOK detail page)
 - `editorial` = 화보컷 (campaign cut, used on the category grid / Worn With)
 - `.jpg`, `.jpeg`, and `.png` all work — the site tries each in that order.
+- Not every look gets a dedicated 화보컷 shoot. If no `_editorial` file
+  exists, the site automatically uses the `_model` cut in its place on the
+  category grid / Worn With instead of falling back to a placeholder —
+  so a look with only a model cut still shows a real photo everywhere. Just
+  upload whichever cuts you actually have; nothing extra to wire up.
 - Multiple photos of the same combo: append `_1`, `_2`, ... before the
   extension (e.g. `263TS001M_263PH001M_model_2.jpg`) — only the first
   (no-suffix) file is picked up automatically today; ask if you need the
