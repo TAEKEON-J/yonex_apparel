@@ -543,7 +543,7 @@ function renderCategory(key){
     <section class="look-grid">
       ${looks.map(l=>`
         <article class="look-card reveal" onclick="go('look','${l.id}')">
-          <div class="lc-frame"><img src="${l.img}" alt="${c.label} ${l.caption}" loading="lazy"></div>
+          <div class="lc-frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${c.label} ${l.caption}" loading="lazy"`)}</div>
           <div class="lc-meta">
             <div>
               <div class="lc-num">MODEL 0${l.num} — LOOK 0${l.num}</div>
@@ -584,6 +584,31 @@ function renderFullLineup(key){
 function itemFig(code){
   const p = PRODUCTS[code];
   return p ? p.img : 'images/products/placeholder.png';
+}
+
+/* ---------------- images/looks/ auto-matching ----------------
+   Naming convention: {TOP code}_{BOTTOM code}[_{other codes}]_{model|editorial}.jpg
+   (lowercase, full M/F/U-suffixed codes, slots ordered TOP→BOTTOM→other; a
+   TOP-only look just omits the rest, e.g. "263ts002f_model.jpg"). Drop a file
+   matching a look's codes into images/looks/ and it's picked up automatically —
+   no code change needed. Until then the <img> quietly falls back to the
+   look's temporary placeholder photo. */
+const LOOK_IMG_SLOT_ORDER = ['TOP','BOTTOM','OUTER','BAG'];
+function lookFilenameBase(items){
+  const ordered = [...items].sort((a,b)=>LOOK_IMG_SLOT_ORDER.indexOf(a.slot)-LOOK_IMG_SLOT_ORDER.indexOf(b.slot));
+  return ordered.map(it=>(PRODUCTS[it.code]?.code || it.code).toLowerCase()).join('_');
+}
+function lookImgTag(items, type, fallbackSrc, attrs=''){
+  const base = `images/looks/${lookFilenameBase(items)}_${type}`;
+  const chain = [`${base}.jpg`, `${base}.jpeg`, `${base}.png`, fallbackSrc];
+  return `<img src="${chain[0]}" data-chain='${JSON.stringify(chain.slice(1))}' onerror="imgChainNext(this)" ${attrs}>`;
+}
+function imgChainNext(img){
+  let chain = [];
+  try{ chain = JSON.parse(img.dataset.chain || '[]'); }catch(e){}
+  if(!chain.length){ img.onerror = null; return; }
+  img.src = chain.shift();
+  img.dataset.chain = JSON.stringify(chain);
 }
 
 /* resolves the M/W code pair for an item regardless of which side it.code points to */
@@ -644,7 +669,7 @@ function renderLook(id){
       </div>
       <div class="ld-split">
         <div class="ld-visual" id="ldVisual">
-          <img src="${variant.img}" alt="${look.caption}">
+          ${lookImgTag(variant.items, 'model', variant.img, `alt="${look.caption}"`)}
           <div class="vscrim"></div>
           <span class="swipe-hint left">&lsaquo;</span>
           <span class="swipe-hint right">&rsaquo;</span>
@@ -688,7 +713,7 @@ function renderWornWithSection(look){
     <div class="ww-grid">
       ${related.map(l=>`
         <div class="ww-card" onclick="go('look','${l.id}')">
-          <div class="ww-frame"><img src="${l.img}" alt="${l.caption}" loading="lazy"></div>
+          <div class="ww-frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>
           <div class="ww-lbl">${CATEGORIES[l.cat].label} — LOOK 0${l.num}</div>
         </div>`).join('')}
     </div>
@@ -778,7 +803,7 @@ function openProduct(code, lookId){
     <div class="pm-detail-txt">${p.material}</div>
     ${related.length ? `<div class="pm-ww"><h5>WORN WITH</h5><div class="pm-ww-row">
       ${related.map(l=>`<div class="ww-mini" onclick="go('look','${l.id}')">
-        <div class="frame"><img src="${l.img}" alt="${l.caption}"></div>
+        <div class="frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}"`)}</div>
         <div class="lbl">LOOK 0${l.num}</div>
       </div>`).join('')}
     </div></div>` : ''}
