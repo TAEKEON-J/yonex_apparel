@@ -223,16 +223,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .ld-nav{padding:22px 18px 60px;}
 }
 
-/* ===== WORN WITH ===== */
-.worn-with{max-width:1440px;margin:0 auto;padding:0 28px 100px;}
-.worn-with h4{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);margin-bottom:20px;}
-.ww-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;}
-.ww-card{cursor:pointer;}
-.ww-card .ww-frame{aspect-ratio:4/5;overflow:hidden;background:var(--paper-2);}
-.ww-card .ww-frame img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .5s var(--ease);}
-.ww-card:hover .ww-frame img{transform:scale(1.04);}
-.ww-card .ww-lbl{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:9px;}
-
 /* ===== PRODUCT MODAL ===== */
 .pm-backdrop{position:fixed;inset:0;background:rgba(15,14,12,.5);z-index:500;opacity:0;pointer-events:none;transition:opacity .3s ease;}
 .pm-backdrop.show{opacity:1;pointer-events:auto;}
@@ -669,7 +659,7 @@ function renderCategory(key){
       <div class="ec-featured" id="ecFeatured">
         ${lookImgTag(featured.items, 'editorial', featured.img, `alt="${featured.caption}"`)}
         <div class="ec-scrim"></div>
-        <div class="ec-featured-cap"><div class="eyebrow">${c.label} — LOOK ${String(featured.num).padStart(2,'0')}</div><h3>${featured.caption}</h3></div>
+        <div class="ec-featured-cap"><div class="eyebrow">${c.label}</div></div>
       </div>
       <div class="ec-strip">
         ${editorialLooks.map((l,i)=>`<div class="ec-thumb${i===0?' active':''}" onclick="selectCampaign(${i})">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>`).join('')}
@@ -702,7 +692,7 @@ function paintCampaign(){
   featured.innerHTML = `
     ${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}"`)}
     <div class="ec-scrim"></div>
-    <div class="ec-featured-cap"><div class="eyebrow">${CATEGORIES[l.cat].label} — LOOK ${String(l.num).padStart(2,'0')}</div><h3>${l.caption}</h3></div>
+    <div class="ec-featured-cap"><div class="eyebrow">${CATEGORIES[l.cat].label}</div></div>
   `;
   document.querySelectorAll('.ec-thumb').forEach((t,i)=>t.classList.toggle('active', i===campaignIdx));
 }
@@ -914,28 +904,11 @@ function renderLook(id){
     <nav class="ld-nav">
       <div class="ld-related-strip">${otherLooksHtml}</div>
     </nav>
-    ${renderWornWithSection(look)}
   </div>`;
 }
 
 function wornWithFor(code, excludeLookId){
   return LOOKS.filter(l=>l.id!==excludeLookId && l.items.some(it=>it.code===code));
-}
-
-function renderWornWithSection(look){
-  const codes = [...new Set(look.items.map(i=>i.code))];
-  const related = [...new Map(codes.flatMap(code=>wornWithFor(code, look.id)).map(l=>[l.id,l])).values()];
-  if(!related.length) return '';
-  return `<section class="worn-with">
-    <h4>WORN WITH — SAME PIECES, OTHER LOOKS</h4>
-    <div class="ww-grid">
-      ${related.map(l=>`
-        <div class="ww-card" onclick="go('look','${l.id}')">
-          <div class="ww-frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>
-          <div class="ww-lbl">${CATEGORIES[l.cat].label} — LOOK ${String(l.num).padStart(2,'0')}</div>
-        </div>`).join('')}
-    </div>
-  </section>`;
 }
 
 function bindLookInteractions(id){
