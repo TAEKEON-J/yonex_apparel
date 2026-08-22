@@ -813,11 +813,13 @@ function lookImgTag(items, type, fallbackSrc, attrs=''){
     return [`${upperBase}.jpg`, `${upperBase}.jpeg`, `${upperBase}.png`,
              `${lowerBase}.jpg`, `${lowerBase}.jpeg`, `${lowerBase}.png`];
   };
-  /* not every look has a separate 화보컷 (editorial) shoot yet — if one isn't
-     found, try the 모델컷 (model) cut before giving up on a real photo
-     entirely, so category grids/Worn With don't fall back to a placeholder
-     hero image just because the editorial-specific shot hasn't been taken. */
-  const chain = type==='editorial' ? [...chainFor('editorial'), ...chainFor('model'), fallbackSrc] : [...chainFor(type), fallbackSrc];
+  /* not every look has a separate 화보컷 (editorial) shoot yet — if the
+     auto-guessed editorial filename isn't found, trust the look's own img
+     field (already the best available photo, editorial or otherwise) before
+     falling back to a blind 모델컷 (model) filename guess, since that guess
+     can accidentally match a real but wrong file (e.g. a model-cut shot for
+     a different top/bottom pairing than the curated editorial photo). */
+  const chain = type==='editorial' ? [...chainFor('editorial'), fallbackSrc, ...chainFor('model')] : [...chainFor(type), fallbackSrc];
   return `<img src="${chain[0]}" data-chain='${JSON.stringify(chain.slice(1))}' onerror="imgChainNext(this)" ${attrs}>`;
 }
 function imgChainNext(img){
