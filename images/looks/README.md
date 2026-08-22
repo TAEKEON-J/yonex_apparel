@@ -49,3 +49,23 @@ images/products/{code}_B.jpg    back
 e.g. `263TS001M.jpg` / `263TS001M_B.jpg`. These aren't auto-matched by
 filename yet (unlike `images/looks/` above) — tell Claude when you add a
 batch and it'll wire each one into its product entry.
+
+### Same code, different color
+
+Some codes are sold in two (or more) colorways under one shared product
+code. Keep the base code plain for the first color, then append `_1` for
+the second, `_2` for the third, and so on — same front/back suffix rules
+apply on top of that:
+
+```
+images/products/{code}.jpg         color 1, front
+images/products/{code}_B.jpg       color 1, back
+images/products/{code}_1.jpg       color 2, front
+images/products/{code}_1_B.jpg     color 2, back
+images/products/{code}_2.jpg       color 3, front (if there is one)
+images/products/{code}_2_B.jpg     color 3, back
+```
+
+Don't add Korean descriptions or anything else in the filename (e.g. no
+`{code}(설명).jpg`) — the site matches on the exact code + suffix pattern
+above, so extra text breaks the match.
