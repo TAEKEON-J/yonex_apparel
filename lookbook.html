@@ -104,6 +104,22 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 @media(max-width:760px){.look-grid{grid-template-columns:1fr 1fr;gap:28px 16px !important;} .cat-hero{padding:52px 18px 10px;} .look-grid{padding:26px 18px 80px;}}
 @media(max-width:480px){.look-grid{grid-template-columns:1fr;}}
 
+/* ===== FULL LINE-UP (all SKUs in a category) ===== */
+.full-lineup{max-width:1320px;margin:0 auto;padding:0 28px 120px;border-top:1px solid var(--line-soft);}
+.fl-head{display:flex;align-items:baseline;justify-content:space-between;padding:46px 0 30px;}
+.fl-head h4{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--ink);font-weight:700;}
+.fl-count{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.fl-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:28px 18px;}
+.fl-card{cursor:pointer;}
+.fl-card .fl-frame{aspect-ratio:1/1;background:var(--paper-2);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:background .2s;}
+.fl-card:hover .fl-frame{background:var(--paper-3);}
+.fl-card .fl-frame img{max-width:82%;max-height:82%;object-fit:contain;transition:transform .3s var(--ease);}
+.fl-card:hover .fl-frame img{transform:scale(1.04);}
+.fl-card .fl-code{font-family:var(--mono);font-size:11px;font-weight:700;margin-top:10px;letter-spacing:.02em;}
+.fl-card .fl-sub{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:3px;}
+@media(max-width:980px){.fl-grid{grid-template-columns:repeat(4,1fr);gap:22px 14px;}}
+@media(max-width:640px){.full-lineup{padding:0 18px 90px;} .fl-head{padding:34px 0 22px;} .fl-grid{grid-template-columns:repeat(3,1fr);gap:18px 10px;} .fl-card .fl-code{font-size:9.5px;} .fl-card .fl-sub{font-size:8.5px;}}
+
 /* ===== LOOK DETAIL ===== */
 .look-detail{max-width:1440px;margin:0 auto;padding:28px 28px 0;}
 .ld-crumb{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;padding:14px 0 26px;}
@@ -533,7 +549,32 @@ function renderCategory(key){
           </div>
         </article>`).join('')}
     </section>
+    ${renderFullLineup(key)}
   </div>`;
+}
+
+const COLLECTION_BY_CAT = {game:'Game Wear', casual:'Casual Wear', easy:'Easy Wear'};
+function productsForCat(key){
+  return Object.entries(PRODUCTS).filter(([,p])=>p.collection===COLLECTION_BY_CAT[key]);
+}
+
+function renderFullLineup(key){
+  const items = productsForCat(key);
+  if(!items.length) return '';
+  return `<section class="full-lineup">
+    <div class="fl-head">
+      <h4>FULL LINE-UP</h4>
+      <span class="fl-count">${String(items.length).padStart(2,'0')} STYLES</span>
+    </div>
+    <div class="fl-grid">
+      ${items.map(([code,p])=>`
+        <div class="fl-card reveal" onclick="openProduct('${code}')">
+          <div class="fl-frame"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
+          <div class="fl-code">${code}</div>
+          <div class="fl-sub">${p.price.toLocaleString()}원 · ${p.color}</div>
+        </div>`).join('')}
+    </div>
+  </section>`;
 }
 
 function itemFig(code){
