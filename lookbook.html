@@ -447,7 +447,9 @@ const HS_DEFAULT = {top:{x:24,y:13,w:52,h:39},bottom:{x:22,y:50,w:56,h:31}};
    have photography for one gender in each of those categories. */
 const LOOKS = [
   {id:'g1',cat:'game',num:1,img:'images/hero/cover-coral-1.jpeg',fitImg:'images/hero/cover-coral-1.jpeg',model:'Men',caption:'Match Point',
-    items:[{slot:'TOP',code:'263TS001'},{slot:'BOTTOM',code:'263PH001'}],
+    /* BOTTOM is the Black colorway (263PH001-2), not the Dark Green base entry —
+       confirmed against the real model/editorial photos in images/looks/. */
+    items:[{slot:'TOP',code:'263TS001'},{slot:'BOTTOM',code:'263PH001-2'}],
     hotspots:{top:{x:27,y:15,w:46,h:36},bottom:{x:26,y:50,w:50,h:30}}},
   {id:'g3',cat:'game',num:2,img:'images/hero/keyvisual-blue-1.jpeg',fitImg:'images/hero/keyvisual-blue-1.jpeg',model:'Women',caption:'Full Swing',
     /* TOP only: the sheet has no matching skirt SKU this season for the skirt in the photo. */
