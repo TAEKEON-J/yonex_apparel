@@ -130,8 +130,13 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 
 /* ===== FULL LINE-UP (all SKUs in a category) ===== */
 .full-lineup{max-width:1320px;margin:0 auto;padding:0 28px 120px;border-top:1px solid var(--line-soft);}
-.fl-head{display:flex;align-items:baseline;justify-content:space-between;padding:46px 0 30px;}
+.fl-head{display:flex;align-items:baseline;justify-content:space-between;padding:46px 0 30px;flex-wrap:wrap;gap:14px;}
 .fl-head h4{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--ink);font-weight:700;}
+.fl-head-right{display:flex;align-items:center;gap:16px;}
+.fl-toggle{display:inline-flex;border:1px solid var(--line);}
+.fl-toggle button{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;padding:7px 13px;background:none;border:none;cursor:pointer;color:var(--muted);transition:background .18s,color .18s;}
+.fl-toggle button:not(:last-child){border-right:1px solid var(--line);}
+.fl-toggle button.active{background:var(--ink);color:var(--paper);}
 .fl-count{font-family:var(--mono);font-size:11px;color:var(--muted);}
 .fl-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:28px 18px;}
 .fl-card{cursor:pointer;}
@@ -190,9 +195,9 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ii-gtoggle button{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;width:26px;height:22px;background:none;border:none;cursor:pointer;color:var(--muted);transition:background .18s,color .18s;}
 .ii-gtoggle button:first-child{border-right:1px solid var(--line);}
 .ii-gtoggle button.active{background:var(--ink);color:var(--paper);}
-.ii-related{display:flex;gap:8px;margin-top:14px;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.ii-related{display:flex;gap:8px;margin-top:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .ii-related::-webkit-scrollbar{display:none;}
-.ii-related-thumb{flex:0 0 auto;width:56px;aspect-ratio:4/5;cursor:pointer;scroll-snap-align:start;overflow:hidden;background:var(--paper-3);border:1px solid var(--line-soft);transition:border-color .2s;}
+.ii-related-thumb{flex:0 0 calc((100% - 32px)/5);aspect-ratio:4/5;cursor:pointer;scroll-snap-align:start;overflow:hidden;background:var(--paper-3);border:1px solid var(--line-soft);transition:border-color .2s;}
 .ii-related-thumb:hover{border-color:var(--ink-soft);}
 .ii-related-thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;}
 
@@ -694,13 +699,6 @@ function renderCategory(key){
       ${looks.map(l=>`
         <article class="look-card reveal" onclick="go('look','${l.id}')">
           <div class="lc-frame">${lookImgTag(l.items, 'model', l.fitImg, `alt="${c.label} ${l.caption}" loading="lazy"`)}</div>
-          <div class="lc-meta">
-            <div>
-              <div class="lc-num">MODEL ${String(l.num).padStart(2,'0')} — LOOK ${String(l.num).padStart(2,'0')}</div>
-              <div class="lc-cap">${l.caption}</div>
-            </div>
-            <div class="lc-view">VIEW &rarr;</div>
-          </div>
         </article>`).join('')}
     </section>
     ${renderFullLineup(key)}
@@ -761,17 +759,35 @@ function renderFullLineup(key){
   return `<section class="full-lineup">
     <div class="fl-head">
       <h4>FULL LINE-UP</h4>
-      <span class="fl-count">${String(items.length).padStart(2,'0')} STYLES</span>
+      <div class="fl-head-right">
+        <div class="fl-toggle">
+          <button type="button" class="active" data-g="all" onclick="filterFullLineup('all')">ALL</button>
+          <button type="button" data-g="men" onclick="filterFullLineup('men')">MEN</button>
+          <button type="button" data-g="women" onclick="filterFullLineup('women')">WOMEN</button>
+        </div>
+        <span class="fl-count">${String(items.length).padStart(2,'0')} STYLES</span>
+      </div>
     </div>
     <div class="fl-grid">
       ${items.map(([code,p])=>`
-        <div class="fl-card reveal" onclick="openProduct('${code}')">
+        <div class="fl-card reveal" data-gender="${p.gender.toLowerCase()}" onclick="openProduct('${code}')">
           <div class="fl-frame"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
           <div class="fl-code">${p.code}</div>
           <div class="fl-sub">${fmtPrice(p.price)} · ${p.color}</div>
         </div>`).join('')}
     </div>
   </section>`;
+}
+function filterFullLineup(g){
+  document.querySelectorAll('.fl-toggle button').forEach(b=>b.classList.toggle('active', b.dataset.g===g));
+  let visible = 0;
+  document.querySelectorAll('.fl-card').forEach(c=>{
+    const show = g==='all' || c.dataset.gender==='unisex' || c.dataset.gender===g;
+    c.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+  const countEl = document.querySelector('.fl-count');
+  if(countEl) countEl.textContent = `${String(visible).padStart(2,'0')} STYLES`;
 }
 
 function itemFig(code){
@@ -901,8 +917,7 @@ function renderLook(id){
           <span class="swipe-hint right">&rsaquo;</span>
           ${hotspotsHtml}
           <div class="ld-caption">
-            <div class="eyebrow">${c.label} — LOOK ${String(look.num).padStart(2,'0')}</div>
-            <h3>${look.caption}</h3>
+            <div class="eyebrow">${c.label}</div>
           </div>
         </div>
         <div class="ld-items">${itemsHtml}</div>
