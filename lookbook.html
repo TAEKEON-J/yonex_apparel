@@ -955,11 +955,20 @@ function renderLook(id){
       <button type="button" class="${showW?'active':''}" data-lg="W">WOMEN</button>
     </div>` : '';
 
+  /* two-dot indicator under the hero photo for paired looks — signals that
+     the photo itself is swipeable/tappable between MEN and WOMEN, since
+     nothing about a plain photo otherwise hints that a swipe does anything.
+     Mirrors the multi-photo gallery dots (mutually exclusive with those). */
+  const pairDotsHtml = look.pair ? `<div class="ld-gallery-dots ld-pair-dots">
+    <button type="button" class="ld-dot${showW?'':' active'}" onclick="event.stopPropagation();lookPairView='M';paintLook('${look.id}');" aria-label="Men"></button>
+    <button type="button" class="ld-dot${showW?' active':''}" onclick="event.stopPropagation();lookPairView='W';paintLook('${look.id}');" aria-label="Women"></button>
+  </div>` : '';
+
   const heroHtml = `
     <img src="${activePhoto}" alt="${look.caption}" id="ldHeroImg">
     <div class="vscrim"></div>
     <div class="ld-caption"><div class="eyebrow">${c.label}</div></div>
-    ${dotsHtml}`;
+    ${dotsHtml}${pairDotsHtml}`;
 
   const itemsHtml = variant.items.map((it,i)=>{
     const p = PRODUCTS[it.code];
