@@ -964,24 +964,63 @@ function genderInfo(code){
   };
 }
 
-/* re-paints the look view in place (no scroll reset, no hash change) — used
-   by the couple-look MEN/WOMEN toggle and its swipe equivalent so switching
-   variant doesn't jump the page */
-function paintLook(id){
-  const app = document.getElementById('app');
-  if(REDUCE_MOTION){
-    app.innerHTML = renderLook(id);
-    bindLookInteractions(id);
-    return;
+/* switches a couple-look's MEN/WOMEN variant in place — used by the pair
+   toggle buttons, the swipe gesture, and jumping to a search result on the
+   opposite-gender side. Only the hero photo (crossfade) and the item panel
+   (code/color/price) actually depend on the variant, so this updates just
+   those two instead of re-rendering the whole page — the breadcrumb, nav
+   arrows and related-looks strip never change, and don't need to flicker. */
+function swapLookPair(id, view){
+  const look = LOOKS.find(l=>l.id===id);
+  if(!look || !look.pair || lookPairView===view) return;
+  lookPairView = view;
+  const showW = view === 'W';
+  const variant = showW ? look.pair : look;
+
+  const img = document.getElementById('ldHeroImg');
+  if(img){
+    const photo = variant.fitImg || variant.img;
+    if(REDUCE_MOTION){
+      img.src = photo;
+    } else {
+      img.classList.add('ld-hero-swap');
+      setTimeout(()=>{
+        img.src = photo;
+        img.classList.remove('ld-hero-swap');
+      }, 180);
+    }
   }
-  app.classList.add('app-out');
-  setTimeout(()=>{
-    app.innerHTML = renderLook(id);
-    app.classList.remove('app-out');
-    bindLookInteractions(id);
-  }, 190);
+
+  const itemsEl = document.querySelector('.ld-items');
+  if(itemsEl){
+    itemsEl.innerHTML = buildItemsHtml(look, variant);
+    bindLookItemClicks(id);
+  }
+
+  document.querySelectorAll('.ld-look-gtoggle button').forEach(b=>b.classList.toggle('active', b.dataset.lg===view));
+  document.querySelectorAll('.ld-pair-dots .ld-dot').forEach((d,i)=>d.classList.toggle('active', (i===0)===(view==='M')));
 }
 
+function buildItemsHtml(look, variant){
+  return variant.items.map((it,i)=>{
+    const p = PRODUCTS[it.code];
+    const isBottom = it.slot.toLowerCase()==='bottom';
+    const gi = (!look.pair && !look.noGenderToggle && !isBottom) ? genderInfo(it.code) : null;
+    const toggleHtml = gi
+      ? `<div class="ii-gtoggle"><button type="button" class="${gi.active==='M'?'active':''}" data-g="M">M</button><button type="button" class="${gi.active==='W'?'active':''}" data-g="W">W</button></div>`
+      : '';
+    const colorLine = p && !isBottom && p.color ? `<div class="ii-color">${p.color}</div>` : '';
+    const figureHtml = isBottom ? '' : `<div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>`;
+    return `<div class="ld-item" data-slot="${it.slot.toLowerCase()}" data-active-code="${it.code}" data-code-m="${gi?gi.m:''}" data-code-w="${gi?gi.w:''}">
+      <div class="ii-top"><span class="ii-slot">${it.slot}</span></div>
+      ${figureHtml}
+      <div class="ii-name">${p?p.code:it.code}</div>
+      ${colorLine}
+      <div class="ii-code">${p?fmtPrice(p.price):''}</div>
+      ${toggleHtml}
+    </div>`;
+  }).join('');
+}
 function renderLook(id){
   const look = LOOKS.find(l=>l.id===id);
   if(!look) return renderCover();
@@ -1019,8 +1058,8 @@ function renderLook(id){
      nothing about a plain photo otherwise hints that a swipe does anything.
      Mirrors the multi-photo gallery dots (mutually exclusive with those). */
   const pairDotsHtml = look.pair ? `<div class="ld-gallery-dots ld-pair-dots">
-    <button type="button" class="ld-dot${showW?'':' active'}" onclick="event.stopPropagation();lookPairView='M';paintLook('${look.id}');" aria-label="Men"></button>
-    <button type="button" class="ld-dot${showW?' active':''}" onclick="event.stopPropagation();lookPairView='W';paintLook('${look.id}');" aria-label="Women"></button>
+    <button type="button" class="ld-dot${showW?'':' active'}" onclick="event.stopPropagation();swapLookPair('${look.id}','M');" aria-label="Men"></button>
+    <button type="button" class="ld-dot${showW?' active':''}" onclick="event.stopPropagation();swapLookPair('${look.id}','W');" aria-label="Women"></button>
   </div>` : '';
 
   const heroHtml = `
@@ -1029,24 +1068,7 @@ function renderLook(id){
     <div class="ld-caption"><div class="eyebrow">${c.label}</div></div>
     ${dotsHtml}${pairDotsHtml}`;
 
-  const itemsHtml = variant.items.map((it,i)=>{
-    const p = PRODUCTS[it.code];
-    const isBottom = it.slot.toLowerCase()==='bottom';
-    const gi = (!look.pair && !look.noGenderToggle && !isBottom) ? genderInfo(it.code) : null;
-    const toggleHtml = gi
-      ? `<div class="ii-gtoggle"><button type="button" class="${gi.active==='M'?'active':''}" data-g="M">M</button><button type="button" class="${gi.active==='W'?'active':''}" data-g="W">W</button></div>`
-      : '';
-    const colorLine = p && !isBottom && p.color ? `<div class="ii-color">${p.color}</div>` : '';
-    const figureHtml = isBottom ? '' : `<div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>`;
-    return `<div class="ld-item" data-slot="${it.slot.toLowerCase()}" data-active-code="${it.code}" data-code-m="${gi?gi.m:''}" data-code-w="${gi?gi.w:''}">
-      <div class="ii-top"><span class="ii-slot">${it.slot}</span></div>
-      ${figureHtml}
-      <div class="ii-name">${p?p.code:it.code}</div>
-      ${colorLine}
-      <div class="ii-code">${p?fmtPrice(p.price):''}</div>
-      ${toggleHtml}
-    </div>`;
-  }).join('');
+  const itemsHtml = buildItemsHtml(look, variant);
 
   /* All other looks in this category — replaces PREV/NEXT LOOK with a
      swipeable strip so jumping to any other look is one tap, not a
@@ -1096,20 +1118,12 @@ function selectLookPhoto(i){
   document.querySelectorAll('.ld-dot').forEach((d,idx)=>d.classList.toggle('active', idx===i));
 }
 
-function bindLookInteractions(id){
-  const visual = document.getElementById('ldVisual');
-  if(!visual) return;
-  const look = LOOKS.find(l=>l.id===id);
-
-  document.querySelectorAll('.ld-look-gtoggle button').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      lookPairView = btn.dataset.lg;
-      paintLook(id);
-    });
-  });
+/* item-panel click handlers only — these need re-binding every time
+   .ld-items' innerHTML changes (both on a full page render and on
+   swapLookPair's lighter in-place update), unlike the rest of
+   bindLookInteractions which only ever runs once per page render. */
+function bindLookItemClicks(id){
   document.querySelectorAll('.ld-item').forEach(el=>{
-    const slot = el.dataset.slot;
-
     el.addEventListener('click', e=>{
       if(e.target.closest('.ii-gtoggle')) return;
       openProduct(el.dataset.activeCode, id);
@@ -1131,6 +1145,16 @@ function bindLookInteractions(id){
       });
     });
   });
+}
+function bindLookInteractions(id){
+  const visual = document.getElementById('ldVisual');
+  if(!visual) return;
+  const look = LOOKS.find(l=>l.id===id);
+
+  document.querySelectorAll('.ld-look-gtoggle button').forEach(btn=>{
+    btn.addEventListener('click', ()=>swapLookPair(id, btn.dataset.lg));
+  });
+  bindLookItemClicks(id);
   document.addEventListener('keydown', lookKeyNav);
 
   const detail = document.querySelector('.look-detail');
@@ -1144,8 +1168,7 @@ function bindLookInteractions(id){
     const dy = e.changedTouches[0].clientY - swipeY;
     if(Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy)*1.5){
       if(look && look.pair){
-        lookPairView = lookPairView==='W' ? 'M' : 'W';
-        paintLook(id);
+        swapLookPair(id, lookPairView==='W' ? 'M' : 'W');
       } else {
         go('look', dx < 0 ? detail.dataset.next : detail.dataset.prev);
       }
@@ -1286,7 +1309,7 @@ function jumpToSearchResult(i){
   if(!hit) return;
   closeSearch();
   const finish = ()=>{
-    if(hit.isPair && lookPairView!=='W'){ lookPairView='W'; paintLook(hit.lookId); }
+    if(hit.isPair) swapLookPair(hit.lookId, 'W');
   };
   if(parseHash().view==='look' && parseHash().param===hit.lookId){
     finish();
