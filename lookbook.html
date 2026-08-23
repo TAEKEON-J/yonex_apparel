@@ -688,11 +688,17 @@ function go(view, param){
   const target = param ? `${view}/${param}` : view;
   if(location.hash.replace('#','') === target) return;
   const app = document.getElementById('app');
-  if(app && app.children.length && !REDUCE_MOTION){
+  /* going from one LOOK straight to another (prev/next arrows, related-looks
+     strip, swipe, keyboard nav) skips the whole-page fade-out — render()
+     gives that case its own lighter, hero-photo-only transition instead of
+     dipping the entire section (breadcrumb, item panel, everything) to
+     nothing and back, which read as the whole page flickering. */
+  const isLookToLook = view==='look' && parseHash().view==='look';
+  if(isLookToLook || !app || !app.children.length || REDUCE_MOTION){
+    location.hash = target;
+  } else {
     app.classList.add('app-out');
     setTimeout(()=>{ location.hash = target; }, 190);
-  } else {
-    location.hash = target;
   }
 }
 window.addEventListener('hashchange', render);
@@ -705,6 +711,7 @@ function parseHash(){
 
 function render(){
   const {view, param} = parseHash();
+  const isLookToLook = view==='look' && document.querySelector('.look-detail') && !REDUCE_MOTION;
   document.querySelectorAll('#catnav button').forEach(b=>b.classList.toggle('active', view==='category' && b.dataset.cat===param));
   document.body.dataset.cat = view==='category'||view==='look' ? (view==='category'?param:LOOKS.find(l=>l.id===param)?.cat) : '';
   const cat = document.body.dataset.cat;
@@ -722,7 +729,21 @@ function render(){
   else if(view==='mix') app.innerHTML = renderMix();
   else app.innerHTML = renderCover();
 
-  app.querySelector('.view')?.classList.add('view');
+  const viewEl = app.querySelector('.view');
+  if(isLookToLook && viewEl){
+    /* skip the big blur/scale/translateY page-entrance animation — only
+       the hero photo should visibly transition when hopping between looks,
+       everything else (breadcrumb, item panel, related strip) can just be
+       there, already-updated, with no animation of its own. */
+    viewEl.classList.remove('view');
+    const img = document.getElementById('ldHeroImg');
+    if(img){
+      img.classList.add('ld-hero-swap');
+      requestAnimationFrame(()=>requestAnimationFrame(()=>img.classList.remove('ld-hero-swap')));
+    }
+  } else if(viewEl){
+    viewEl.classList.add('view');
+  }
   observeReveal();
   if(view==='look') bindLookInteractions(param);
   if(view==='category') bindCampaignInteractions(param);
