@@ -122,9 +122,14 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ec-featured-cap{position:absolute;left:24px;bottom:22px;color:#fff;z-index:2;}
 .ec-featured-cap .eyebrow{color:rgba(255,255,255,.75);}
 .ec-featured-cap h3{color:#fff;font-size:24px;margin-top:6px;letter-spacing:-.01em;}
-.ec-strip{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,1fr);gap:10px;margin-top:14px;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.ec-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,.92);cursor:pointer;font-size:19px;line-height:1;color:var(--ink);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.18);transition:background .2s,transform .15s var(--ease);}
+.ec-arrow:hover{background:#fff;}
+.ec-arrow:active{transform:translateY(-50%) scale(.9);}
+.ec-arrow-prev{left:16px;}
+.ec-arrow-next{right:16px;}
+.ec-strip{display:flex;gap:10px;margin-top:14px;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .ec-strip::-webkit-scrollbar{display:none;}
-.ec-thumb{width:110px;aspect-ratio:4/5;cursor:pointer;scroll-snap-align:start;overflow:hidden;background:var(--paper-3);border:1px solid transparent;transition:border-color .2s,transform .18s var(--ease),opacity .2s var(--ease);}
+.ec-thumb{flex:0 0 110px;aspect-ratio:4/5;cursor:pointer;scroll-snap-align:start;overflow:hidden;background:var(--paper-3);border:1px solid transparent;transition:border-color .2s,transform .18s var(--ease),opacity .2s var(--ease);}
 .ec-thumb.active{border-color:var(--ink);opacity:.55;}
 .ec-thumb:active{transform:scale(.94);}
 .ec-thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;}
@@ -132,7 +137,10 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .editorial-carousel{padding:34px 18px 0;}
   .ec-featured{aspect-ratio:4/5;}
   .ec-featured-cap h3{font-size:20px;}
-  .ec-thumb{width:88px;}
+  .ec-thumb{flex-basis:88px;}
+  .ec-arrow{width:34px;height:34px;font-size:15px;}
+  .ec-arrow-prev{left:10px;}
+  .ec-arrow-next{right:10px;}
 }
 
 /* ===== FULL LINE-UP (all SKUs in a category) ===== */
@@ -673,6 +681,8 @@ function renderCategory(key){
         ${lookImgTag(featured.items, 'editorial', featured.img, `alt="${featured.caption}"`)}
         <div class="ec-scrim"></div>
         <div class="ec-featured-cap"><div class="eyebrow">${c.label}</div></div>
+        <button type="button" class="ec-arrow ec-arrow-prev" onclick="event.stopPropagation();campaignNav(-1)" aria-label="Previous">&#8249;</button>
+        <button type="button" class="ec-arrow ec-arrow-next" onclick="event.stopPropagation();campaignNav(1)" aria-label="Next">&#8250;</button>
       </div>
       <div class="ec-strip">
         ${editorialLooks.map((l,i)=>`<div class="ec-thumb${i===0?' active':''}" onclick="selectCampaign(${i})">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>`).join('')}
@@ -709,12 +719,19 @@ function paintCampaign(){
       ${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}"`)}
       <div class="ec-scrim"></div>
       <div class="ec-featured-cap"><div class="eyebrow">${CATEGORIES[l.cat].label}</div></div>
+      <button type="button" class="ec-arrow ec-arrow-prev" onclick="event.stopPropagation();campaignNav(-1)" aria-label="Previous">&#8249;</button>
+      <button type="button" class="ec-arrow ec-arrow-next" onclick="event.stopPropagation();campaignNav(1)" aria-label="Next">&#8250;</button>
     `;
     featured.classList.remove('ec-swap');
   }, REDUCE_MOTION ? 0 : 220);
 }
 function selectCampaign(i){
   campaignIdx = i;
+  paintCampaign();
+}
+function campaignNav(dir){
+  if(!campaignLooks.length) return;
+  campaignIdx = (campaignIdx + dir + campaignLooks.length) % campaignLooks.length;
   paintCampaign();
 }
 function bindCampaignInteractions(key){
