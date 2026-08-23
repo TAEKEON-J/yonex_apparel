@@ -524,6 +524,10 @@ const HS_DEFAULT = {top:{x:24,y:13,w:52,h:39},bottom:{x:22,y:50,w:56,h:31}};
    gender before the other. Casual/Easy stay single-gender for now since we only
    have photography for one gender in each of those categories. */
 const LOOKS = [
+  /* Game Tee couple pairs: 263TS001/003/005/007/009 (Men) each share the
+     exact same color name with 263TS002/004/006/008/010 (Women) — same
+     design, matching M/W colorway. Those looks are merged into one via
+     look.pair (dual model-cut hero) instead of listed as separate LOOKS. */
   {id:'g1',cat:'game',num:1,img:'images/looks/263TS001M_261PH001M_editorial.jpg',fitImg:'images/looks/263TS001M_261PH001M_model.jpg',hasEditorial:true,model:'Men',caption:'Match Point',
     /* hasEditorial: only set once a real, dedicated 화보컷 shoot exists for
        this look — drives the editorial carousel on the category page. Most
@@ -538,45 +542,43 @@ const LOOKS = [
        noGenderToggle: the photo is locked to this one colorway, so an M/W
        toggle would just swap the code/color text with no visual change. */
     items:[{slot:'TOP',code:'263TS001'},{slot:'BOTTOM',code:'261PH001M-1'}],
-    hotspots:{top:{x:27,y:15,w:46,h:36},bottom:{x:26,y:50,w:50,h:30}},noGenderToggle:true},
-  {id:'g3',cat:'game',num:2,img:'images/looks/263TS002F_261PS001F_model.jpg',fitImg:'images/looks/263TS002F_261PS001F_model.jpg',model:'Women',caption:'Full Swing',
-    items:[{slot:'TOP',code:'263TS002'},{slot:'BOTTOM',code:'261PS001F'}],
-    hotspots:{top:{x:30,y:16,w:44,h:34},bottom:{x:26,y:50,w:48,h:30}}},
-  {id:'g2',cat:'game',num:3,img:'images/hero/cover-coral-2.jpeg',fitImg:'images/hero/cover-coral-2.jpeg',model:'Men',caption:'Center Court',
+    hotspots:{top:{x:27,y:15,w:46,h:36},bottom:{x:26,y:50,w:50,h:30}},noGenderToggle:true,
+    pair:{model:'Women',img:'images/looks/263TS002F_261PS001F_model.jpg',fitImg:'images/looks/263TS002F_261PS001F_model.jpg',
+      items:[{slot:'TOP',code:'263TS002'},{slot:'BOTTOM',code:'261PS001F'}],
+      hotspots:{top:{x:30,y:16,w:44,h:34},bottom:{x:26,y:50,w:48,h:30}}}},
+  {id:'g2',cat:'game',num:2,img:'images/hero/cover-coral-2.jpeg',fitImg:'images/hero/cover-coral-2.jpeg',model:'Men',caption:'Center Court',
     items:[{slot:'TOP',code:'263TS013'},{slot:'BOTTOM',code:'263PH001-2'}],
     hotspots:{top:{x:24,y:14,w:52,h:37},bottom:{x:22,y:50,w:56,h:30}}},
-  {id:'g4',cat:'game',num:4,img:'images/hero/keyvisual-blue-2.jpeg',fitImg:'images/hero/keyvisual-blue-2.jpeg',model:'Women',caption:'Rally Ready',
+  {id:'g4',cat:'game',num:3,img:'images/hero/keyvisual-blue-2.jpeg',fitImg:'images/hero/keyvisual-blue-2.jpeg',model:'Women',caption:'Rally Ready',
     items:[{slot:'TOP',code:'263TS026'}],
     hotspots:{top:HS_DEFAULT.top}},
-  {id:'g5',cat:'game',num:5,img:'images/looks/263TS003M_editorial.jpg',fitImg:'images/looks/263TS003M_263PH001M_model.jpg',hasEditorial:true,model:'Men',caption:'Sideline',
+  {id:'g5',cat:'game',num:4,img:'images/looks/263TS003M_editorial.jpg',fitImg:'images/looks/263TS003M_263PH001M_model.jpg',hasEditorial:true,model:'Men',caption:'Sideline',
     /* editorial shot is TOP-only (close crop), so img is hardcoded — the
        auto-match-by-code lookup expects both TOP+BOTTOM codes in the
        filename and won't find a TOP-only editorial file. */
     items:[{slot:'TOP',code:'263TS003'},{slot:'BOTTOM',code:'263PH001'}],
-    hotspots:HS_DEFAULT},
-  {id:'g6',cat:'game',num:6,img:'images/looks/263TS006F_263PH002F_model.jpg',fitImg:'images/looks/263TS006F_263PH002F_model.jpg',model:'Women',caption:'Cross Court',
-    items:[{slot:'TOP',code:'263TS006'},{slot:'BOTTOM',code:'263PH002'}],
-    hotspots:HS_DEFAULT},
-  {id:'g7',cat:'game',num:7,img:'images/looks/263TS005M_editorial.jpg',fitImg:'images/looks/263TS005M_263PH001M_model.jpg',hasEditorial:true,model:'Men',caption:'Baseline',
+    hotspots:HS_DEFAULT,
+    pair:{model:'Women',img:'images/looks/263TS004F_261PS003F_model.jpg',fitImg:'images/looks/263TS004F_261PS003F_model.jpg',
+      items:[{slot:'TOP',code:'263TS004'},{slot:'BOTTOM',code:'261PS003F'}],
+      hotspots:HS_DEFAULT}},
+  {id:'g7',cat:'game',num:5,img:'images/looks/263TS005M_editorial.jpg',fitImg:'images/looks/263TS005M_263PH001M_model.jpg',hasEditorial:true,model:'Men',caption:'Baseline',
     items:[{slot:'TOP',code:'263TS005'},{slot:'BOTTOM',code:'263PH001'}],
-    hotspots:HS_DEFAULT},
-  {id:'g8',cat:'game',num:8,img:'images/looks/263TS008F_261PH002F-1_model.jpg',fitImg:'images/looks/263TS008F_261PH002F-1_model.jpg',model:'Women',caption:'Net Play',
-    items:[{slot:'TOP',code:'263TS008'},{slot:'BOTTOM',code:'261PH002F-1'}],
-    hotspots:HS_DEFAULT},
-  {id:'g9',cat:'game',num:9,img:'images/looks/263TS007M_editorial.jpg',fitImg:'images/looks/263TS007M_261PH001M-1_model.jpg',hasEditorial:true,model:'Men',caption:'Ace Serve',
+    hotspots:HS_DEFAULT,
+    pair:{model:'Women',img:'images/looks/263TS006F_263PH002F_model.jpg',fitImg:'images/looks/263TS006F_263PH002F_model.jpg',
+      items:[{slot:'TOP',code:'263TS006'},{slot:'BOTTOM',code:'263PH002'}],
+      hotspots:HS_DEFAULT}},
+  {id:'g9',cat:'game',num:6,img:'images/looks/263TS007M_editorial.jpg',fitImg:'images/looks/263TS007M_261PH001M-1_model.jpg',hasEditorial:true,model:'Men',caption:'Ace Serve',
     items:[{slot:'TOP',code:'263TS007'},{slot:'BOTTOM',code:'261PH001M-1'}],
-    hotspots:HS_DEFAULT},
-  {id:'g10',cat:'game',num:10,img:'images/looks/263TS009M_editorial.jpg',fitImg:'images/looks/263TS009M_261PH001M-1_model.jpg',hasEditorial:true,model:'Men',caption:'Smash',
+    hotspots:HS_DEFAULT,
+    pair:{model:'Women',img:'images/looks/263TS008F_261PH002F-1_model.jpg',fitImg:'images/looks/263TS008F_261PH002F-1_model.jpg',
+      items:[{slot:'TOP',code:'263TS008'},{slot:'BOTTOM',code:'261PH002F-1'}],
+      hotspots:HS_DEFAULT}},
+  {id:'g10',cat:'game',num:7,img:'images/looks/263TS009M_editorial.jpg',fitImg:'images/looks/263TS009M_261PH001M-1_model.jpg',hasEditorial:true,model:'Men',caption:'Smash',
     items:[{slot:'TOP',code:'263TS009'},{slot:'BOTTOM',code:'261PH001M-1'}],
-    hotspots:HS_DEFAULT},
-  {id:'g11',cat:'game',num:11,img:'images/looks/263TS004F_261PS003F_model.jpg',fitImg:'images/looks/263TS004F_261PS003F_model.jpg',model:'Women',caption:'Deuce',
-    items:[{slot:'TOP',code:'263TS004'},{slot:'BOTTOM',code:'261PS003F'}],
-    hotspots:HS_DEFAULT},
-  {id:'g12',cat:'game',num:12,img:'images/looks/263TS010F_261PS001F_model.jpg',fitImg:'images/looks/263TS010F_261PS001F_model.jpg',model:'Women',caption:'Tie Break',
-    /* Same skirt (261PS001F) as LOOK 02 — reused for styling with a
-       different top, same as the shorts reused across several looks. */
-    items:[{slot:'TOP',code:'263TS010'},{slot:'BOTTOM',code:'261PS001F'}],
-    hotspots:HS_DEFAULT},
+    hotspots:HS_DEFAULT,
+    pair:{model:'Women',img:'images/looks/263TS010F_261PS001F_model.jpg',fitImg:'images/looks/263TS010F_261PS001F_model.jpg',
+      items:[{slot:'TOP',code:'263TS010'},{slot:'BOTTOM',code:'261PS001F'}],
+      hotspots:HS_DEFAULT}},
   {id:'c1',cat:'casual',num:1,img:'images/hero/daily-nature-1.jpeg',fitImg:'images/hero/daily-nature-1.jpeg',model:'Men',caption:'Off Duty',
     items:[{slot:'TOP',code:'263TS038'},{slot:'BOTTOM',code:'263PL001'}],
     hotspots:HS_DEFAULT},
