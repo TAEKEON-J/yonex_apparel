@@ -223,16 +223,15 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-item{flex:1;display:flex;flex-direction:column;padding:28px 20px;border-bottom:none;border-right:1px solid var(--line-soft);cursor:pointer;transition:background .25s;position:relative;}
 .ld-item:last-child{border-right:none;}
 .ld-item:hover,.ld-item.hover-active{background:var(--paper-2);}
-.ld-item .ii-top{display:flex;justify-content:space-between;align-items:baseline;}
+.ld-item .ii-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;}
 .ld-item .ii-slot{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--accent-cat);}
-.ld-item .ii-figure{display:flex;align-items:center;justify-content:center;padding:16px 0;min-height:120px;}
-.ld-item .ii-figure img{max-height:220px;width:auto;max-width:92%;object-fit:contain;filter:drop-shadow(0 14px 22px rgba(20,20,15,.10));transition:transform .35s var(--ease);}
+.ld-item .ii-row{display:flex;align-items:center;gap:14px;}
+.ld-item .ii-figure{flex:none;width:76px;height:76px;display:flex;align-items:center;justify-content:center;}
+.ld-item .ii-figure img{max-height:100%;max-width:100%;object-fit:contain;filter:drop-shadow(0 10px 16px rgba(20,20,15,.10));transition:transform .35s var(--ease);}
 .ld-item:hover .ii-figure img{transform:translateY(-3px) scale(1.02);}
-.ld-item .ii-info{display:flex;flex-direction:column;gap:6px;}
-.ld-item .ii-name{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:-.01em;}
-.ld-item .ii-color{font-family:var(--mono);font-size:11px;color:var(--muted);}
-.ld-item .ii-code{font-family:var(--mono);font-size:13px;color:var(--muted);}
-.ld-item[data-slot="bottom"] .ii-figure{display:none;}
+.ld-item .ii-name{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:-.01em;min-width:0;}
+.ld-item .ii-color{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:12px;}
+.ld-item .ii-code{font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:4px;}
 .ld-item[data-slot="bottom"] .ii-name{font-size:16px;}
 .ii-gtoggle{display:inline-flex;align-self:flex-start;margin-top:12px;border:1px solid var(--line);}
 .ii-gtoggle button{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;width:26px;height:22px;background:none;border:none;cursor:pointer;color:var(--muted);transition:background .18s,color .18s;}
@@ -245,12 +244,12 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .ld-items{flex-direction:row;border-left:none;border-top:1px solid var(--line-soft);}
   .ld-item{padding:16px 12px;border-right:1px solid var(--line-soft);border-bottom:none;}
   .ld-item:last-child{border-right:none;}
-  .ld-item .ii-figure{min-height:0;padding:6px 0;}
-  .ld-item .ii-figure img{max-height:80px;}
-  .ld-item .ii-info{flex-direction:column;gap:3px;}
+  .ld-item .ii-top{margin-bottom:10px;}
+  .ld-item .ii-row{gap:8px;}
+  .ld-item .ii-figure{width:48px;height:48px;}
   .ld-item .ii-name{font-size:15px;}
   .ld-item[data-slot="bottom"] .ii-name{font-size:13px;}
-  .ld-item .ii-color{font-size:10px;}
+  .ld-item .ii-color{font-size:10px;margin-top:8px;}
   .ld-item .ii-code{font-size:10.5px;}
 }
 
@@ -1029,14 +1028,15 @@ function renderLook(id){
       ? `<div class="ii-gtoggle"><button type="button" class="${gi.active==='M'?'active':''}" data-g="M">M</button><button type="button" class="${gi.active==='W'?'active':''}" data-g="W">W</button></div>`
       : '';
     const colorLine = p && !isBottom && p.color ? `<div class="ii-color">${p.color}</div>` : '';
+    const figureHtml = isBottom ? '' : `<div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>`;
     return `<div class="ld-item" data-slot="${it.slot.toLowerCase()}" data-active-code="${it.code}" data-code-m="${gi?gi.m:''}" data-code-w="${gi?gi.w:''}">
       <div class="ii-top"><span class="ii-slot">${it.slot}</span></div>
-      <div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>
-      <div class="ii-info">
+      <div class="ii-row">
+        ${figureHtml}
         <div class="ii-name">${p?p.code:it.code}</div>
-        ${colorLine}
-        <div class="ii-code">${p?fmtPrice(p.price):''}</div>
       </div>
+      ${colorLine}
+      <div class="ii-code">${p?fmtPrice(p.price):''}</div>
       ${toggleHtml}
     </div>`;
   }).join('');
