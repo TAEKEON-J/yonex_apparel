@@ -192,10 +192,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-dot{width:7px;height:7px;border-radius:50%;border:1.5px solid rgba(255,255,255,.7);background:rgba(255,255,255,.25);padding:0;cursor:pointer;transition:background .2s,transform .15s var(--ease);}
 .ld-dot.active{background:#fff;}
 .ld-dot:active{transform:scale(.85);}
-.ld-hotspot{position:absolute;pointer-events:none;opacity:0;transition:opacity .45s ease;border-radius:50%;background:radial-gradient(ellipse at center,var(--accent-cat-a) 0%,transparent 72%);filter:blur(2px);}
-.ld-hotspot.active{opacity:1;}
-.ld-hotspot .ring{position:absolute;inset:8%;border:1px solid var(--accent-cat);border-radius:46% 54% 52% 48%/50% 46% 54% 50%;opacity:0;transition:opacity .45s ease;}
-.ld-hotspot.active .ring{opacity:.55;}
 .ld-caption{position:absolute;left:24px;bottom:24px;color:#fff;z-index:2;}
 .ld-caption .eyebrow{color:rgba(255,255,255,.75);}
 .ld-caption h3{color:#fff;font-size:26px;margin-top:6px;letter-spacing:-.01em;}
@@ -910,10 +906,6 @@ function renderLook(id){
   const showW = lookPairView==='W' && look.pair;
   const variant = showW ? look.pair : look;
 
-  const hotspotsHtml = Object.entries(variant.hotspots).map(([slot,r])=>
-    `<div class="ld-hotspot" data-slot="${slot}" style="left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%;"><span class="ring"></span></div>`
-  ).join('');
-
   /* a look can optionally list a few model-cut photos of the same outfit
      (different angles/poses) via look.photos — the hero then shows a small
      tap-through dot gallery instead of just the one shot. Falls back to the
@@ -932,7 +924,6 @@ function renderLook(id){
   const heroHtml = `
     <img src="${activePhoto}" alt="${look.caption}" id="ldHeroImg">
     <div class="vscrim"></div>
-    ${hotspotsHtml}
     <div class="ld-caption"><div class="eyebrow">${c.label}</div></div>
     ${dotsHtml}`;
 
@@ -1016,9 +1007,6 @@ function bindLookInteractions(id){
   });
   document.querySelectorAll('.ld-item').forEach(el=>{
     const slot = el.dataset.slot;
-    const hs = visual.querySelector(`.ld-hotspot[data-slot="${slot}"]`);
-    el.addEventListener('mouseenter', ()=>hs && hs.classList.add('active'));
-    el.addEventListener('mouseleave', ()=>hs && hs.classList.remove('active'));
 
     el.addEventListener('click', e=>{
       if(e.target.closest('.ii-gtoggle')) return;
