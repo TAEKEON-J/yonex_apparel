@@ -341,7 +341,7 @@ footer.lb-foot .eyebrow{justify-content:center;display:flex;}
       </button>
       <div class="search-panel" id="searchPanel">
         <div class="search-input-row">
-          <input type="text" id="searchInput" placeholder="품번 검색 · e.g. 263TS001" autocomplete="off" oninput="onSearchInput(this.value)" onkeydown="onSearchKeydown(event)">
+          <input type="text" id="searchInput" placeholder="품번검색 263TS001M" autocomplete="off" oninput="onSearchInput(this.value)" onkeydown="onSearchKeydown(event)">
           <button type="button" class="search-close" onclick="closeSearch()" aria-label="Close search">&times;</button>
         </div>
         <div class="search-results" id="searchResults"></div>
@@ -1136,9 +1136,12 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeProduct(); 
 /* ---------------- PRODUCT CODE SEARCH ----------------
    Header search: type a product code, get live matches across every LOOK
    (including the hidden gender-variant items inside look.pair), click/Enter
-   jumps straight to that look's page and opens the product panel for the
-   exact item found — no separate "search page", just a jump. */
+   jumps straight to that look's page (showing its model cut) — no separate
+   "search page", just a jump. Results are ordered TOP items before BOTTOM
+   items (then original look order) so e.g. searching "001" lists tops
+   first, bottoms below. */
 let searchActiveIdx = -1;
+const SLOT_RANK = {top:0, bottom:1};
 function searchProducts(query){
   const q = query.trim().toUpperCase();
   if(!q) return [];
@@ -1156,9 +1159,14 @@ function searchProducts(query){
         const dedupe = look.id+'|'+isPair+'|'+it.code;
         if(seen.has(dedupe)) return;
         seen.add(dedupe);
-        results.push({lookId:look.id, isPair, code:it.code, product:p, look});
+        results.push({lookId:look.id, isPair, code:it.code, product:p, look, slot:it.slot});
       });
     });
+  });
+  results.sort((a,b)=>{
+    const ra = SLOT_RANK[(a.slot||'').toLowerCase()] ?? 2;
+    const rb = SLOT_RANK[(b.slot||'').toLowerCase()] ?? 2;
+    return ra - rb;
   });
   return results.slice(0,8);
 }
@@ -1208,7 +1216,6 @@ function jumpToSearchResult(i){
   closeSearch();
   const finish = ()=>{
     if(hit.isPair && lookPairView!=='W'){ lookPairView='W'; paintLook(hit.lookId); }
-    openProduct(hit.code, hit.lookId);
   };
   if(parseHash().view==='look' && parseHash().param===hit.lookId){
     finish();
