@@ -63,7 +63,8 @@ nav.catnav button.active::after{transform:scaleX(1);}
 .search-close{border:none;background:none;color:var(--muted);font-size:20px;line-height:1;cursor:pointer;padding:8px 12px;flex:none;}
 .search-close:hover{color:var(--ink);}
 .search-results{max-height:340px;overflow-y:auto;}
-.search-row{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--line-soft);transition:background .15s;}
+.search-row{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--line-soft);transition:background .15s;animation:searchRowIn .22s var(--ease) both;}
+@keyframes searchRowIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
 .search-row:last-child{border-bottom:none;}
 .search-row:hover,.search-row.active{background:var(--paper-2);}
 .search-row .sr-figure{width:36px;height:36px;flex:none;background:var(--paper-2);display:flex;align-items:center;justify-content:center;overflow:hidden;}
@@ -294,7 +295,8 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-hero .eyebrow{justify-content:center;display:flex;}
 .mix-hero h2{font-size:clamp(30px,5vw,48px);letter-spacing:-.03em;margin-top:14px;text-transform:uppercase;}
 .mix-hero p{font-size:14.5px;color:var(--ink-soft);margin-top:14px;font-weight:300;}
-.mix-stage{max-width:920px;margin:56px auto 0;padding:0 28px;}
+.mix-stage{max-width:920px;margin:56px auto 0;padding:0 28px;transition:opacity .26s var(--ease);}
+.mix-stage.mix-swap{opacity:0;}
 .mix-slot{display:grid;grid-template-columns:56px 1fr 56px;align-items:center;gap:10px;padding:0;}
 .mix-slot:first-of-type{padding-top:30px;border-top:1px solid var(--line-soft);}
 .mix-slot:last-of-type{padding-bottom:30px;border-bottom:1px solid var(--line-soft);}
@@ -964,9 +966,17 @@ function genderInfo(code){
    variant doesn't jump the page */
 function paintLook(id){
   const app = document.getElementById('app');
-  app.innerHTML = renderLook(id);
-  app.querySelector('.view')?.classList.add('view');
-  bindLookInteractions(id);
+  if(REDUCE_MOTION){
+    app.innerHTML = renderLook(id);
+    bindLookInteractions(id);
+    return;
+  }
+  app.classList.add('app-out');
+  setTimeout(()=>{
+    app.innerHTML = renderLook(id);
+    app.classList.remove('app-out');
+    bindLookInteractions(id);
+  }, 190);
 }
 
 function renderLook(id){
@@ -1367,7 +1377,13 @@ function paintMix(){
 function shiftMix(which, dir){
   if(which==='top') mixTopIdx = (mixTopIdx + dir + MIX_TOPS.length) % MIX_TOPS.length;
   else mixBottomIdx = (mixBottomIdx + dir + MIX_BOTTOMS.length) % MIX_BOTTOMS.length;
-  paintMix();
+  const stage = document.getElementById('mixStage');
+  if(REDUCE_MOTION || !stage){ paintMix(); return; }
+  stage.classList.add('mix-swap');
+  setTimeout(()=>{
+    paintMix();
+    stage.classList.remove('mix-swap');
+  }, 200);
 }
 /* touch swipe on mix figures */
 let touchX = null;
