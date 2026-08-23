@@ -424,10 +424,16 @@ const PRODUCTS = {
   '263TR002':{code:"263TR002M",name:"Sleeveless Game Tee",color:"Midnight Black",price:69000,gender:"Men",material:"PE 100% 배색1 PE 92%, PU 8%, 배색2 PE 100%",size:"95–110",collection:"Game Wear",img:"images/products/263TR002M.jpg",imgBack:"images/products/263TR002M_B.jpg"},
   '263PH001':{code:"263PH001M",name:"Game Shorts (4부)",color:"Midnight Black",price:59000,gender:"Men",material:"PE 100%",size:"95–110",collection:"Game Wear",img:"images/products/263PH001M.jpg",pairCode:"263PH002"},
   '263PH001-2':{code:"263PH001M",name:"Game Shorts (4부)",color:"Dark Green",price:59000,gender:"Men",material:"PE 100%",size:"95–110",collection:"Game Wear",img:"images/products/263PH001M_1.jpg",pairCode:"263PH002-2"},
-  '261PH001M-1':{code:"261PH001M-1",name:"Game Shorts (4부)",color:"Midnight Black",price:59000,gender:"Men",material:"PE 100%",collection:"Previous Season",img:"images/products/placeholder.png",pairCode:"261PH002F-1"},
-  '261PH002F-1':{code:"261PH002F-1",name:"Game Shorts (4부)",color:"Midnight Black",price:59000,gender:"Women",material:"PE 100%",collection:"Previous Season",img:"images/products/placeholder.png",pairCode:"261PH001M-1"},
-  '261PS001F':{code:"261PS001F",name:"Skirt",color:"White",price:65000,gender:"Women",material:"PE 100%",collection:"Previous Season",img:"images/products/placeholder.png"},
-  '261PS003F':{code:"261PS003F",name:"Skirt",color:"Black",price:65000,gender:"Women",material:"PE 100%",collection:"Previous Season",img:"images/products/placeholder.png"},
+  /* 261-prefixed codes are previous-season carry-over stock — the same
+     code turns up in multiple colorways across look photos, so the color
+     field is intentionally omitted for all of them (COLOR row hidden
+     wherever p.color is falsy) and only price is shown. */
+  '261PH001M-1':{code:"261PH001M-1",name:"Game Shorts (4부)",price:59000,gender:"Men",material:"PE 100%",collection:"Previous Season",img:"images/products/placeholder.png",pairCode:"261PH002F-1"},
+  '261PH002F-1':{code:"261PH002F-1",name:"Game Shorts (4부)",price:59000,gender:"Women",material:"PE 100%",collection:"Previous Season",img:"images/products/placeholder.png",pairCode:"261PH001M-1"},
+  '261PH001F-1':{code:"261PH001F-1",name:"Game Shorts (4부)",price:59000,gender:"Women",material:"PE 100%",collection:"Previous Season",img:"images/products/placeholder.png"},
+  '261PS001F':{code:"261PS001F",name:"Skirt",price:65000,gender:"Women",material:"PE 100%",collection:"Previous Season",img:"images/products/placeholder.png"},
+  '261PS002F':{code:"261PS002F",name:"Skirt",price:65000,gender:"Women",material:"PE 100%",collection:"Previous Season",img:"images/products/placeholder.png"},
+  '261PS003F':{code:"261PS003F",name:"Skirt",price:65000,gender:"Women",material:"PE 100%",collection:"Previous Season",img:"images/products/placeholder.png"},
   '263PH002':{code:"263PH002F",name:"Game Shorts (4부)",color:"Midnight Black",price:59000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Game Wear",img:"images/products/263PH002F.jpg",pairCode:"263PH001",imgBack:"images/products/263PH002F_B.jpg"},
   '263PH002-2':{code:"263PH002F",name:"Game Shorts (4부)",color:"Dark Green",price:59000,gender:"Women",material:"PE 100%",size:"85–100",collection:"Game Wear",img:"images/products/263PH002F_1.jpg",pairCode:"263PH001-2"},
   '70108EX':{code:"70108EX",name:"Warm-up Jacket",color:"Off White",price:219000,gender:"Unisex",material:"PE 100% (HEAT CAPSULE)",size:"S(90)–3XL(115)",collection:"Game Wear",img:"images/products/placeholder.png"},
@@ -576,9 +582,12 @@ const LOOKS = [
     pair:{model:'Women',img:'images/looks/263TS002F_261PS001F_model.jpg',fitImg:'images/looks/263TS002F_261PS001F_model.jpg',
       items:[{slot:'TOP',code:'263TS002'},{slot:'BOTTOM',code:'261PS001F'}],
       hotspots:{top:{x:30,y:16,w:44,h:34},bottom:{x:26,y:50,w:48,h:30}}}},
-  {id:'g2',cat:'game',num:2,img:'images/hero/cover-coral-2.jpeg',fitImg:'images/hero/cover-coral-2.jpeg',model:'Men',caption:'Center Court',
-    items:[{slot:'TOP',code:'263TS013'},{slot:'BOTTOM',code:'263PH001-2'}],
-    hotspots:{top:{x:24,y:14,w:52,h:37},bottom:{x:22,y:50,w:56,h:30}}},
+  {id:'g2',cat:'game',num:2,img:'images/looks/263TS013M_261PH001M-1_model.jpg',fitImg:'images/looks/263TS013M_261PH001M-1_model.jpg',model:'Men',caption:'Center Court',
+    items:[{slot:'TOP',code:'263TS013'},{slot:'BOTTOM',code:'261PH001M-1'}],
+    hotspots:{top:{x:24,y:14,w:52,h:37},bottom:{x:22,y:50,w:56,h:30}},
+    pair:{model:'Women',img:'images/looks/263TS014F_261PS001F_model.jpg',fitImg:'images/looks/263TS014F_261PS001F_model.jpg',
+      items:[{slot:'TOP',code:'263TS014'},{slot:'BOTTOM',code:'261PS001F'}],
+      hotspots:{top:{x:24,y:14,w:52,h:37},bottom:{x:22,y:50,w:56,h:30}}}},
   {id:'g4',cat:'game',num:3,img:'images/hero/keyvisual-blue-2.jpeg',fitImg:'images/hero/keyvisual-blue-2.jpeg',model:'Women',caption:'Rally Ready',
     items:[{slot:'TOP',code:'263TS026'}],
     hotspots:{top:HS_DEFAULT.top}},
@@ -608,6 +617,36 @@ const LOOKS = [
     hotspots:HS_DEFAULT,
     pair:{model:'Women',img:'images/looks/263TS010F_261PS001F_model.jpg',fitImg:'images/looks/263TS010F_261PS001F_model.jpg',
       items:[{slot:'TOP',code:'263TS010'},{slot:'BOTTOM',code:'261PS001F'}],
+      hotspots:HS_DEFAULT}},
+  {id:'g13',cat:'game',num:8,img:'images/looks/263TS011M_editorial.jpg',fitImg:'images/looks/263TS011M_261PH001M-1_model.jpg',hasEditorial:true,model:'Men',caption:'Net Play',
+    items:[{slot:'TOP',code:'263TS011'},{slot:'BOTTOM',code:'261PH001M-1'}],
+    hotspots:HS_DEFAULT,
+    pair:{model:'Women',img:'images/looks/263TS012F_261PH002F-1_model.jpg',fitImg:'images/looks/263TS012F_261PH002F-1_model.jpg',
+      items:[{slot:'TOP',code:'263TS012'},{slot:'BOTTOM',code:'261PH002F-1'}],
+      hotspots:HS_DEFAULT}},
+  {id:'g14',cat:'game',num:9,img:'images/looks/263TS015M_261PH001M-1_model.jpg',fitImg:'images/looks/263TS015M_261PH001M-1_model.jpg',model:'Men',caption:'Deuce',
+    items:[{slot:'TOP',code:'263TS015'},{slot:'BOTTOM',code:'261PH001M-1'}],
+    hotspots:HS_DEFAULT,
+    pair:{model:'Women',img:'images/looks/263TS016F_261PS002F_model.jpg',fitImg:'images/looks/263TS016F_261PS002F_model.jpg',
+      items:[{slot:'TOP',code:'263TS016'},{slot:'BOTTOM',code:'261PS002F'}],
+      hotspots:HS_DEFAULT}},
+  {id:'g15',cat:'game',num:10,img:'images/looks/263TS017M_editorial.jpg',fitImg:'images/looks/263TS017M_261PH001M-1_model.jpg',hasEditorial:true,model:'Men',caption:'Cross Court',
+    items:[{slot:'TOP',code:'263TS017'},{slot:'BOTTOM',code:'261PH001M-1'}],
+    hotspots:HS_DEFAULT,
+    pair:{model:'Women',img:'images/looks/263TS018F_261PS003F_model.jpg',fitImg:'images/looks/263TS018F_261PS003F_model.jpg',
+      items:[{slot:'TOP',code:'263TS018'},{slot:'BOTTOM',code:'261PS003F'}],
+      hotspots:HS_DEFAULT}},
+  {id:'g16',cat:'game',num:11,img:'images/looks/263TS019M_editorial.jpg',fitImg:'images/looks/263TS019M_263PH001M_model.jpg',hasEditorial:true,model:'Men',caption:'Fast Break',
+    items:[{slot:'TOP',code:'263TS019'},{slot:'BOTTOM',code:'263PH001'}],
+    hotspots:HS_DEFAULT,
+    pair:{model:'Women',img:'images/looks/263TS020F_261PH001F-1_model.jpg',fitImg:'images/looks/263TS020F_261PH001F-1_model.jpg',
+      items:[{slot:'TOP',code:'263TS020'},{slot:'BOTTOM',code:'261PH001F-1'}],
+      hotspots:HS_DEFAULT}},
+  {id:'g17',cat:'game',num:12,img:'images/looks/263TS021M_editorial.jpg',fitImg:'images/looks/263TS021M_261PH001M-1_model.jpg',hasEditorial:true,model:'Men',caption:'Match Set',
+    items:[{slot:'TOP',code:'263TS021'},{slot:'BOTTOM',code:'261PH001M-1'}],
+    hotspots:HS_DEFAULT,
+    pair:{model:'Women',img:'images/looks/263TS022F_261PS001F_model.jpg',fitImg:'images/looks/263TS022F_261PS001F_model.jpg',
+      items:[{slot:'TOP',code:'263TS022'},{slot:'BOTTOM',code:'261PS001F'}],
       hotspots:HS_DEFAULT}},
   {id:'c1',cat:'casual',num:1,img:'images/hero/daily-nature-1.jpeg',fitImg:'images/hero/daily-nature-1.jpeg',model:'Men',caption:'Off Duty',
     items:[{slot:'TOP',code:'263TS038'},{slot:'BOTTOM',code:'263PL001'}],
@@ -1116,7 +1155,7 @@ function openProduct(code, lookId){
     </div>` : ''}
     <div class="pm-code">${p.gender.toUpperCase()}</div>
     <div class="pm-name">${p.code}</div>
-    <div class="pm-row"><span>COLOR</span><span>${p.color}</span></div>
+    ${p.color ? `<div class="pm-row"><span>COLOR</span><span>${p.color}</span></div>` : ''}
     <div class="pm-row"><span>COLLECTION</span><span>${p.collection}</span></div>
     <div class="pm-detail-lbl">DETAIL</div>
     <div class="pm-detail-txt">${p.material}</div>
@@ -1191,7 +1230,7 @@ function onSearchInput(value){
       <div class="sr-figure"><img src="${r.product.img}" alt=""></div>
       <div class="sr-info">
         <div class="sr-code">${r.product.code}</div>
-        <div class="sr-name">${r.product.name} · ${r.product.color}</div>
+        <div class="sr-name">${r.product.color ? `${r.product.name} · ${r.product.color}` : r.product.name}</div>
       </div>
       <div class="sr-look">LOOK ${String(r.look.num).padStart(2,'0')}</div>
     </div>`).join('');
