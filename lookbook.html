@@ -225,7 +225,10 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-item:hover,.ld-item.hover-active{background:var(--paper-2);}
 .ld-item .ii-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;}
 .ld-item .ii-slot{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--accent-cat);}
-.ld-item .ii-name{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:-.01em;text-align:right;}
+.ld-item .ii-figure{width:100%;height:200px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+.ld-item .ii-figure img{max-height:100%;max-width:70%;object-fit:contain;filter:drop-shadow(0 14px 22px rgba(20,20,15,.10));transition:transform .35s var(--ease);}
+.ld-item:hover .ii-figure img{transform:translateY(-3px) scale(1.02);}
+.ld-item .ii-name{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:-.01em;text-align:right;margin-top:24px;}
 .ld-item .ii-color{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:12px;text-align:right;}
 .ld-item .ii-code{font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:4px;text-align:right;}
 .ii-gtoggle{display:inline-flex;align-self:flex-start;margin-top:12px;border:1px solid var(--line);}
@@ -240,7 +243,8 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .ld-item{padding:10px 12px;border-right:1px solid var(--line-soft);border-bottom:none;}
   .ld-item:last-child{border-right:none;}
   .ld-item .ii-top{margin-bottom:6px;}
-  .ld-item .ii-name{font-size:15px;}
+  .ld-item .ii-figure{display:none;}
+  .ld-item .ii-name{font-size:15px;margin-top:0;}
   .ld-item .ii-color{font-size:10px;margin-top:4px;}
   .ld-item .ii-code{font-size:10.5px;margin-top:2px;}
 }
@@ -890,6 +894,11 @@ function filterFullLineup(g){
   if(countEl) countEl.textContent = `${String(visible).padStart(2,'0')} STYLES`;
 }
 
+function itemFig(code){
+  const p = PRODUCTS[code];
+  return p ? p.img : 'images/products/placeholder.png';
+}
+
 /* a few special/commemorative items have no confirmed price in any source yet (price:0) */
 function fmtPrice(price){
   return price ? `${price.toLocaleString()}원` : 'PRICE TBD';
@@ -1015,8 +1024,10 @@ function renderLook(id){
       ? `<div class="ii-gtoggle"><button type="button" class="${gi.active==='M'?'active':''}" data-g="M">M</button><button type="button" class="${gi.active==='W'?'active':''}" data-g="W">W</button></div>`
       : '';
     const colorLine = p && !isBottom && p.color ? `<div class="ii-color">${p.color}</div>` : '';
+    const figureHtml = isBottom ? '' : `<div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>`;
     return `<div class="ld-item" data-slot="${it.slot.toLowerCase()}" data-active-code="${it.code}" data-code-m="${gi?gi.m:''}" data-code-w="${gi?gi.w:''}">
       <div class="ii-top"><span class="ii-slot">${it.slot}</span></div>
+      ${figureHtml}
       <div class="ii-name">${p?p.code:it.code}</div>
       ${colorLine}
       <div class="ii-code">${p?fmtPrice(p.price):''}</div>
@@ -1097,6 +1108,8 @@ function bindLookInteractions(id){
         const p = PRODUCTS[code];
         if(!p) return;
         el.dataset.activeCode = code;
+        const figEl = el.querySelector('.ii-figure img');
+        if(figEl) figEl.src = itemFig(code);
         el.querySelector('.ii-name').textContent = p.code;
         const colorEl = el.querySelector('.ii-color');
         if(colorEl) colorEl.textContent = p.color;
