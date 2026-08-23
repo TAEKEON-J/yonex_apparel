@@ -179,6 +179,12 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-split{display:grid;grid-template-columns:65fr 35fr;gap:0;align-items:stretch;min-height:78vh;border:1px solid var(--line-soft);}
 .ld-visual{position:relative;background:var(--paper-3);overflow:hidden;min-height:420px;}
 .ld-visual img{width:100%;height:100%;object-fit:cover;object-position:top center;}
+#ldHeroImg{transition:opacity .2s var(--ease);}
+#ldHeroImg.ld-hero-swap{opacity:0;}
+.ld-gallery-dots{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);z-index:3;display:flex;gap:9px;}
+.ld-dot{width:7px;height:7px;border-radius:50%;border:1.5px solid rgba(255,255,255,.7);background:rgba(255,255,255,.25);padding:0;cursor:pointer;transition:background .2s,transform .15s var(--ease);}
+.ld-dot.active{background:#fff;}
+.ld-dot:active{transform:scale(.85);}
 .ld-visual-duo{display:grid;grid-template-columns:1fr 1fr;}
 .ld-visual-half{position:relative;overflow:hidden;}
 .ld-visual-half:first-child{border-right:1px solid rgba(255,255,255,.25);}
@@ -591,6 +597,7 @@ const MIX_BOTTOMS = ['263PH001','263PL001','263PL002','263WP001','263WP009'];
 
 /* ---------------- STATE / ROUTER ---------------- */
 let mixTopIdx = 0, mixBottomIdx = 0;
+let lookGalleryIdx = 0;
 
 const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 function go(view, param){
@@ -621,6 +628,7 @@ function render(){
   if(cat) document.documentElement.style.setProperty('--accent-cat-a', CATEGORIES[cat].accent+'33');
   window.scrollTo({top:0,behavior:'instant'});
   closeProduct();
+  lookGalleryIdx = 0;
 
   const app = document.getElementById('app');
   app.classList.remove('app-out');
@@ -886,6 +894,16 @@ function renderLook(id){
     `<div class="ld-hotspot" data-slot="${slot}" style="left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%;"><span class="ring"></span></div>`
   ).join('');
 
+  /* a look can optionally list a few model-cut photos of the same outfit
+     (different angles/poses) via look.photos — the hero then shows a small
+     tap-through dot gallery instead of just the one shot. Falls back to the
+     single fitImg/img when absent. */
+  const photos = look.photos && look.photos.length ? look.photos : [look.fitImg || look.img];
+  const activePhoto = photos[Math.min(lookGalleryIdx, photos.length - 1)];
+  const dotsHtml = photos.length > 1 ? `<div class="ld-gallery-dots">${photos.map((_,i)=>
+    `<button type="button" class="ld-dot${i===lookGalleryIdx?' active':''}" onclick="event.stopPropagation();selectLookPhoto(${i})" aria-label="Photo ${i+1}"></button>`
+  ).join('')}</div>` : '';
+
   const heroHtml = look.pair ? `
     <div class="ld-visual-half">
       ${lookImgTag(look.items, 'model', look.fitImg||look.img, `alt="${look.caption} — ${look.model}"`)}
@@ -897,10 +915,11 @@ function renderLook(id){
       <div class="vscrim"></div>
       <div class="ld-half-label">${look.pair.model==='Women'?'WOMEN':'MEN'}</div>
     </div>` : `
-    ${lookImgTag(look.items, 'model', look.fitImg||look.img, `alt="${look.caption}"`)}
+    <img src="${activePhoto}" alt="${look.caption}" id="ldHeroImg">
     <div class="vscrim"></div>
     ${hotspotsHtml}
-    <div class="ld-caption"><div class="eyebrow">${c.label}</div></div>`;
+    <div class="ld-caption"><div class="eyebrow">${c.label}</div></div>
+    ${dotsHtml}`;
 
   const itemsHtml = look.items.map((it,i)=>{
     const p = PRODUCTS[it.code];
@@ -951,6 +970,21 @@ function renderLook(id){
 
 function wornWithFor(code, excludeLookId){
   return LOOKS.filter(l=>l.id!==excludeLookId && l.items.some(it=>it.code===code));
+}
+
+function selectLookPhoto(i){
+  const look = LOOKS.find(l=>l.id===parseHash().param);
+  const img = document.getElementById('ldHeroImg');
+  if(!look || !img) return;
+  const photos = look.photos && look.photos.length ? look.photos : [look.fitImg||look.img];
+  if(i===lookGalleryIdx || !photos[i]) return;
+  lookGalleryIdx = i;
+  img.classList.add('ld-hero-swap');
+  setTimeout(()=>{
+    img.src = photos[i];
+    img.classList.remove('ld-hero-swap');
+  }, REDUCE_MOTION ? 0 : 180);
+  document.querySelectorAll('.ld-dot').forEach((d,idx)=>d.classList.toggle('active', idx===i));
 }
 
 function bindLookInteractions(id){
