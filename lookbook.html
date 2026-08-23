@@ -191,7 +191,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-caption .eyebrow{color:rgba(255,255,255,.75);}
 .ld-caption h3{color:#fff;font-size:26px;margin-top:6px;letter-spacing:-.01em;}
 .ld-visual .vscrim{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,0) 30%);pointer-events:none;}
-.swipe-hint{display:none;}
 
 .ld-items{background:var(--paper);display:flex;flex-direction:column;border-left:1px solid var(--line-soft);}
 .ld-item{flex:1;display:flex;flex-direction:column;padding:28px 30px;border-bottom:1px solid var(--line-soft);cursor:pointer;transition:background .25s;position:relative;}
@@ -220,11 +219,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .ld-visual{aspect-ratio:4/5;min-height:0;touch-action:pan-y;}
   .ld-visual-duo{aspect-ratio:8/5;}
   .ld-half-label{left:10px;bottom:12px;font-size:9.5px;}
-  .swipe-hint{display:flex;position:absolute;top:50%;width:30px;height:30px;align-items:center;justify-content:center;color:#fff;font-size:20px;line-height:1;z-index:3;pointer-events:none;}
-  .swipe-hint.left{left:2px;animation:swipeHintL 2.2s ease-in-out infinite;}
-  .swipe-hint.right{right:2px;animation:swipeHintR 2.2s ease-in-out infinite;}
-  @keyframes swipeHintL{0%,100%{opacity:.32;transform:translate(0,-50%);}50%{opacity:.85;transform:translate(-5px,-50%);}}
-  @keyframes swipeHintR{0%,100%{opacity:.32;transform:translate(0,-50%);}50%{opacity:.85;transform:translate(5px,-50%);}}
   .ld-items{border-left:none;border-top:1px solid var(--line-soft);}
   .ld-item{padding:20px 16px;}
   .ld-item[data-slot="bottom"]{padding:18px 16px 22px;}
@@ -943,8 +937,8 @@ function renderLook(id){
       <div class="ld-split">
         <div class="ld-visual${look.pair?' ld-visual-duo':''}" id="ldVisual">
           ${heroHtml}
-          <span class="swipe-hint left">&lsaquo;</span>
-          <span class="swipe-hint right">&rsaquo;</span>
+          <button type="button" class="ec-arrow ec-arrow-prev" onclick="event.stopPropagation();go('look','${prev.id}')" aria-label="Previous look">&#8249;</button>
+          <button type="button" class="ec-arrow ec-arrow-next" onclick="event.stopPropagation();go('look','${next.id}')" aria-label="Next look">&#8250;</button>
         </div>
         <div class="ld-items">${itemsHtml}</div>
       </div>
