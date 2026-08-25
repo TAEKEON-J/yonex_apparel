@@ -195,8 +195,12 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .fl-card:hover .fl-frame img{transform:scale(1.04);}
 .fl-card .fl-code{font-family:var(--mono);font-size:11px;font-weight:700;margin-top:10px;letter-spacing:.02em;}
 .fl-card .fl-sub{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:3px;}
+.fl-swatches{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;}
+.fl-swatch{font-family:var(--mono);font-size:8.5px;letter-spacing:.02em;color:var(--muted);padding:3px 7px;border:1px solid var(--line);border-radius:999px;background:none;cursor:pointer;transition:color .15s,border-color .15s,background .15s;}
+.fl-swatch:hover{border-color:var(--ink-soft);}
+.fl-swatch.active{color:var(--ink);border-color:var(--ink);background:var(--paper-2);}
 @media(max-width:980px){.fl-grid{grid-template-columns:repeat(4,1fr);gap:22px 14px;}}
-@media(max-width:640px){.full-lineup{padding:0 18px 90px;} .fl-head{padding:34px 0 22px;} .fl-grid{grid-template-columns:repeat(3,1fr);gap:18px 10px;} .fl-card .fl-code{font-size:9.5px;} .fl-card .fl-sub{font-size:8.5px;}}
+@media(max-width:640px){.full-lineup{padding:0 18px 90px;} .fl-head{padding:34px 0 22px;} .fl-grid{grid-template-columns:repeat(3,1fr);gap:18px 10px;} .fl-card .fl-code{font-size:9.5px;} .fl-card .fl-sub{font-size:8.5px;} .fl-swatch{font-size:7.5px;padding:2px 6px;}}
 
 /* ===== LOOK DETAIL ===== */
 .look-detail{max-width:1440px;margin:0 auto;padding:28px 28px 0;}
@@ -1325,13 +1329,24 @@ function bindCampaignInteractions(key){
 }
 
 const COLLECTION_BY_CAT = {game:'Game Wear', casual:'Daily Wear', easy:'Easy Wear'};
+/* Groups PRODUCTS entries by their shared .code — a product with several
+   colorways (263TS033, 263TS033-2, ...) is one "style" with N variants,
+   not N separate styles. Returns an array of variant-groups, each an
+   array of [key,p] pairs in PRODUCTS insertion order (first = default
+   colorway shown until a swatch is tapped). */
 function productsForCat(key){
-  return Object.entries(PRODUCTS).filter(([,p])=>p.collection===COLLECTION_BY_CAT[key]);
+  const entries = Object.entries(PRODUCTS).filter(([,p])=>p.collection===COLLECTION_BY_CAT[key]);
+  const groups = new Map();
+  entries.forEach(([k,p])=>{
+    if(!groups.has(p.code)) groups.set(p.code, []);
+    groups.get(p.code).push([k,p]);
+  });
+  return Array.from(groups.values());
 }
 
 function renderFullLineup(key){
-  const items = productsForCat(key);
-  if(!items.length) return '';
+  const groups = productsForCat(key);
+  if(!groups.length) return '';
   return `<section class="full-lineup">
     <div class="fl-head">
       <h4>FULL LINE-UP</h4>
@@ -1341,16 +1356,20 @@ function renderFullLineup(key){
           <button type="button" data-g="men" onclick="filterFullLineup('men')">MEN</button>
           <button type="button" data-g="women" onclick="filterFullLineup('women')">WOMEN</button>
         </div>
-        <span class="fl-count">${String(items.length).padStart(2,'0')} STYLES</span>
+        <span class="fl-count">${String(groups.length).padStart(2,'0')} STYLES</span>
       </div>
     </div>
     <div class="fl-grid">
-      ${items.map(([code,p])=>`
-        <div class="fl-card reveal" data-gender="${p.gender.toLowerCase()}" onclick="openProduct('${code}')">
+      ${groups.map(variants=>{
+        const [defaultKey,p] = variants[0];
+        return `
+        <div class="fl-card reveal" data-gender="${p.gender.toLowerCase()}" data-active-key="${defaultKey}" onclick="openFullLineupCard(this)">
           <div class="fl-frame"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
           <div class="fl-code">${p.code}</div>
-          <div class="fl-sub">${fmtPrice(p.price)} · ${p.color}</div>
-        </div>`).join('')}
+          <div class="fl-sub">${fmtPrice(p.price)} · <span class="fl-color">${p.color}</span></div>
+          ${variants.length>1 ? `<div class="fl-swatches">${variants.map(([vk,vp],vi)=>`<button type="button" class="fl-swatch${vi===0?' active':''}" data-key="${vk}" onclick="event.stopPropagation();selectFullLineupSwatch(this)">${vp.color}</button>`).join('')}</div>` : ''}
+        </div>`;
+      }).join('')}
     </div>
   </section>`;
 }
@@ -1371,6 +1390,19 @@ function filterFullLineup(g){
   requestAnimationFrame(()=>toShow.forEach(c=>c.classList.remove('fl-hide')));
   const countEl = document.querySelector('.fl-count');
   if(countEl) countEl.textContent = `${String(visible).padStart(2,'0')} STYLES`;
+}
+function selectFullLineupSwatch(btn){
+  const card = btn.closest('.fl-card');
+  const p = PRODUCTS[btn.dataset.key];
+  if(!card || !p) return;
+  card.dataset.activeKey = btn.dataset.key;
+  const img = card.querySelector('.fl-frame img');
+  img.src = p.img; img.alt = p.name;
+  card.querySelector('.fl-sub').innerHTML = `${fmtPrice(p.price)} · <span class="fl-color">${p.color}</span>`;
+  card.querySelectorAll('.fl-swatch').forEach(s=>s.classList.toggle('active', s===btn));
+}
+function openFullLineupCard(card){
+  if(card.dataset.activeKey) openProduct(card.dataset.activeKey);
 }
 
 function itemFig(code){
