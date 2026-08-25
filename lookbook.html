@@ -340,7 +340,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-figure .ms-name{font-size:14px;font-weight:600;margin-top:2px;}
 .mix-figure .ms-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;}
 .mix-cta{text-align:center;padding:46px 28px 110px;}
-.mix-cta button{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;padding:16px 38px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;transition:opacity .2s;}
+.mix-cta button{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;padding:12px 30px;border-radius:999px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;transition:opacity .2s;}
 .mix-cta button:disabled{background:none;color:var(--muted);border-color:var(--line);cursor:default;}
 .mix-cta button:not(:disabled):hover{opacity:.8;}
 .mix-cta .mc-note{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:14px;}
@@ -1994,8 +1994,8 @@ function paintMix(which, dir){
       <div class="mp-fallback">코디 미리보기<br>준비 중입니다</div>`;
   }
   cta.innerHTML = match
-    ? `<button onclick="go('look','${match.id}')">VIEW STYLING &rarr;</button><div class="mc-note">Styled as ${CATEGORIES[match.cat].label} — LOOK ${String(match.num).padStart(2,'0')}</div>`
-    : `<button disabled>VIEW STYLING</button><div class="mc-note">No styled photo for this pairing yet</div>`;
+    ? `<button onclick="go('look','${match.id}')">VIEW STYLING &rarr;</button><div class="mc-note">LOOK ${String(match.num).padStart(2,'0')} 스타일링 있음</div>`
+    : `<button disabled>VIEW STYLING</button><div class="mc-note">촬영된 조합 없음</div>`;
 }
 function shiftMix(which, dir){
   if(which==='top') mixTopIdx = (mixTopIdx + dir + MIX_TOPS.length) % MIX_TOPS.length;
