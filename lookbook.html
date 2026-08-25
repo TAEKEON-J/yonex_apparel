@@ -822,7 +822,7 @@ function renderCategory(key){
         <button type="button" class="ec-arrow ec-arrow-next" onclick="event.stopPropagation();campaignNav(1)" aria-label="Next">&#8250;</button>
       </div>
       <div class="ec-strip">
-        ${editorialLooks.map((l,i)=>`<div class="ec-thumb${i===0?' active':''}" onclick="selectCampaign(${i})">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>`).join('')}
+        ${editorialLooks.map((l,i)=>`<div class="ec-thumb${i===0?' active':''}" onclick="selectCampaign(${i})">${lookImgTag(l.items, 'model', l.fitImg, `alt="${l.caption}" loading="lazy"`)}</div>`).join('')}
       </div>
     </section>` : '';
   return `<div class="view">
@@ -836,7 +836,7 @@ function renderCategory(key){
     <section class="look-grid">
       ${looks.map(l=>`
         <article class="look-card reveal" onclick="go('look','${l.id}')">
-          <div class="lc-frame">${lookImgTag(l.items, 'model', l.fitImg, `alt="${c.label} ${l.caption}" loading="lazy"`)}</div>
+          <div class="lc-frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${c.label} ${l.caption}" loading="lazy"`)}</div>
         </article>`).join('')}
     </section>
   </div>`;
