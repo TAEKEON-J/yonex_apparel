@@ -810,7 +810,7 @@ const LOOKS = [
       items:[{slot:'TOP',code:'263TS032'},{slot:'BOTTOM',code:'261PH002F-1'}],
       hotspots:HS_DEFAULT}},
   {id:'c1',cat:'casual',num:1,caption:'Weekend Polo',model:'Men',img:'images/looks/10759EX_15284EX_model.jpg',fitImg:'images/looks/10759EX_15284EX_model.jpg',
-    items:[{slot:'TOP',code:'10759EX'},{slot:'BOTTOM',code:'15284EX'}],
+    items:[{slot:'TOP',code:'10759EX'},{slot:'BOTTOM',code:'15284EX-2'}],
     hotspots:HS_DEFAULT},
   {id:'c2',cat:'casual',num:2,
     img:'images/looks/263TL001U_263PL002U_model.jpg',fitImg:'images/looks/263TL001U_263PL002U_model.jpg',model:'Men',caption:'Overcast',
@@ -1070,23 +1070,23 @@ const LOOKS = [
       items:[{slot:'TOP',code:'263TL004'},{slot:'BOTTOM',code:'263PL001'}],
       hotspots:HS_DEFAULT}},
   {id:'c37',cat:'casual',num:37,caption:'Nature Trail',model:'Men',img:'images/looks/31063EX_61073EX_model.jpg',fitImg:'images/looks/31063EX_61073EX_model.jpg',
-    items:[{slot:'TOP',code:'31063EX'},{slot:'BOTTOM',code:'61073EX'}],
-    hotspots:HS_DEFAULT},
-  {id:'c38',cat:'casual',num:38,caption:'Midnight Trail',model:'Men',img:'images/looks/31063EX_1_61073EX_1_model.jpg',fitImg:'images/looks/31063EX_1_61073EX_1_model.jpg',
     items:[{slot:'TOP',code:'31063EX-2'},{slot:'BOTTOM',code:'61073EX-2'}],
     hotspots:HS_DEFAULT},
-  {id:'c39',cat:'casual',num:39,caption:'Open Country',model:'Men',img:'images/looks/51073EX_61073EX_model.jpg',fitImg:'images/looks/51073EX_61073EX_model.jpg',
-    items:[{slot:'TOP',code:'51073EX'},{slot:'BOTTOM',code:'61073EX'}],
+  {id:'c38',cat:'casual',num:38,caption:'Midnight Trail',model:'Men',img:'images/looks/31063EX_1_61073EX_1_model.jpg',fitImg:'images/looks/31063EX_1_61073EX_1_model.jpg',
+    items:[{slot:'TOP',code:'31063EX'},{slot:'BOTTOM',code:'61073EX'}],
     hotspots:HS_DEFAULT},
-  {id:'c40',cat:'casual',num:40,caption:'Dark Country',model:'Men',img:'images/looks/51073EX_1_61073EX_1_model.jpg',fitImg:'images/looks/51073EX_1_61073EX_1_model.jpg',
+  {id:'c39',cat:'casual',num:39,caption:'Open Country',model:'Men',img:'images/looks/51073EX_61073EX_model.jpg',fitImg:'images/looks/51073EX_61073EX_model.jpg',
     items:[{slot:'TOP',code:'51073EX-2'},{slot:'BOTTOM',code:'61073EX-2'}],
     hotspots:HS_DEFAULT},
+  {id:'c40',cat:'casual',num:40,caption:'Dark Country',model:'Men',img:'images/looks/51073EX_1_61073EX_1_model.jpg',fitImg:'images/looks/51073EX_1_61073EX_1_model.jpg',
+    items:[{slot:'TOP',code:'51073EX'},{slot:'BOTTOM',code:'61073EX'}],
+    hotspots:HS_DEFAULT},
   {id:'c41',cat:'casual',num:41,caption:'Pearl Coast',model:'Women',img:'images/looks/58121EX_68121EX_model.jpg',fitImg:'images/looks/58121EX_68121EX_model.jpg',
-    items:[{slot:'TOP',code:'58121EX'},{slot:'BOTTOM',code:'68121EX'}],
+    items:[{slot:'TOP',code:'58121EX-2'},{slot:'BOTTOM',code:'68121EX-2'}],
     hotspots:HS_DEFAULT,
     photos:['images/looks/58121EX_68121EX_model.jpg','images/looks/58121EX_68121EX_model-1.jpg']},
   {id:'c42',cat:'casual',num:42,caption:'Navy Coast',model:'Women',img:'images/looks/58121EX_1_68121EX_1_model.jpg',fitImg:'images/looks/58121EX_1_68121EX_1_model.jpg',
-    items:[{slot:'TOP',code:'58121EX-2'},{slot:'BOTTOM',code:'68121EX-2'}],
+    items:[{slot:'TOP',code:'58121EX'},{slot:'BOTTOM',code:'68121EX'}],
     hotspots:HS_DEFAULT,
     photos:['images/looks/58121EX_1_68121EX_1_model.jpg','images/looks/58121EX_1_68121EX_1_model-1.jpg']},
   {id:'c43',cat:'casual',num:43,hasEditorial:true,img:'images/looks/269JJ005U_255PL001U_e.jpg',fitImg:'images/looks/269JJ005U_255PL001U_model.jpg',model:'Men',caption:'Anniversary',
@@ -1551,7 +1551,7 @@ function buildItemsHtml(look, variant){
     const toggleHtml = gi
       ? `<div class="ii-gtoggle"><button type="button" class="${gi.active==='M'?'active':''}" data-g="M">M</button><button type="button" class="${gi.active==='W'?'active':''}" data-g="W">W</button></div>`
       : '';
-    const colorLine = p && !isBottom && p.color ? `<div class="ii-color">${p.color}</div>` : '';
+    const colorLine = p && p.color ? `<div class="ii-color">${p.color}</div>` : '';
     const figureHtml = isBottom ? '' : `<div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>`;
     return `<div class="ld-item" data-slot="${it.slot.toLowerCase()}" data-active-code="${it.code}" data-code-m="${gi?gi.m:''}" data-code-w="${gi?gi.w:''}">
       <div class="ii-top"><span class="ii-slot">${it.slot}</span></div>
