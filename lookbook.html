@@ -717,7 +717,7 @@ function render(){
   window.scrollTo({top:0,behavior:'instant'});
   closeProduct();
   lookGalleryIdx = 0;
-  lookPairView = 'M';
+  if(!isLookToLook) lookPairView = 'M';
 
   const app = document.getElementById('app');
   app.classList.remove('app-out');
