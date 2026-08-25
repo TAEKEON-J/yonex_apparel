@@ -195,12 +195,12 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .fl-card:hover .fl-frame img{transform:scale(1.04);}
 .fl-card .fl-code{font-family:var(--mono);font-size:11px;font-weight:700;margin-top:10px;letter-spacing:.02em;}
 .fl-card .fl-sub{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:3px;}
-.fl-swatches{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;}
-.fl-swatch{font-family:var(--mono);font-size:8.5px;letter-spacing:.02em;color:var(--muted);padding:3px 7px;border:1px solid var(--line);border-radius:999px;background:none;cursor:pointer;transition:color .15s,border-color .15s,background .15s;}
-.fl-swatch:hover{border-color:var(--ink-soft);}
-.fl-swatch.active{color:var(--ink);border-color:var(--ink);background:var(--paper-2);}
+.fl-swatches{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.fl-swatch{width:16px;height:16px;padding:0;border-radius:50%;cursor:pointer;border:1px solid rgba(0,0,0,.14);box-shadow:0 0 0 1px var(--paper) inset;transition:transform .15s var(--ease),box-shadow .15s;}
+.fl-swatch:hover{transform:scale(1.12);}
+.fl-swatch.active{box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--ink);}
 @media(max-width:980px){.fl-grid{grid-template-columns:repeat(4,1fr);gap:22px 14px;}}
-@media(max-width:640px){.full-lineup{padding:0 18px 90px;} .fl-head{padding:34px 0 22px;} .fl-grid{grid-template-columns:repeat(3,1fr);gap:18px 10px;} .fl-card .fl-code{font-size:9.5px;} .fl-card .fl-sub{font-size:8.5px;} .fl-swatch{font-size:7.5px;padding:2px 6px;}}
+@media(max-width:640px){.full-lineup{padding:0 18px 90px;} .fl-head{padding:34px 0 22px;} .fl-grid{grid-template-columns:repeat(3,1fr);gap:18px 10px;} .fl-card .fl-code{font-size:9.5px;} .fl-card .fl-sub{font-size:8.5px;} .fl-swatch{width:14px;height:14px;}}
 
 /* ===== LOOK DETAIL ===== */
 .look-detail{max-width:1440px;margin:0 auto;padding:28px 28px 0;}
@@ -1329,6 +1329,22 @@ function bindCampaignInteractions(key){
 }
 
 const COLLECTION_BY_CAT = {game:'Game Wear', casual:'Daily Wear', easy:'Easy Wear'};
+/* Approximate swatch colors for the FULL LINE-UP color-dot picker — PRODUCTS
+   only stores color NAMES (from the brand sheet), not hex values, so these
+   are visual approximations for the dot only; the real name is always in
+   the swatch's title/aria-label and in the product modal's COLOR row. */
+const COLOR_HEX = {
+  'Beige Gray':'#B8AFA0','Black':'#141414','Blue':'#2851C4','Blue Gray':'#5C6B78',
+  'Brown':'#7A5C3E','Charcoal':'#3A3A3C','Coral Red':'#E2543A','Dark Charcoal':'#2E2E30',
+  'Dark Green':'#2F4A34','Dark Navy':'#1B2A4A','Gray':'#9B9B9B','Green Charcoal':'#3E4A3E',
+  'Indigo Blue':'#35538F','Ivory':'#F1ECDD','Khaki Gray':'#8B8677','Light Brown':'#B08D5C',
+  'Melange Gray':'#B7B4AC','Melange White':'#EDEAE3','Midnight':'#1C1F2A','Midnight Black':'#17171A',
+  'Midnight Navy':'#16213A','Navy':'#1E2A4A','New Turquoise':'#1F5C52','Off White':'#F2EFE9',
+  'Pale Blue':'#B9CCE0','Pale Lilac':'#D8CFE0','Pale Mint':'#C7DCCB','Pearl Beige':'#DCCBAF',
+  'Pepper Mint':'#A9C9B8','Pink':'#E8A6B0','Smoke Navy':'#2B3245','Stone Charcoal':'#4B4A47',
+  'Venus Blue':'#4A7FC4','Warm Gray':'#9C9488','White':'#FAFAF8',
+};
+function colorHex(name){ return COLOR_HEX[name] || '#B0B0B0'; }
 /* Groups PRODUCTS entries by their shared .code — a product with several
    colorways (263TS033, 263TS033-2, ...) is one "style" with N variants,
    not N separate styles. Returns an array of variant-groups, each an
@@ -1367,7 +1383,7 @@ function renderFullLineup(key){
           <div class="fl-frame"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
           <div class="fl-code">${p.code}</div>
           <div class="fl-sub">${fmtPrice(p.price)} · <span class="fl-color">${p.color}</span></div>
-          ${variants.length>1 ? `<div class="fl-swatches">${variants.map(([vk,vp],vi)=>`<button type="button" class="fl-swatch${vi===0?' active':''}" data-key="${vk}" onclick="event.stopPropagation();selectFullLineupSwatch(this)">${vp.color}</button>`).join('')}</div>` : ''}
+          ${variants.length>1 ? `<div class="fl-swatches">${variants.map(([vk,vp],vi)=>`<button type="button" class="fl-swatch${vi===0?' active':''}" data-key="${vk}" style="background-color:${colorHex(vp.color)}" title="${vp.color}" aria-label="${vp.color}" onclick="event.stopPropagation();selectFullLineupSwatch(this)"></button>`).join('')}</div>` : ''}
         </div>`;
       }).join('')}
     </div>
