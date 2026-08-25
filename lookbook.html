@@ -1215,16 +1215,18 @@ function renderCategory(key){
      and only lists those looks. It's a mood/campaign moment, separate from
      the LOOK grid below (which is the comprehensive, model-cut-driven way
      to browse every look regardless of whether it has an editorial shot).
-     The carousel itself always shows the 모델컷 (fitImg), enlarged in the
-     featured hero — not the editorial crop — even for looks that do have
-     one; campaignImg/campaignItems (the "editorial only exists on the
-     .pair side" workaround, see c3) are intentionally not used here. */
+     The featured/enlarged hero shows the real 화보컷 (l.img) when the
+     look has one; for c3/c11/c15/c20 — where the editorial shoot only
+     exists on the .pair side, not this primary side — l.img is set to
+     the same photo as fitImg, so this naturally falls back to an
+     enlarged 모델컷 for exactly those cases without any special-casing
+     here. The thumbnail strip always shows the 모델컷 (fitImg). */
   const carouselHtml = editorialLooks.length ? `
     <section class="editorial-carousel">
       <div class="ec-head"><h4>CAMPAIGN</h4><span class="ec-count">${String(editorialLooks.length).padStart(2,'0')}</span></div>
       <div class="ec-featured" id="ecFeatured">
-        ${lookImgTag(featured.items, 'model', featured.fitImg, `class="ec-bg" alt="" aria-hidden="true"`)}
-        ${lookImgTag(featured.items, 'model', featured.fitImg, `class="ec-fg" alt="${featured.caption}"`)}
+        ${lookImgTag(featured.items, 'editorial', featured.img, `class="ec-bg" alt="" aria-hidden="true"`)}
+        ${lookImgTag(featured.items, 'editorial', featured.img, `class="ec-fg" alt="${featured.caption}"`)}
         <div class="ec-scrim"></div>
         <div class="ec-featured-cap"><div class="eyebrow">${c.label}</div></div>
         <button type="button" class="ec-arrow ec-arrow-prev" onclick="event.stopPropagation();campaignNav(-1)" aria-label="Previous">&#8249;</button>
@@ -1261,8 +1263,8 @@ function paintCampaign(){
   featured.classList.add('ec-swap');
   setTimeout(()=>{
     featured.innerHTML = `
-      ${lookImgTag(l.items, 'model', l.fitImg, `class="ec-bg" alt="" aria-hidden="true"`)}
-      ${lookImgTag(l.items, 'model', l.fitImg, `class="ec-fg" alt="${l.caption}"`)}
+      ${lookImgTag(l.items, 'editorial', l.img, `class="ec-bg" alt="" aria-hidden="true"`)}
+      ${lookImgTag(l.items, 'editorial', l.img, `class="ec-fg" alt="${l.caption}"`)}
       <div class="ec-scrim"></div>
       <div class="ec-featured-cap"><div class="eyebrow">${CATEGORIES[l.cat].label}</div></div>
       <button type="button" class="ec-arrow ec-arrow-prev" onclick="event.stopPropagation();campaignNav(-1)" aria-label="Previous">&#8249;</button>
