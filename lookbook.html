@@ -320,7 +320,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-preview .mp-base{z-index:1;}
 .mix-preview .mp-bottom{z-index:2;}
 .mix-preview .mp-top{z-index:3;}
-.mix-preview .mp-real{z-index:3;object-fit:cover;}
 .mix-preview .mp-fallback{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;padding:20px;line-height:1.6;}
 .mix-preview.mp-broken img{visibility:hidden;}
 .mix-preview.mp-broken .mp-fallback{display:flex;}
@@ -1989,20 +1988,16 @@ function paintMix(which, dir){
   const match = mixMatchLook();
   if(preview){
     preview.classList.remove('mp-broken');
-    if(match){
-      preview.innerHTML = `<img class="mp-real" src="${match.fitImg||match.img}" alt="${match.caption||''}">`;
-    } else {
-      const onerr = "this.closest('.mix-preview').classList.add('mp-broken')";
-      preview.innerHTML = `
-        <img class="mp-base" src="images/mannequin/base.jpg" alt="" onerror="${onerr}">
-        <img class="mp-top" src="images/mannequin/tops/${mixTopCode()}.png" alt="" onerror="${onerr}">
-        <img class="mp-bottom" src="images/mannequin/bottoms/${mixBottomCode()}.png" alt="" onerror="${onerr}">
-        <div class="mp-fallback">코디 미리보기<br>준비 중입니다</div>`;
-    }
+    const onerr = "this.closest('.mix-preview').classList.add('mp-broken')";
+    preview.innerHTML = `
+      <img class="mp-base" src="images/mannequin/base.jpg" alt="" onerror="${onerr}">
+      <img class="mp-top" src="images/mannequin/tops/${mixTopCode()}.png" alt="" onerror="${onerr}">
+      <img class="mp-bottom" src="images/mannequin/bottoms/${mixBottomCode()}.png" alt="" onerror="${onerr}">
+      <div class="mp-fallback">코디 미리보기<br>준비 중입니다</div>`;
   }
   cta.innerHTML = match
     ? `<button onclick="go('look','${match.id}')">VIEW STYLING &rarr;</button><div class="mc-note">Styled as ${CATEGORIES[match.cat].label} — LOOK ${String(match.num).padStart(2,'0')}</div>`
-    : `<button disabled>VIEW STYLING</button><div class="mc-note">No styled photo for this pairing yet — mannequin preview above</div>`;
+    : `<button disabled>VIEW STYLING</button><div class="mc-note">No styled photo for this pairing yet</div>`;
 }
 function shiftMix(which, dir){
   if(which==='top') mixTopIdx = (mixTopIdx + dir + MIX_TOPS.length) % MIX_TOPS.length;
