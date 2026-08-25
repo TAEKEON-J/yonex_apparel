@@ -790,14 +790,21 @@ const LOOKS = [
   {id:'g33',cat:'game',num:32,img:'images/looks/70108EX_80108EX_model.jpg',fitImg:'images/looks/70108EX_80108EX_model.jpg',model:'Unisex',caption:'Off White',
     items:[{slot:'TOP',code:'70108EX'},{slot:'BOTTOM',code:'80108EX'}],
     hotspots:HS_DEFAULT},
-  {id:'g34',cat:'game',num:33,img:'images/looks/263TS029M_261PH003M-1_editorial.jpg',fitImg:'images/looks/263TS029M_261PH003M-1_model.jpg',hasEditorial:true,model:'Men',caption:'Pink Slip',
-    items:[{slot:'TOP',code:'263TS029'},{slot:'BOTTOM',code:'261PH003M-1'}],
+  {id:'g34',cat:'game',num:33,img:'images/looks/263TS029M_261PH003M-1_editorial.jpg',fitImg:'images/looks/263TS029M_261PH003M-1_model.jpg',hasEditorial:true,model:'Men',caption:'Royal Blue',
+    /* photo is the Blue colorway (263TS029-2), not the base Pink (263TS029)
+       — confirmed by opening the photo directly. Women's side (263TS030,
+       base/Pink) is correct as-is per user confirmation. */
+    items:[{slot:'TOP',code:'263TS029-2'},{slot:'BOTTOM',code:'261PH003M-1'}],
     hotspots:HS_DEFAULT,
     pair:{model:'Women',img:'images/looks/263TS030F_261PS002F_model.jpg',fitImg:'images/looks/263TS030F_261PS002F_model.jpg',
       items:[{slot:'TOP',code:'263TS030'},{slot:'BOTTOM',code:'261PS002F'}],
       hotspots:HS_DEFAULT}},
   {id:'g35',cat:'game',num:34,img:'images/looks/263TS031M_261PH001M-1_editorial.jpg',fitImg:'images/looks/263TS031M_261PH001M-1_model.jpg',hasEditorial:true,model:'Men',caption:'Cool Down',
-    items:[{slot:'TOP',code:'263TS031'},{slot:'BOTTOM',code:'261PH001M-1'}],
+    /* photo is the Pepper Mint colorway (263TS031-2), not the base Pale
+       Blue (263TS031) — confirmed by opening the photo directly. Women's
+       side (263TS032, base/Pale Blue) is correct as-is per user
+       confirmation. */
+    items:[{slot:'TOP',code:'263TS031-2'},{slot:'BOTTOM',code:'261PH001M-1'}],
     hotspots:HS_DEFAULT,
     pair:{model:'Women',img:'images/looks/263TS032F_261PH002F-1_model.jpg',fitImg:'images/looks/263TS032F_261PH002F-1_model.jpg',
       items:[{slot:'TOP',code:'263TS032'},{slot:'BOTTOM',code:'261PH002F-1'}],
