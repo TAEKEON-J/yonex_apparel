@@ -319,7 +319,8 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-preview .mp-base{z-index:1;}
 .mix-preview .mp-bottom{z-index:2;}
 .mix-preview .mp-top{z-index:3;}
-.mix-preview .mp-fallback{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;padding:20px;line-height:1.6;}
+.mix-preview .mp-fallback{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;padding:20px;}
+.mix-preview .mp-fallback svg{width:26px;height:26px;opacity:.55;}
 .mix-preview.mp-broken img{visibility:hidden;}
 .mix-preview.mp-broken .mp-fallback{display:flex;}
 .mix-stage{max-width:920px;margin:18px auto 0;padding:0 28px;}
@@ -1991,7 +1992,7 @@ function paintMix(which, dir){
       <img class="mp-base" src="images/mannequin/base.jpg" alt="" onerror="${onerr}">
       <img class="mp-top" src="images/mannequin/tops/${mixTopCode()}.png" alt="" onerror="${onerr}">
       <img class="mp-bottom" src="images/mannequin/bottoms/${mixBottomCode()}.png" alt="" onerror="${onerr}">
-      <div class="mp-fallback">코디 미리보기<br>준비 중입니다</div>`;
+      <div class="mp-fallback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6"/><path d="M12 6.6v1.8"/><path d="M12 8.4 3.5 14.2a1.2 1.2 0 0 0 .68 2.18H19.8a1.2 1.2 0 0 0 .68-2.18L12 8.4Z"/><path d="M5 17.6h14"/></svg><span>미리보기 준비 중</span></div>`;
   }
   cta.innerHTML = match
     ? `<button onclick="go('look','${match.id}')">VIEW STYLING &rarr;</button><div class="mc-note">LOOK ${String(match.num).padStart(2,'0')} 스타일링 있음</div>`
