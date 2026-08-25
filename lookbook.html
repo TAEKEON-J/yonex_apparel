@@ -806,8 +806,6 @@ const LOOKS = [
       items:[{slot:'TOP',code:'263TL001'},{slot:'BOTTOM',code:'261PH004F-1'}],
       hotspots:HS_DEFAULT}},
   {id:'c3',cat:'casual',num:3,hasEditorial:true,
-    campaignImg:'images/looks/263TS034U_261PH002F-1_editorial.jpg',
-    campaignItems:[{slot:'TOP',code:'263TS034'},{slot:'BOTTOM',code:'261PH002F-1'}],
     img:'images/looks/263TS034U_261PH001M-1_model.jpg',fitImg:'images/looks/263TS034U_261PH001M-1_model.jpg',model:'Men',caption:'Rest Day',
     items:[{slot:'TOP',code:'263TS034'},{slot:'BOTTOM',code:'261PH001M-1'}],
     hotspots:HS_DEFAULT,
@@ -864,8 +862,6 @@ const LOOKS = [
       items:[{slot:'TOP',code:'263TS036'},{slot:'BOTTOM',code:'261PH004F-1'}],
       hotspots:HS_DEFAULT}},
   {id:'c11',cat:'casual',num:11,hasEditorial:true,
-    campaignImg:'images/looks/263TS037U_261PH004F-1_editorial.jpg',
-    campaignItems:[{slot:'TOP',code:'263TS037'},{slot:'BOTTOM',code:'261PH004F-1'}],
     img:'images/looks/263TS037U_261PH003M-1_model.jpg',fitImg:'images/looks/263TS037U_261PH003M-1_model.jpg',model:'Men',caption:'Late Checkout',
     items:[{slot:'TOP',code:'263TS037'},{slot:'BOTTOM',code:'261PH003M-1'}],
     hotspots:HS_DEFAULT,
@@ -894,8 +890,6 @@ const LOOKS = [
       items:[{slot:'TOP',code:'263TS041'},{slot:'BOTTOM',code:'261PH004F-1'}],
       hotspots:HS_DEFAULT}},
   {id:'c15',cat:'casual',num:15,hasEditorial:true,
-    campaignImg:'images/looks/263TS044U_261PH004F-1_editorial.jpg',
-    campaignItems:[{slot:'TOP',code:'263TS044'},{slot:'BOTTOM',code:'261PH004F-1'}],
     img:'images/looks/263TS044U_261PH003M-1_model.jpg',fitImg:'images/looks/263TS044U_261PH003M-1_model.jpg',model:'Men',caption:'Late Bloom',
     items:[{slot:'TOP',code:'263TS044'},{slot:'BOTTOM',code:'261PH003M-1'}],
     hotspots:HS_DEFAULT,
@@ -931,8 +925,6 @@ const LOOKS = [
       items:[{slot:'TOP',code:'263JJ002'},{slot:'BOTTOM',code:'263PL002'}],
       hotspots:HS_DEFAULT}},
   {id:'c20',cat:'casual',num:20,hasEditorial:true,
-    campaignImg:'images/looks/263JJ003U_261PH004F-1_e.jpg',
-    campaignItems:[{slot:'TOP',code:'263JJ003'},{slot:'BOTTOM',code:'261PH004F-1'}],
     img:'images/looks/263JJ003U_255PL002U_model.jpg',fitImg:'images/looks/263JJ003U_255PL002U_model.jpg',model:'Men',caption:'Night Shift',
     items:[{slot:'TOP',code:'263JJ003'},{slot:'BOTTOM',code:'255PL002U'}],
     hotspots:HS_DEFAULT,
@@ -1222,20 +1214,24 @@ function renderCategory(key){
      this section only appears once at least one look has hasEditorial set,
      and only lists those looks. It's a mood/campaign moment, separate from
      the LOOK grid below (which is the comprehensive, model-cut-driven way
-     to browse every look regardless of whether it has an editorial shot). */
+     to browse every look regardless of whether it has an editorial shot).
+     The carousel itself always shows the 모델컷 (fitImg), enlarged in the
+     featured hero — not the editorial crop — even for looks that do have
+     one; campaignImg/campaignItems (the "editorial only exists on the
+     .pair side" workaround, see c3) are intentionally not used here. */
   const carouselHtml = editorialLooks.length ? `
     <section class="editorial-carousel">
       <div class="ec-head"><h4>CAMPAIGN</h4><span class="ec-count">${String(editorialLooks.length).padStart(2,'0')}</span></div>
       <div class="ec-featured" id="ecFeatured">
-        ${lookImgTag(featured.campaignItems || featured.items, 'editorial', featured.campaignImg || featured.img, `class="ec-bg" alt="" aria-hidden="true"`)}
-        ${lookImgTag(featured.campaignItems || featured.items, 'editorial', featured.campaignImg || featured.img, `class="ec-fg" alt="${featured.caption}"`)}
+        ${lookImgTag(featured.items, 'model', featured.fitImg, `class="ec-bg" alt="" aria-hidden="true"`)}
+        ${lookImgTag(featured.items, 'model', featured.fitImg, `class="ec-fg" alt="${featured.caption}"`)}
         <div class="ec-scrim"></div>
         <div class="ec-featured-cap"><div class="eyebrow">${c.label}</div></div>
         <button type="button" class="ec-arrow ec-arrow-prev" onclick="event.stopPropagation();campaignNav(-1)" aria-label="Previous">&#8249;</button>
         <button type="button" class="ec-arrow ec-arrow-next" onclick="event.stopPropagation();campaignNav(1)" aria-label="Next">&#8250;</button>
       </div>
       <div class="ec-strip">
-        ${editorialLooks.map((l,i)=>`<div class="ec-thumb${i===0?' active':''}" onclick="selectCampaign(${i})">${lookImgTag(l.campaignItems || l.items, 'model', l.campaignImg || l.fitImg, `alt="${l.caption}" loading="lazy"`)}</div>`).join('')}
+        ${editorialLooks.map((l,i)=>`<div class="ec-thumb${i===0?' active':''}" onclick="selectCampaign(${i})">${lookImgTag(l.items, 'model', l.fitImg, `alt="${l.caption}" loading="lazy"`)}</div>`).join('')}
       </div>
     </section>` : '';
   return `<div class="view">
@@ -1265,8 +1261,8 @@ function paintCampaign(){
   featured.classList.add('ec-swap');
   setTimeout(()=>{
     featured.innerHTML = `
-      ${lookImgTag(l.campaignItems || l.items, 'editorial', l.campaignImg || l.img, `class="ec-bg" alt="" aria-hidden="true"`)}
-      ${lookImgTag(l.campaignItems || l.items, 'editorial', l.campaignImg || l.img, `class="ec-fg" alt="${l.caption}"`)}
+      ${lookImgTag(l.items, 'model', l.fitImg, `class="ec-bg" alt="" aria-hidden="true"`)}
+      ${lookImgTag(l.items, 'model', l.fitImg, `class="ec-fg" alt="${l.caption}"`)}
       <div class="ec-scrim"></div>
       <div class="ec-featured-cap"><div class="eyebrow">${CATEGORIES[l.cat].label}</div></div>
       <button type="button" class="ec-arrow ec-arrow-prev" onclick="event.stopPropagation();campaignNav(-1)" aria-label="Previous">&#8249;</button>
