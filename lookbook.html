@@ -1461,6 +1461,14 @@ function swapLookPair(id, view){
 
   document.querySelectorAll('.ld-look-gtoggle button').forEach(b=>b.classList.toggle('active', b.dataset.lg===view));
   document.querySelectorAll('.ld-pair-dots .ld-dot').forEach((d,i)=>d.classList.toggle('active', (i===0)===(view==='M')));
+
+  document.querySelectorAll('.ld-related-thumb[data-related-id]').forEach(thumb=>{
+    const rl = LOOKS.find(l=>l.id===thumb.dataset.relatedId);
+    if(!rl) return;
+    const rv = (view==='W' && rl.pair) ? rl.pair : rl;
+    const rimg = thumb.querySelector('img');
+    if(rimg) rimg.src = rv.fitImg || rv.img;
+  });
 }
 
 function buildItemsHtml(look, variant){
@@ -1534,10 +1542,14 @@ function renderLook(id){
 
   /* All other looks in this category — replaces PREV/NEXT LOOK with a
      swipeable strip so jumping to any other look is one tap, not a
-     click-through-them-all-in-order chain. */
-  const otherLooksHtml = catLooks.filter(l=>l.id!==id).map(l=>
-    `<div class="ld-related-thumb" onclick="go('look','${l.id}')">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>`
-  ).join('');
+     click-through-them-all-in-order chain. Shows the 모델컷 (not the
+     editorial crop) for each, and follows the current MEN/WOMEN toggle
+     state: looks with a .pair show whichever gender is currently active,
+     kept in sync live by swapLookPair when the toggle is tapped. */
+  const otherLooksHtml = catLooks.filter(l=>l.id!==id).map(l=>{
+    const v = (lookPairView==='W' && l.pair) ? l.pair : l;
+    return `<div class="ld-related-thumb" data-related-id="${l.id}" onclick="go('look','${l.id}')">${lookImgTag(v.items, 'model', v.fitImg, `alt="${l.caption}" loading="lazy"`)}</div>`;
+  }).join('');
 
   return `<div class="view">
     <section class="look-detail" data-prev="${prev.id}" data-next="${next.id}" data-id="${id}">
