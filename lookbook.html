@@ -1994,8 +1994,8 @@ function paintMix(which, dir){
       const onerr = "this.closest('.mix-preview').classList.add('mp-broken')";
       preview.innerHTML = `
         <img class="mp-base" src="images/mannequin/base.png" alt="" onerror="${onerr}">
-        <img class="mp-top" src="images/mannequin/tops/${top.code}.png" alt="" onerror="${onerr}">
-        <img class="mp-bottom" src="images/mannequin/bottoms/${bottom.code}.png" alt="" onerror="${onerr}">
+        <img class="mp-top" src="images/mannequin/tops/${mixTopCode()}.png" alt="" onerror="${onerr}">
+        <img class="mp-bottom" src="images/mannequin/bottoms/${mixBottomCode()}.png" alt="" onerror="${onerr}">
         <div class="mp-fallback">코디 미리보기<br>준비 중입니다</div>`;
     }
   }
