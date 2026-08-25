@@ -457,20 +457,29 @@ const PRODUCTS = {
   '263TR002':{code:"263TR002M",name:"Sleeveless Game Tee",color:"Midnight Black",price:69000,gender:"Men",material:"겉감 : PE 100% / 배색1 : PE 92%, PU 8% / 배색2 : PE 100%",size:"95–110",collection:"Game Wear",img:"images/products/263TR002M.jpg",imgBack:"images/products/263TR002M_B.jpg"},
   '263PH001':{code:"263PH001M",name:"Game Shorts (4부)",color:"Midnight Black",price:59000,gender:"Men",material:"겉감 : PE 100%",note1:"니트 4부",size:"95–110",collection:"Game Wear",img:"images/products/263PH001M.jpg",pairCode:"263PH002"},
   '263PH001-2':{code:"263PH001M",name:"Game Shorts (4부)",color:"Dark Green",price:59000,gender:"Men",material:"겉감 : PE 100%",note1:"니트 4부",size:"95–110",collection:"Game Wear",img:"images/products/263PH001M_1.jpg",pairCode:"263PH002-2"},
-  /* 261-prefixed codes are previous-season carry-over stock — the same
-     code turns up in multiple colorways across look photos, so the color
-     field is intentionally omitted for all of them (COLOR row hidden
-     wherever p.color is falsy) and only price is shown. */
-  '261PH001M-1':{code:"261PH001M-1",name:"Game Shorts (4부)",price:59000,gender:"Men",material:"겉감 : PE 100%\n겉감/속바지 : PE 100% (WHITE, ICE GRAY",note1:"니트 4부",collection:"Previous Season",img:"images/products/placeholder.png",pairCode:"261PH002F-1"},
-  '261PH002F-1':{code:"261PH002F-1",name:"Game Shorts (4부)",price:59000,gender:"Women",material:"겉감 : PE 100%\n겉감/속바지 : PE 100% (WHITE, ICE GRAY",note1:"니트 4부",collection:"Previous Season",img:"images/products/placeholder.png",pairCode:"261PH001M-1"},
-  '261PH003M-1':{code:"261PH003M-1",name:"Woven Shorts (4부)",price:63000,gender:"Men",material:"겉감 : NY 84%, PU 16%\n겉감 : NY 84%, PU 16% / 속바지 : PE 100%\n(ICE GRAY, WHITE)",note1:"우븐 4부",collection:"Game Wear",img:"images/products/placeholder.png",pairCode:"261PH004F-1"},
-  '261PH004F-1':{code:"261PH004F-1",name:"Woven Shorts (4부)",price:63000,gender:"Women",material:"겉감 : NY 84%, PU 16%\n겉감 : NY 84%, PU 16% / 속바지 : PE 100%\n(ICE GRAY, WHITE)",note1:"우븐 4부",collection:"Game Wear",img:"images/products/placeholder.png",pairCode:"261PH003M-1"},
-  '261PH005M-1':{code:"261PH005M-1",name:"Woven Shorts (4부)",price:69000,gender:"Men",material:"겉감/속바지 : PE 100%",note1:"우븐 4부",collection:"Game Wear",img:"images/products/placeholder.png",pairCode:"261PH006F-1"},
-  '261PH006F-1':{code:"261PH006F-1",name:"Woven Shorts (4부)",price:69000,gender:"Women",material:"겉감/속바지 : PE 100%",note1:"우븐 4부",collection:"Game Wear",img:"images/products/placeholder.png",pairCode:"261PH005M-1"},
-  '261PH009U-1':{code:"261PH009U-1",name:"Woven Shorts (5부)",price:59000,gender:"Unisex",material:"겉감 : NY 91%, PU 9%",note1:"우븐 5부",collection:"Game Wear",img:"images/products/placeholder.png"},
-  '261PS001F':{code:"261PS001F",name:"Skirt",price:65000,gender:"Women",material:"겉감 : NY 77%, PU 23% / 속바지 : PE 84%, PU 16%",note1:"우븐",collection:"Previous Season",img:"images/products/placeholder.png"},
-  '261PS002F':{code:"261PS002F",name:"Skirt",price:65000,gender:"Women",material:"겉감 : NY 78%, PU 22% / 배색 : NY 85%, PU 15%\n속바지 : PE 84%, PU 16%",note1:"우븐",collection:"Previous Season",img:"images/products/placeholder.png"},
-  '261PS003F':{code:"261PS003F",name:"Skirt",price:65000,gender:"Women",material:"겉감 : NY 77%, PU 23%\n속바지 : PE 84%, PU16%",note1:"우븐",collection:"Previous Season",img:"images/products/placeholder.png"},
+  /* 261-prefixed codes are previous-season carry-over stock, reused as
+     styling across many unrelated looks in different actual colorways.
+     Real per-color product photos now exist for some of these, wired as
+     -2/-3 swatch variants; the specific color shown in any one look's own
+     photo is unrelated to which variant is the default here. */
+  '261PH001M-1':{code:"261PH001M-1",name:"Game Shorts (4부)",color:"Black",price:59000,gender:"Men",material:"겉감 : PE 100%\n겉감/속바지 : PE 100% (WHITE, ICE GRAY",note1:"니트 4부",collection:"Previous Season",img:"images/products/261PH001M-1_black.jpg",pairCode:"261PH002F-1"},
+  '261PH001M-1-2':{code:"261PH001M-1",name:"Game Shorts (4부)",color:"Dark Khaki",price:59000,gender:"Men",material:"겉감 : PE 100%\n겉감/속바지 : PE 100% (WHITE, ICE GRAY",note1:"니트 4부",collection:"Previous Season",img:"images/products/261PH001M-1_darkkhaki.jpg",pairCode:"261PH002F-1-2"},
+  '261PH001M-1-3':{code:"261PH001M-1",name:"Game Shorts (4부)",color:"White",price:59000,gender:"Men",material:"겉감 : PE 100%\n겉감/속바지 : PE 100% (WHITE, ICE GRAY",note1:"니트 4부",collection:"Previous Season",img:"images/products/261PH001M-1_white.jpg",pairCode:"261PH002F-1-3"},
+  '261PH002F-1':{code:"261PH002F-1",name:"Game Shorts (4부)",color:"Black",price:59000,gender:"Women",material:"겉감 : PE 100%\n겉감/속바지 : PE 100% (WHITE, ICE GRAY",note1:"니트 4부",collection:"Previous Season",img:"images/products/261PH002F-1_black.jpg",pairCode:"261PH001M-1"},
+  '261PH002F-1-2':{code:"261PH002F-1",name:"Game Shorts (4부)",color:"Dark Khaki",price:59000,gender:"Women",material:"겉감 : PE 100%\n겉감/속바지 : PE 100% (WHITE, ICE GRAY",note1:"니트 4부",collection:"Previous Season",img:"images/products/261PH002F-1_darkkhaki.jpg",pairCode:"261PH001M-1-2"},
+  '261PH002F-1-3':{code:"261PH002F-1",name:"Game Shorts (4부)",color:"White",price:59000,gender:"Women",material:"겉감 : PE 100%\n겉감/속바지 : PE 100% (WHITE, ICE GRAY",note1:"니트 4부",collection:"Previous Season",img:"images/products/261PH002F-1_white.jpg",pairCode:"261PH001M-1-3"},
+  '261PH003M-1':{code:"261PH003M-1",name:"Woven Shorts (4부)",color:"Black",price:63000,gender:"Men",material:"겉감 : NY 84%, PU 16%\n겉감 : NY 84%, PU 16% / 속바지 : PE 100%\n(ICE GRAY, WHITE)",note1:"우븐 4부",collection:"Game Wear",img:"images/products/261PH003M-1_BLACK.jpg",pairCode:"261PH004F-1"},
+  '261PH003M-1-2':{code:"261PH003M-1",name:"Woven Shorts (4부)",color:"Beige",price:63000,gender:"Men",material:"겉감 : NY 84%, PU 16%\n겉감 : NY 84%, PU 16% / 속바지 : PE 100%\n(ICE GRAY, WHITE)",note1:"우븐 4부",collection:"Game Wear",img:"images/products/261PH003M-1_BEIGE.jpg",pairCode:"261PH004F-1-2"},
+  '261PH003M-1-3':{code:"261PH003M-1",name:"Woven Shorts (4부)",color:"White",price:63000,gender:"Men",material:"겉감 : NY 84%, PU 16%\n겉감 : NY 84%, PU 16% / 속바지 : PE 100%\n(ICE GRAY, WHITE)",note1:"우븐 4부",collection:"Game Wear",img:"images/products/261PH003M-1_WHITE.jpg",pairCode:"261PH004F-1-3"},
+  '261PH004F-1':{code:"261PH004F-1",name:"Woven Shorts (4부)",color:"Black",price:63000,gender:"Women",material:"겉감 : NY 84%, PU 16%\n겉감 : NY 84%, PU 16% / 속바지 : PE 100%\n(ICE GRAY, WHITE)",note1:"우븐 4부",collection:"Game Wear",img:"images/products/261PH004F-1_BLACK.jpg",pairCode:"261PH003M-1"},
+  '261PH004F-1-2':{code:"261PH004F-1",name:"Woven Shorts (4부)",color:"Beige",price:63000,gender:"Women",material:"겉감 : NY 84%, PU 16%\n겉감 : NY 84%, PU 16% / 속바지 : PE 100%\n(ICE GRAY, WHITE)",note1:"우븐 4부",collection:"Game Wear",img:"images/products/261PH004F-1_BEIGE.jpg",pairCode:"261PH003M-1-2"},
+  '261PH004F-1-3':{code:"261PH004F-1",name:"Woven Shorts (4부)",color:"White",price:63000,gender:"Women",material:"겉감 : NY 84%, PU 16%\n겉감 : NY 84%, PU 16% / 속바지 : PE 100%\n(ICE GRAY, WHITE)",note1:"우븐 4부",collection:"Game Wear",img:"images/products/261PH004F-1_WHITE.jpg",pairCode:"261PH003M-1-3"},
+  '261PH005M-1':{code:"261PH005M-1",name:"Woven Shorts (4부)",price:69000,gender:"Men",material:"겉감/속바지 : PE 100%",note1:"우븐 4부",collection:"Game Wear",img:"images/products/261PH005M-1.jpg",pairCode:"261PH006F-1"},
+  '261PH006F-1':{code:"261PH006F-1",name:"Woven Shorts (4부)",price:69000,gender:"Women",material:"겉감/속바지 : PE 100%",note1:"우븐 4부",collection:"Game Wear",img:"images/products/261PH006F-1.jpg",pairCode:"261PH005M-1"},
+  '261PH009U-1':{code:"261PH009U-1",name:"Woven Shorts (5부)",price:59000,gender:"Unisex",material:"겉감 : NY 91%, PU 9%",note1:"우븐 5부",collection:"Game Wear",img:"images/products/261PH009U-1.jpg"},
+  '261PS001F':{code:"261PS001F",name:"Skirt",color:"White",price:65000,gender:"Women",material:"겉감 : NY 77%, PU 23% / 속바지 : PE 84%, PU 16%",note1:"우븐",collection:"Previous Season",img:"images/products/261PS001F_WHITE.jpg"},
+  '261PS002F':{code:"261PS002F",name:"Skirt",color:"Navy",price:65000,gender:"Women",material:"겉감 : NY 78%, PU 22% / 배색 : NY 85%, PU 15%\n속바지 : PE 84%, PU 16%",note1:"우븐",collection:"Previous Season",img:"images/products/261PS002F_NAVY.jpg"},
+  '261PS003F':{code:"261PS003F",name:"Skirt",color:"Black",price:65000,gender:"Women",material:"겉감 : NY 77%, PU 23%\n속바지 : PE 84%, PU16%",note1:"우븐",collection:"Previous Season",img:"images/products/261PS003F_BLACK.jpg"},
   '263PH002':{code:"263PH002F",name:"Game Shorts (4부)",color:"Midnight Black",price:59000,gender:"Women",material:"겉감 : PE 100%",note1:"니트 4부",size:"85–100",collection:"Game Wear",img:"images/products/263PH002F.jpg",pairCode:"263PH001",imgBack:"images/products/263PH002F_B.jpg"},
   '263PH002-2':{code:"263PH002F",name:"Game Shorts (4부)",color:"Dark Green",price:59000,gender:"Women",material:"겉감 : PE 100%",note1:"니트 4부",size:"85–100",collection:"Game Wear",img:"images/products/263PH002F_1.jpg",pairCode:"263PH001-2"},
   '70108EX':{code:"70108EX",name:"Warm-up Jacket",color:"Off White",price:219000,gender:"Unisex",material:"PE 100%",note1:"HEAT CAPSULE",size:"S(90)–3XL(115)",collection:"Game Wear",img:"images/products/placeholder.png"},
@@ -552,13 +561,13 @@ const PRODUCTS = {
   /* these 5 are pants borrowed from the Tennis Collection to style
      Daily Wear looks — not part of this season's own lineup, so only
      price + collection are tracked (per brand). */
-  '245PL002U':{code:"245PL002U",name:"Tennis Collection Pants",price:89000,gender:"Unisex",collection:"Tennis Collection",img:"images/products/placeholder.png"},
-  '251PL001U':{code:"251PL001U",name:"Tennis Collection Pants",price:119000,gender:"Unisex",collection:"Tennis Collection",img:"images/products/placeholder.png"},
-  '255PL001U':{code:"255PL001U",name:"Tennis Collection Pants",price:119000,gender:"Unisex",collection:"Tennis Collection",img:"images/products/placeholder.png"},
-  '255PL002U':{code:"255PL002U",name:"Tennis Collection Pants",price:119000,gender:"Unisex",collection:"Tennis Collection",img:"images/products/placeholder.png"},
-  '265PL001U':{code:"265PL001U",name:"Tennis Collection Pants",price:119000,gender:"Unisex",collection:"Tennis Collection",img:"images/products/placeholder.png"},
+  '245PL002U':{code:"245PL002U",name:"Tennis Collection Pants",price:89000,gender:"Unisex",collection:"Tennis Collection",img:"images/products/245PL002U.jpg",imgBack:"images/products/245PL002U-b.jpg"},
+  '255PL001U':{code:"255PL001U",name:"Tennis Collection Pants",price:119000,gender:"Unisex",collection:"Tennis Collection",img:"images/products/255PL001U.jpg",imgBack:"images/products/255PL001U_b.jpg"},
+  '255PL002U':{code:"255PL002U",name:"Tennis Collection Pants",price:119000,gender:"Unisex",collection:"Tennis Collection",img:"images/products/255PL002U.jpg",imgBack:"images/products/255PL002U_b.jpg"},
+  '265PL001U':{code:"265PL001U",name:"Tennis Collection Pants",price:119000,gender:"Unisex",collection:"Tennis Collection",img:"images/products/265PL001U.jpg",imgBack:"images/products/265PL001U_b.jpg"},
   /* previous-season pants, worn as styling per brand ("구상품") */
-  '253PL003U':{code:"253PL003U",name:"Pants",price:119000,gender:"Unisex",collection:"Previous Season",img:"images/products/placeholder.png"},
+  '251PL001U':{code:"251PL001U",name:"Pants",price:119000,gender:"Unisex",collection:"Previous Season",img:"images/products/251PL001U.jpg"},
+  '253PL003U':{code:"253PL003U",name:"Pants",price:119000,gender:"Unisex",collection:"Previous Season",img:"images/products/253PL003U.jpg"},
   '269TR011':{code:"269TR011M",name:"Easy Wear Tee",color:"Black",price:29000,gender:"Men",material:"겉감 : PE 100%",size:"95–110",collection:"Easy Wear",img:"images/products/269TR011M.jpg",pairCode:"269TR012",imgBack:"images/products/269TR011M_B.jpg"},
   '269TR011-2':{code:"269TR011M",name:"Easy Wear Tee",color:"Dark Navy",price:29000,gender:"Men",material:"겉감 : PE 100%",size:"95–110",collection:"Easy Wear",img:"images/products/269TR011M_1.jpg",pairCode:"269TR012-2",imgBack:"images/products/269TR011M_1_B.jpg"},
   '269TR012':{code:"269TR012F",name:"Easy Wear Tee",color:"Black",price:29000,gender:"Women",material:"겉감 : PE 100%",size:"85–100",collection:"Easy Wear",img:"images/products/269TR012F.jpg",pairCode:"269TR011",imgBack:"images/products/269TR012F_B.jpg"},
@@ -571,8 +580,16 @@ const PRODUCTS = {
   '269TL001-2':{code:"269TL001M",name:"Easy Wear Long Sleeve",color:"Navy",price:33000,gender:"Men",material:"겉감 : PE 88%, PU 12%",size:"95–110",collection:"Easy Wear",img:"images/products/269TL001M_1.jpg",pairCode:"269TL002-2",imgBack:"images/products/269TL001M_1_B.jpg"},
   '269TL002':{code:"269TL002F",name:"Easy Wear Long Sleeve",color:"Midnight Black",price:33000,gender:"Women",material:"겉감 : PE 88%, PU 12%",size:"85–100",collection:"Easy Wear",img:"images/products/269TL002F.jpg",pairCode:"269TL001",imgBack:"images/products/269TL002F_B.jpg"},
   '269TL002-2':{code:"269TL002F",name:"Easy Wear Long Sleeve",color:"Navy",price:33000,gender:"Women",material:"겉감 : PE 88%, PU 12%",size:"85–100",collection:"Easy Wear",img:"images/products/269TL002F_1.jpg",pairCode:"269TL001-2",imgBack:"images/products/269TL002F_1_B.jpg"},
-  '269PH001':{code:"269PH001M",name:"Easy Wear Shorts",price:43000,gender:"Men",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269PH002"},
-  '269PH002':{code:"269PH002F",name:"Easy Wear Shorts",price:43000,gender:"Women",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",collection:"Easy Wear",img:"images/products/placeholder.png",pairCode:"269PH001"},
+  '269PH001':{code:"269PH001M",name:"Easy Wear Shorts",color:"Black",price:43000,gender:"Men",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",collection:"Easy Wear",img:"images/products/269PH001M_black.jpg",pairCode:"269PH002"},
+  '269PH001-2':{code:"269PH001M",name:"Easy Wear Shorts",color:"Marine",price:43000,gender:"Men",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",collection:"Easy Wear",img:"images/products/269PH001M_marine.jpg",pairCode:"269PH002-2"},
+  '269PH001-3':{code:"269PH001M",name:"Easy Wear Shorts",color:"Navy Blue",price:43000,gender:"Men",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",collection:"Easy Wear",img:"images/products/269PH001M_navyblue.jpg",pairCode:"269PH002-3"},
+  '269PH001-4':{code:"269PH001M",name:"Easy Wear Shorts",color:"Pale Green",price:43000,gender:"Men",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",collection:"Easy Wear",img:"images/products/269PH001M_palegreen.jpg",pairCode:"269PH002-4"},
+  '269PH001-5':{code:"269PH001M",name:"Easy Wear Shorts",color:"White",price:43000,gender:"Men",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",collection:"Easy Wear",img:"images/products/269PH001M_white.jpg",pairCode:"269PH002-5"},
+  '269PH002':{code:"269PH002F",name:"Easy Wear Shorts",color:"Black",price:43000,gender:"Women",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",collection:"Easy Wear",img:"images/products/269PH002F_black.jpg",pairCode:"269PH001"},
+  '269PH002-2':{code:"269PH002F",name:"Easy Wear Shorts",color:"Marine",price:43000,gender:"Women",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",collection:"Easy Wear",img:"images/products/269PH002F_marine.jpg",pairCode:"269PH001-2"},
+  '269PH002-3':{code:"269PH002F",name:"Easy Wear Shorts",color:"Navy Blue",price:43000,gender:"Women",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",collection:"Easy Wear",img:"images/products/269PH002F_navyblue.jpg",pairCode:"269PH001-3"},
+  '269PH002-4':{code:"269PH002F",name:"Easy Wear Shorts",color:"Pale Green",price:43000,gender:"Women",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",collection:"Easy Wear",img:"images/products/269PH002F_palegreen.jpg",pairCode:"269PH001-4"},
+  '269PH002-5':{code:"269PH002F",name:"Easy Wear Shorts",color:"White",price:43000,gender:"Women",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",collection:"Easy Wear",img:"images/products/269PH002F_white.jpg",pairCode:"269PH001-5"},
 };
 
 const CATEGORIES = {
