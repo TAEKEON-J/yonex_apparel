@@ -772,7 +772,18 @@ const LOOKS = [
   {id:'c2',cat:'casual',num:2,img:'images/looks/263TL001U_263PL002U_model.jpg',fitImg:'images/looks/263TL001U_263PL002U_model.jpg',model:'Men',caption:'Overcast',
     items:[{slot:'TOP',code:'263TL001'},{slot:'BOTTOM',code:'263PL002'}],
     hotspots:HS_DEFAULT},
-  {id:'c3',cat:'casual',num:3,img:'images/looks/263TS034U_261PH001M-1_model.jpg',fitImg:'images/looks/263TS034U_261PH001M-1_model.jpg',model:'Men',caption:'Rest Day',
+  {id:'c3',cat:'casual',num:3,img:'images/looks/263TS034U_261PH001M-1_model.jpg',fitImg:'images/looks/263TS034U_261PH001M-1_model.jpg',hasEditorial:true,
+    /* the real 화보컷 for this SKU was only shot on the Women model, not
+       Men — but the look-detail MEN/WOMEN toggle is positional (top-level
+       = MEN), so Men has to stay primary here to avoid mislabeling.
+       campaignImg/campaignItems let the CAMPAIGN carousel show the actual
+       Women editorial photo (from .pair) while img/fitImg (used by the
+       look-grid card and the look-detail hero) stay on the Men model cut.
+       Clicking the carousel hero still navigates to this look's default
+       (Men) view — see bindCampaignInteractions/go('look', id). */
+    campaignImg:'images/looks/263TS034U_261PH002F-1_editorial.jpg',
+    campaignItems:[{slot:'TOP',code:'263TS034'},{slot:'BOTTOM',code:'261PH002F-1'}],
+    model:'Men',caption:'Rest Day',
     items:[{slot:'TOP',code:'263TS034'},{slot:'BOTTOM',code:'261PH001M-1'}],
     hotspots:HS_DEFAULT,
     pair:{model:'Women',img:'images/looks/263TS034U_261PH002F-1_editorial.jpg',fitImg:'images/looks/263TS034U_261PH002F-1_model.jpg',
@@ -923,15 +934,15 @@ function renderCategory(key){
     <section class="editorial-carousel">
       <div class="ec-head"><h4>CAMPAIGN</h4><span class="ec-count">${String(editorialLooks.length).padStart(2,'0')}</span></div>
       <div class="ec-featured" id="ecFeatured">
-        ${lookImgTag(featured.items, 'editorial', featured.img, `class="ec-bg" alt="" aria-hidden="true"`)}
-        ${lookImgTag(featured.items, 'editorial', featured.img, `class="ec-fg" alt="${featured.caption}"`)}
+        ${lookImgTag(featured.campaignItems || featured.items, 'editorial', featured.campaignImg || featured.img, `class="ec-bg" alt="" aria-hidden="true"`)}
+        ${lookImgTag(featured.campaignItems || featured.items, 'editorial', featured.campaignImg || featured.img, `class="ec-fg" alt="${featured.caption}"`)}
         <div class="ec-scrim"></div>
         <div class="ec-featured-cap"><div class="eyebrow">${c.label}</div></div>
         <button type="button" class="ec-arrow ec-arrow-prev" onclick="event.stopPropagation();campaignNav(-1)" aria-label="Previous">&#8249;</button>
         <button type="button" class="ec-arrow ec-arrow-next" onclick="event.stopPropagation();campaignNav(1)" aria-label="Next">&#8250;</button>
       </div>
       <div class="ec-strip">
-        ${editorialLooks.map((l,i)=>`<div class="ec-thumb${i===0?' active':''}" onclick="selectCampaign(${i})">${lookImgTag(l.items, 'model', l.fitImg, `alt="${l.caption}" loading="lazy"`)}</div>`).join('')}
+        ${editorialLooks.map((l,i)=>`<div class="ec-thumb${i===0?' active':''}" onclick="selectCampaign(${i})">${lookImgTag(l.campaignItems || l.items, 'model', l.campaignImg || l.fitImg, `alt="${l.caption}" loading="lazy"`)}</div>`).join('')}
       </div>
     </section>` : '';
   return `<div class="view">
@@ -961,8 +972,8 @@ function paintCampaign(){
   featured.classList.add('ec-swap');
   setTimeout(()=>{
     featured.innerHTML = `
-      ${lookImgTag(l.items, 'editorial', l.img, `class="ec-bg" alt="" aria-hidden="true"`)}
-      ${lookImgTag(l.items, 'editorial', l.img, `class="ec-fg" alt="${l.caption}"`)}
+      ${lookImgTag(l.campaignItems || l.items, 'editorial', l.campaignImg || l.img, `class="ec-bg" alt="" aria-hidden="true"`)}
+      ${lookImgTag(l.campaignItems || l.items, 'editorial', l.campaignImg || l.img, `class="ec-fg" alt="${l.caption}"`)}
       <div class="ec-scrim"></div>
       <div class="ec-featured-cap"><div class="eyebrow">${CATEGORIES[l.cat].label}</div></div>
       <button type="button" class="ec-arrow ec-arrow-prev" onclick="event.stopPropagation();campaignNav(-1)" aria-label="Previous">&#8249;</button>
