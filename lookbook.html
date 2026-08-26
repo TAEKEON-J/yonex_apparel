@@ -1763,8 +1763,47 @@ function bindLookInteractions(id){
     }
     swipeX = null; swipeY = null;
   }, {passive:true});
+
+  /* Pinch directly on the hero photo (before the lightbox is open): the
+     first two-finger touch opens the lightbox and immediately continues
+     the same gesture into zoom, so users don't need a tap first. */
+  let pinchActive = false, pinchStartDist = 0, pinchStartScale = 1, wasPinch = false;
+  visual.addEventListener('touchstart', e=>{
+    if(e.touches.length===2){
+      e.preventDefault();
+      swipeX = null; swipeY = null;
+      pinchActive = true; wasPinch = true;
+      const img = document.getElementById('ldHeroImg');
+      if(img && !document.getElementById('lightbox')?.classList.contains('show')){
+        openLightbox(img.src, img.alt);
+      }
+      pinchStartDist = Math.hypot(e.touches[1].clientX-e.touches[0].clientX, e.touches[1].clientY-e.touches[0].clientY);
+      pinchStartScale = lbScale;
+    }
+  }, {passive:false});
+  visual.addEventListener('touchmove', e=>{
+    if(pinchActive && e.touches.length===2){
+      e.preventDefault();
+      const d = Math.hypot(e.touches[1].clientX-e.touches[0].clientX, e.touches[1].clientY-e.touches[0].clientY);
+      lbScale = Math.min(4, Math.max(1, pinchStartScale * (d / pinchStartDist)));
+      const lbImg = document.getElementById('lightboxImg');
+      if(lbImg) lbImg.style.transform = `translate(${lbPanX}px,${lbPanY}px) scale(${lbScale})`;
+    }
+  }, {passive:false});
+  visual.addEventListener('touchend', e=>{
+    if(pinchActive && e.touches.length<2){
+      pinchActive = false;
+      if(lbScale<=1.02){
+        lbScale = 1; lbPanX = 0; lbPanY = 0;
+        const lbImg = document.getElementById('lightboxImg');
+        if(lbImg) lbImg.style.transform = '';
+      }
+    }
+  }, {passive:true});
+
   visual.addEventListener('click', e=>{
     if(wasSwipe){ wasSwipe = false; return; }
+    if(wasPinch){ wasPinch = false; return; }
     if(e.target.closest('.ec-arrow, .ld-gallery-dots')) return;
     const img = document.getElementById('ldHeroImg');
     if(img) openLightbox(img.src, img.alt);
