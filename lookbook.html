@@ -324,7 +324,14 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-hero{max-width:1000px;margin:0 auto;padding:40px 28px 8px;text-align:center;}
 .mix-hero .eyebrow{justify-content:center;display:flex;}
 .mix-hero h2{font-size:clamp(30px,5vw,48px);letter-spacing:-.03em;margin-top:14px;text-transform:uppercase;}
-.mix-preview{position:relative;width:280px;aspect-ratio:6/7;margin:20px auto 0;background:var(--paper-2);border-radius:4px;overflow:hidden;}
+.mix-visual{perspective:900px;}
+.mix-preview{position:relative;width:280px;aspect-ratio:6/7;margin:20px auto 0;background:var(--paper-2);border-radius:4px;overflow:hidden;box-shadow:0 26px 40px -20px rgba(20,20,15,.3);transition:box-shadow .35s var(--ease-out);cursor:pointer;}
+.mix-preview:hover{box-shadow:0 32px 48px -18px rgba(20,20,15,.38);}
+/* transform itself is set inline by bindMixTilt(): untransitioned
+   while actively tracking the pointer (so it follows in real time,
+   not laggy), transitioned back to flat only on pointerleave via the
+   .mp-tilt-reset class added at that moment. */
+.mix-preview.mp-tilt-reset{transition:transform .4s var(--ease-out),box-shadow .35s var(--ease-out);}
 /* Pure opacity crossfade only — no scale/translate here. These layers
    (base/bottom/top) are pre-aligned PNGs meant to sit pixel-registered
    on the same mannequin canvas; a scale "settle" effect looks nice on
@@ -337,8 +344,8 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-preview img.mp-in{opacity:1;}
 .mix-preview img.mp-out{opacity:0;}
 .mix-preview .mp-base{z-index:1;}
-.mix-preview .mp-bottom{z-index:2;}
-.mix-preview .mp-top{z-index:3;}
+.mix-preview .mp-bottom{z-index:2;filter:drop-shadow(0 5px 7px rgba(20,20,15,.16));}
+.mix-preview .mp-top{z-index:3;filter:drop-shadow(0 9px 12px rgba(20,20,15,.24));}
 .mix-preview .mp-fallback{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;padding:20px;}
 .mix-preview .mp-fallback svg{width:36px;height:36px;opacity:.55;}
 .mix-preview-note{max-width:280px;margin:8px auto 0;font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center;opacity:.7;}
@@ -1325,6 +1332,7 @@ function render(){
         if(parseHash().view==='mix') paintMix();
       });
     }
+    bindMixTilt();
   }
 }
 
@@ -2235,6 +2243,36 @@ function mixSetLayer(preview, cls, src){
   }).catch(()=>{
     if(state.req === req){ state.pendingSrc = null; preview.classList.add('mp-broken'); }
     img.remove();
+  });
+}
+/* Lightweight 3D-ish "card tilt": the whole preview (all its layers
+   move together, so alignment between garments is never disturbed)
+   tilts a few degrees toward the pointer, like a glossy product card.
+   Not a real 3D rotation of the mannequin — just a cheap depth cue on
+   top of the existing flat-photo composite. Pointer-only (mouse/pen);
+   touch devices just don't get the hover, no fallback needed. Bound
+   once per visit to the mix view since #mixPreview itself persists
+   across paintMix() calls (only its child <img>s get swapped). */
+let mixTiltBound = false;
+function bindMixTilt(){
+  if(mixTiltBound || REDUCE_MOTION) return;
+  const preview = document.getElementById('mixPreview');
+  if(!preview) return;
+  mixTiltBound = true;
+  const MAX_DEG = 8;
+  preview.addEventListener('pointermove', e=>{
+    if(e.pointerType==='touch') return;
+    preview.classList.remove('mp-tilt-reset');
+    const r = preview.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;  /* 0..1 */
+    const py = (e.clientY - r.top) / r.height;
+    const rotY = (px - 0.5) * 2 * MAX_DEG;
+    const rotX = (0.5 - py) * 2 * MAX_DEG;
+    preview.style.transform = `rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg)`;
+  });
+  preview.addEventListener('pointerleave', ()=>{
+    preview.classList.add('mp-tilt-reset');
+    preview.style.transform = '';
   });
 }
 function paintMix(which, dir){
