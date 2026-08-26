@@ -331,6 +331,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-preview.mp-broken img{visibility:hidden;}
 .mix-preview.mp-broken .mp-fallback{display:flex;}
 .mix-stage{max-width:920px;margin:18px auto 0;padding:0 28px;}
+.mix-loading{padding:30px 0;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted);}
 .mix-slot{display:grid;grid-template-columns:56px 1fr 56px;align-items:center;gap:10px;padding:0;}
 .mix-slot:first-of-type{padding-top:18px;border-top:1px solid var(--line-soft);}
 .mix-slot:last-of-type{padding-bottom:18px;border-bottom:1px solid var(--line-soft);}
@@ -1175,8 +1176,34 @@ const LOOKS = [
       hotspots:HS_DEFAULT}},
 ];
 
-const MIX_TOPS = ['263TS001','263TS003','263TS005','263TS007','263TS009','263TS011','263TS013','263TS015','263TS057','263TS017','263TS019','263TS021','263TS023','263TS025','263TS027','263TS029','263TS031','263TS029-2','263TS031-2','263TR001','263TR002'];
-const MIX_BOTTOMS = ['263PH001','263PH001-2','263PL001','263PL002','263WP001','263WP009','261PH001M-1','261PH001M-1-2','261PH001M-1-3','261PH001M-1-4','261PH003M-1','261PH003M-1-2','261PH003M-1-3','261PH009U-1'];
+/* Full candidate pool for STYLE MIX — every Game Wear top/bottom SKU
+   that could ever appear here. The pool never needs editing just to
+   surface a new upload: MIX_TOPS/MIX_BOTTOMS below are the subset of
+   this pool that actually has a mannequin cutout uploaded, computed
+   at runtime by probing each candidate's image. Bottom pool is
+   ordered 263-prefix codes first, then 261-prefix codes. */
+const MIX_TOP_POOL = ['263TS001','263TS003','263TS005','263TS007','263TS009','263TS011','263TS013','263TS015','263TS057','263TS017','263TS019','263TS021','263TS023','263TS025','263TS027','263TS029','263TS031','263TS029-2','263TS031-2','263TR001','263TR002'];
+const MIX_BOTTOM_POOL = ['263PH001','263PH001-2','263PH002','263PH002-2','263PL001','263PL002','263WP001','263WP002','263WP003','263WP005','263WP006','263WP007','263WP008','263WP009','263WP010','261PH001M-1','261PH001M-1-2','261PH001M-1-3','261PH001M-1-4','261PH002F-1','261PH002F-1-2','261PH002F-1-3','261PH002F-1-4','261PH003M-1','261PH003M-1-2','261PH003M-1-3','261PH004F-1','261PH004F-1-2','261PH004F-1-3','261PH005M-1','261PH006F-1','261PH009U-1'];
+/* subset of the pools above with a confirmed uploaded image, filled
+   in by initMixPool() */
+let MIX_TOPS = [], MIX_BOTTOMS = [];
+let mixPoolPromise = null;
+function mixImgExists(src){
+  return fetch(src, {method:'HEAD'}).then(r=>r.ok).catch(()=>false);
+}
+function initMixPool(){
+  if(mixPoolPromise) return mixPoolPromise;
+  mixPoolPromise = Promise.all([
+    Promise.all(MIX_TOP_POOL.map(code=>mixImgExists(`images/mannequin/tops/${code}.png`).then(ok=>ok?code:null))),
+    Promise.all(MIX_BOTTOM_POOL.map(code=>mixImgExists(`images/mannequin/bottoms/${code}.png`).then(ok=>ok?code:null))),
+  ]).then(([tops,bottoms])=>{
+    MIX_TOPS = tops.filter(Boolean);
+    MIX_BOTTOMS = bottoms.filter(Boolean);
+    if(mixTopIdx >= MIX_TOPS.length) mixTopIdx = 0;
+    if(mixBottomIdx >= MIX_BOTTOMS.length) mixBottomIdx = 0;
+  });
+  return mixPoolPromise;
+}
 
 /* ---------------- STATE / ROUTER ---------------- */
 let mixTopIdx = 0, mixBottomIdx = 0;
@@ -1247,7 +1274,17 @@ function render(){
   observeReveal();
   if(view==='look') bindLookInteractions(param);
   if(view==='category') bindCampaignInteractions(param);
-  if(view==='mix') paintMix();
+  if(view==='mix'){
+    if(MIX_TOPS.length && MIX_BOTTOMS.length){
+      paintMix();
+    } else {
+      const stage = document.getElementById('mixStage');
+      if(stage) stage.innerHTML = '<div class="mix-loading">불러오는 중…</div>';
+      initMixPool().then(()=>{
+        if(parseHash().view==='mix') paintMix();
+      });
+    }
+  }
 }
 
 /* ---------------- VIEWS ---------------- */
@@ -2081,6 +2118,12 @@ function paintMix(which, dir){
   const cta = document.getElementById('mixCta');
   const preview = document.getElementById('mixPreview');
   if(!stage) return;
+  if(!MIX_TOPS.length || !MIX_BOTTOMS.length){
+    stage.innerHTML = '<div class="mix-loading">업로드된 코디 이미지가 아직 없습니다</div>';
+    if(cta) cta.innerHTML = '';
+    if(preview) preview.innerHTML = '';
+    return;
+  }
   const top = PRODUCTS[mixTopCode()], bottom = PRODUCTS[mixBottomCode()];
   const slideClass = REDUCE_MOTION || !dir ? '' : dir > 0 ? ' mix-slide-next' : ' mix-slide-prev';
   const topClass = which === 'top' ? slideClass : '';
