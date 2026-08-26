@@ -30,6 +30,8 @@ html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-famil
 body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
 a{color:inherit;text-decoration:none;}
 img{max-width:100%;display:block;}
+img[loading="lazy"]{opacity:0;transition:opacity .5s var(--ease-out);}
+img[loading="lazy"].img-loaded{opacity:1;}
 button{font-family:var(--sans);touch-action:manipulation;}
 ::selection{background:var(--ink);color:var(--paper);}
 :focus-visible{outline:2px solid var(--ink);outline-offset:3px;}
@@ -113,7 +115,7 @@ main#app.app-out{opacity:0;transform:translateY(-8px);filter:blur(3px);}
 .cat-count{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:26px;}
 
 .look-grid{max-width:1320px;margin:0 auto;padding:36px 28px 110px;display:grid;grid-template-columns:repeat(2,1fr);gap:56px 32px;}
-.look-card{cursor:pointer;opacity:0;transform:translateY(24px);transition:opacity .6s var(--ease),transform .6s var(--ease);}
+.look-card{cursor:pointer;opacity:0;transform:translateY(24px);transition:opacity .6s var(--ease),transform .6s var(--ease);transition-delay:calc(min(var(--i,0),7) * 55ms);}
 .look-card.in{opacity:1;transform:translateY(0);}
 .look-card .lc-frame{position:relative;overflow:hidden;background:var(--paper-2);aspect-ratio:4/5;border:1px solid var(--line-soft);transition:transform .15s ease,border-color .2s;}
 .look-card .lc-frame img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .7s var(--ease);}
@@ -185,7 +187,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .fl-toggle button:active{transform:scale(.96);}
 .fl-count{font-family:var(--mono);font-size:11px;color:var(--muted);}
 .fl-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:28px 18px;}
-.fl-card{cursor:pointer;opacity:0;transform:translateY(18px);transition:opacity .5s var(--ease),transform .5s var(--ease);}
+.fl-card{cursor:pointer;opacity:0;transform:translateY(18px);transition:opacity .5s var(--ease),transform .5s var(--ease);transition-delay:calc(min(var(--i,0),9) * 45ms);}
 .fl-card.in{opacity:1;transform:translateY(0);}
 .fl-card.fl-hide{opacity:0 !important;transform:scale(.92) !important;pointer-events:none;transition:opacity .2s var(--ease),transform .2s var(--ease);}
 .fl-card:active .fl-frame{transform:scale(.96);}
@@ -198,6 +200,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .fl-swatches{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
 .fl-swatch{width:16px;height:16px;padding:0;border-radius:50%;cursor:pointer;border:1px solid rgba(0,0,0,.14);box-shadow:0 0 0 1px var(--paper) inset;transition:transform .15s var(--ease),box-shadow .15s;}
 .fl-swatch:hover{transform:scale(1.12);}
+.fl-swatch:active{transform:scale(.94);}
 .fl-swatch.active{box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--ink);}
 @media(max-width:980px){.fl-grid{grid-template-columns:repeat(4,1fr);gap:22px 14px;}}
 @media(max-width:640px){.full-lineup{padding:0 18px 90px;} .fl-head{padding:34px 0 22px;} .fl-grid{grid-template-columns:repeat(3,1fr);gap:18px 10px;} .fl-card .fl-code{font-size:9.5px;} .fl-card .fl-sub{font-size:8.5px;} .fl-swatch{width:14px;height:14px;}}
@@ -302,6 +305,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .pm-swatches{display:flex;flex-wrap:wrap;gap:8px;padding:10px 0 18px;}
 .pm-swatch{width:22px;height:22px;padding:0;border-radius:50%;cursor:pointer;border:1px solid rgba(0,0,0,.14);box-shadow:0 0 0 1px var(--paper) inset;transition:transform .15s var(--ease),box-shadow .15s;}
 .pm-swatch:hover{transform:scale(1.1);}
+.pm-swatch:active{transform:scale(.92);}
 .pm-swatch.active{box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--ink);}
 .pm-row:first-of-type{margin-top:30px;}
 .pm-row span:first-child{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--muted);}
@@ -321,7 +325,8 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-hero .eyebrow{justify-content:center;display:flex;}
 .mix-hero h2{font-size:clamp(30px,5vw,48px);letter-spacing:-.03em;margin-top:14px;text-transform:uppercase;}
 .mix-preview{position:relative;width:280px;aspect-ratio:6/7;margin:20px auto 0;background:var(--paper-2);border-radius:4px;overflow:hidden;}
-.mix-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;}
+.mix-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .35s var(--ease-out);}
+.mix-preview img.mp-in{opacity:1;}
 .mix-preview .mp-base{z-index:1;}
 .mix-preview .mp-bottom{z-index:2;}
 .mix-preview .mp-top{z-index:3;}
@@ -335,8 +340,9 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-slot{display:grid;grid-template-columns:56px 1fr 56px;align-items:center;gap:10px;padding:0;}
 .mix-slot:first-of-type{padding-top:18px;border-top:1px solid var(--line-soft);}
 .mix-slot:last-of-type{padding-bottom:18px;border-bottom:1px solid var(--line-soft);}
-.mix-arrow{width:44px;height:44px;border:1px solid var(--line);background:var(--paper);cursor:pointer;font-size:16px;color:var(--ink-soft);transition:border-color .2s,color .2s;justify-self:center;}
+.mix-arrow{width:44px;height:44px;border:1px solid var(--line);background:var(--paper);cursor:pointer;font-size:16px;color:var(--ink-soft);transition:border-color .2s,color .2s,transform .15s ease;justify-self:center;}
 .mix-arrow:hover{border-color:var(--ink);color:var(--ink);}
+.mix-arrow:active{transform:scale(.92);}
 .mix-figure{display:flex;align-items:center;gap:16px;text-align:left;width:380px;margin:0 auto;}
 .mix-figure.mix-slide-next{animation:mixSlideNext .3s var(--ease-out) both;}
 .mix-figure.mix-slide-prev{animation:mixSlidePrev .3s var(--ease-out) both;}
@@ -349,7 +355,8 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-figure .ms-name{font-size:14px;font-weight:600;margin-top:2px;}
 .mix-figure .ms-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;}
 .mix-cta{text-align:center;padding:26px 28px 90px;}
-.mix-cta button{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;padding:12px 30px;border-radius:999px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;transition:opacity .2s;}
+.mix-cta button{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;padding:12px 30px;border-radius:999px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;transition:opacity .2s,transform .15s ease;}
+.mix-cta button:not(:disabled):active{transform:scale(.96);}
 .mix-cta button:disabled{background:none;color:var(--muted);border-color:var(--line);cursor:default;}
 .mix-cta button:not(:disabled):hover{opacity:.8;}
 .mix-cta .mc-note{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:14px;}
@@ -1231,6 +1238,12 @@ function go(view, param){
 window.addEventListener('hashchange', render);
 window.addEventListener('DOMContentLoaded', render);
 
+/* fade lazy-loaded images in once decoded, instead of a hard pop-in
+   as they scroll into view; capture phase since 'load' doesn't bubble */
+document.addEventListener('load', e=>{
+  if(e.target.tagName==='IMG' && e.target.loading==='lazy') e.target.classList.add('img-loaded');
+}, true);
+
 function parseHash(){
   const h = location.hash.replace('#','').split('/').filter(Boolean);
   return {view:h[0]||'cover', param:h[1]||null};
@@ -1351,8 +1364,8 @@ function renderCategory(key){
     </section>
     ${carouselHtml}
     <section class="look-grid">
-      ${looks.map(l=>`
-        <article class="look-card reveal" onclick="go('look','${l.id}')">
+      ${looks.map((l,i)=>`
+        <article class="look-card reveal" style="--i:${i}" onclick="go('look','${l.id}')">
           <div class="lc-frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${c.label} ${l.caption}" loading="lazy"`)}</div>
         </article>`).join('')}
     </section>
@@ -1462,10 +1475,10 @@ function renderFullLineup(key){
       </div>
     </div>
     <div class="fl-grid">
-      ${groups.map(variants=>{
+      ${groups.map((variants,i)=>{
         const [defaultKey,p] = variants[0];
         return `
-        <div class="fl-card reveal" data-gender="${p.gender.toLowerCase()}" data-active-key="${defaultKey}" onclick="openFullLineupCard(this)">
+        <div class="fl-card reveal" style="--i:${i}" data-gender="${p.gender.toLowerCase()}" data-active-key="${defaultKey}" onclick="openFullLineupCard(this)">
           <div class="fl-frame"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
           <div class="fl-code">${p.code}</div>
           <div class="fl-sub">${fmtPrice(p.price)} · <span class="fl-color">${p.color}</span></div>
@@ -2157,10 +2170,11 @@ function paintMix(which, dir){
   if(preview){
     preview.classList.remove('mp-broken');
     const onerr = "this.closest('.mix-preview').classList.add('mp-broken')";
+    const onok = "this.classList.add('mp-in')";
     preview.innerHTML = `
-      <img class="mp-base" src="images/mannequin/base.jpg" alt="" onerror="${onerr}">
-      <img class="mp-top" src="images/mannequin/tops/${mixTopCode()}.png" alt="" onerror="${onerr}">
-      <img class="mp-bottom" src="images/mannequin/bottoms/${mixBottomCode()}.png" alt="" onerror="${onerr}">
+      <img class="mp-base" src="images/mannequin/base.jpg" alt="" onload="${onok}" onerror="${onerr}">
+      <img class="mp-top" src="images/mannequin/tops/${mixTopCode()}.png" alt="" onload="${onok}" onerror="${onerr}">
+      <img class="mp-bottom" src="images/mannequin/bottoms/${mixBottomCode()}.png" alt="" onload="${onok}" onerror="${onerr}">
       <div class="mp-fallback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6"/><path d="M12 6.6v1.8"/><path d="M12 8.4 3.5 14.2a1.2 1.2 0 0 0 .68 2.18H19.8a1.2 1.2 0 0 0 .68-2.18L12 8.4Z"/><path d="M5 17.6h14"/></svg><span>미리보기 준비 중</span></div>`;
   }
   cta.innerHTML = match
