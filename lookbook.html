@@ -213,7 +213,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-look-gtoggle button{font-family:var(--display);font-size:9.5px;font-weight:600;letter-spacing:.06em;padding:5px 13px;background:none;border:none;border-radius:999px;cursor:pointer;color:var(--muted);transition:background .25s var(--ease-out),color .25s var(--ease-out);}
 .ld-look-gtoggle button.active{background:var(--ink);color:var(--paper);}
 .ld-split{display:grid;grid-template-columns:65fr 35fr;gap:0;align-items:stretch;min-height:78vh;border:1px solid var(--line-soft);}
-.ld-visual{position:relative;background:var(--paper-3);overflow:hidden;min-height:420px;}
+.ld-visual{position:relative;background:var(--paper-3);overflow:hidden;min-height:420px;cursor:zoom-in;}
 .ld-visual img{width:100%;height:100%;object-fit:cover;object-position:top center;}
 #ldHeroImg{transition:opacity .2s var(--ease-out);}
 #ldHeroImg.ld-hero-swap{opacity:0;}
@@ -280,6 +280,12 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .pm-panel.show{transform:translateX(0);}
 .pm-close{position:absolute;top:22px;right:24px;background:none;border:none;cursor:pointer;font-size:22px;line-height:1;color:var(--ink-soft);transition:transform .25s var(--ease),color .2s;}
 .pm-close:hover{transform:rotate(90deg);color:var(--ink);}
+/* ===== LIGHTBOX (tap-to-enlarge look photo) ===== */
+.lightbox{position:fixed;inset:0;background:rgba(10,10,9,.94);z-index:600;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s var(--ease-out);cursor:zoom-out;}
+.lightbox.show{opacity:1;pointer-events:auto;}
+.lightbox img{max-width:92vw;max-height:92vh;object-fit:contain;box-shadow:0 30px 70px rgba(0,0,0,.4);}
+.lightbox-close{position:absolute;top:20px;right:20px;width:40px;height:40px;background:none;border:none;cursor:pointer;font-size:26px;line-height:1;color:#F5F4F0;opacity:.8;transition:opacity .2s,transform .25s var(--ease);}
+.lightbox-close:hover{opacity:1;transform:rotate(90deg);}
 .pm-body{padding:74px 34px 50px;}
 .pm-figure{background:var(--paper);border:1px solid var(--line-soft);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;margin-bottom:28px;}
 .pm-figure img{max-width:74%;max-height:74%;object-fit:contain;filter:drop-shadow(0 16px 24px rgba(20,20,15,.12));transition:transform .3s var(--ease),opacity .25s var(--ease);}
@@ -402,6 +408,11 @@ footer.lb-foot .eyebrow{justify-content:center;display:flex;}
   <button class="pm-close" onclick="closeProduct()">&times;</button>
   <div class="pm-body" id="pmBody"></div>
 </aside>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="event.stopPropagation();closeLightbox()">&times;</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
 
 <script>
 /* ---------------- DATA ---------------- */
@@ -1734,7 +1745,7 @@ function bindLookInteractions(id){
   document.addEventListener('keydown', lookKeyNav);
 
   const detail = document.querySelector('.look-detail');
-  let swipeX = null, swipeY = null;
+  let swipeX = null, swipeY = null, wasSwipe = false;
   visual.addEventListener('touchstart', e=>{
     swipeX = e.touches[0].clientX; swipeY = e.touches[0].clientY;
   }, {passive:true});
@@ -1743,6 +1754,7 @@ function bindLookInteractions(id){
     const dx = e.changedTouches[0].clientX - swipeX;
     const dy = e.changedTouches[0].clientY - swipeY;
     if(Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy)*1.5){
+      wasSwipe = true;
       if(look && look.pair){
         swapLookPair(id, lookPairView==='W' ? 'M' : 'W');
       } else {
@@ -1751,7 +1763,25 @@ function bindLookInteractions(id){
     }
     swipeX = null; swipeY = null;
   }, {passive:true});
+  visual.addEventListener('click', e=>{
+    if(wasSwipe){ wasSwipe = false; return; }
+    if(e.target.closest('.ec-arrow, .ld-gallery-dots')) return;
+    const img = document.getElementById('ldHeroImg');
+    if(img) openLightbox(img.src, img.alt);
+  });
 }
+function openLightbox(src, alt){
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxImg').alt = alt || '';
+  lb.classList.add('show');
+}
+function closeLightbox(){
+  document.getElementById('lightbox')?.classList.remove('show');
+}
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape') closeLightbox();
+});
 function lookKeyNav(e){
   const {view, param} = parseHash();
   if(view!=='look') return;
