@@ -2156,28 +2156,57 @@ function mixMatchLook(){
    src instead of hard-replacing it: the incoming image fades/settles in
    while the outgoing one fades/recedes out and is removed once the
    transition finishes, so garment swaps read as one smooth motion
-   rather than a pop-in. No-ops if the layer is already showing src. */
+   rather than a pop-in. No-ops if the layer is already showing src.
+
+   Tapping the arrow buttons a few times quickly fires this several
+   times before earlier calls finish decoding, so it can't rely on a
+   "current" node captured at call-start — that reference goes stale
+   mid-flight and leaves orphaned images stuck at full opacity (a real
+   flicker/ghosting bug, not just cosmetic). mixLayerReq tracks the
+   latest requested src per layer: a call whose request gets
+   superseded before it resolves discards its image outright, and the
+   call that IS still current retires every other sibling of that
+   layer still in the DOM, not just one snapshot. */
+const mixLayerReq = {};
 function mixSetLayer(preview, cls, src){
-  const current = preview.querySelector('img.'+cls+':not(.mp-out)');
-  if(current && current.dataset.src===src) return;
+  const showing = [...preview.querySelectorAll('img.'+cls)].find(n=>!n.classList.contains('mp-out'));
+  if(showing && showing.dataset.src===src && mixLayerReq[cls]?.src===src) return;
+  const req = {src};
+  mixLayerReq[cls] = req;
   const img = document.createElement('img');
   img.className = cls;
   img.alt = '';
   img.dataset.src = src;
-  img.addEventListener('load', ()=>{
-    requestAnimationFrame(()=>img.classList.add('mp-in'));
-    if(current){
-      current.classList.remove('mp-in');
-      current.classList.add('mp-out');
-      setTimeout(()=>current.remove(), 450);
-    }
-  });
-  img.addEventListener('error', ()=>{
-    preview.classList.add('mp-broken');
-    img.remove();
-  });
   preview.appendChild(img);
   img.src = src;
+  /* decode() (not just 'load') waits until the browser has fully
+     decoded pixel data, so the fade-in never overlaps with decode
+     jank — that overlap is what reads as a flicker/pop rather than a
+     clean crossfade. Falls back to load/error for older browsers. */
+  const ready = img.decode ? img.decode() : new Promise((res,rej)=>{
+    img.addEventListener('load', res, {once:true});
+    img.addEventListener('error', rej, {once:true});
+  });
+  ready.then(()=>{
+    if(mixLayerReq[cls] !== req){ img.remove(); return; }
+    /* double rAF: guarantees the browser has painted the opacity:0
+       starting state at least once before we flip to mp-in, so the
+       transition always actually animates instead of occasionally
+       collapsing into an instant snap. */
+    requestAnimationFrame(()=>requestAnimationFrame(()=>img.classList.add('mp-in')));
+    preview.querySelectorAll('img.'+cls).forEach(node=>{
+      if(node===img) return;
+      node.classList.remove('mp-in');
+      node.classList.add('mp-out');
+      let cleaned = false;
+      const cleanup = ()=>{ if(!cleaned){ cleaned = true; node.remove(); } };
+      node.addEventListener('transitionend', cleanup, {once:true});
+      setTimeout(cleanup, 600); /* safety net if transitionend never fires */
+    });
+  }).catch(()=>{
+    if(mixLayerReq[cls] === req) preview.classList.add('mp-broken');
+    img.remove();
+  });
 }
 function paintMix(which, dir){
   const stage = document.getElementById('mixStage');
