@@ -340,9 +340,10 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-slot{display:grid;grid-template-columns:56px 1fr 56px;align-items:center;gap:10px;padding:0;}
 .mix-slot:first-of-type{padding-top:18px;border-top:1px solid var(--line-soft);}
 .mix-slot:last-of-type{padding-bottom:18px;border-bottom:1px solid var(--line-soft);}
-.mix-arrow{width:44px;height:44px;border:1px solid var(--line);background:var(--paper);cursor:pointer;font-size:16px;color:var(--ink-soft);transition:border-color .2s,color .2s,transform .15s ease;justify-self:center;}
-.mix-arrow:hover{border-color:var(--ink);color:var(--ink);}
-.mix-arrow:active{transform:scale(.92);}
+.mix-arrow{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;transition:background .22s var(--ease-out),border-color .22s var(--ease-out),color .22s var(--ease-out),transform .15s ease;justify-self:center;}
+.mix-arrow svg{width:16px;height:16px;}
+.mix-arrow:hover{background:var(--ink);border-color:var(--ink);color:var(--paper);}
+.mix-arrow:active{transform:scale(.88);}
 .mix-figure{display:flex;align-items:center;gap:16px;text-align:left;width:380px;margin:0 auto;}
 .mix-figure.mix-slide-next{animation:mixSlideNext .3s var(--ease-out) both;}
 .mix-figure.mix-slide-prev{animation:mixSlidePrev .3s var(--ease-out) both;}
@@ -381,6 +382,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .mix-slot:first-of-type{padding-top:10px;}
   .mix-slot:last-of-type{padding-bottom:10px;}
   .mix-arrow{width:36px;height:36px;}
+  .mix-arrow svg{width:14px;height:14px;}
   .mix-figure{width:100%;max-width:none;gap:10px;}
   .mix-figure .ms-imgwrap{width:72px;height:72px;}
   .mix-figure .ms-name{font-size:13px;}
@@ -2164,9 +2166,10 @@ function paintMix(which, dir){
   const slideClass = REDUCE_MOTION || !dir ? '' : dir > 0 ? ' mix-slide-next' : ' mix-slide-prev';
   const topClass = which === 'top' ? slideClass : '';
   const bottomClass = which === 'bottom' ? slideClass : '';
+  const arrowIcon = dir => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${dir<0?'M15 6l-6 6 6 6':'M9 6l6 6-6 6'}"/></svg>`;
   stage.innerHTML = `
     <div class="mix-slot">
-      <button class="mix-arrow" onclick="shiftMix('top',-1)">&larr;</button>
+      <button class="mix-arrow" onclick="shiftMix('top',-1)" aria-label="Previous top">${arrowIcon(-1)}</button>
       <div class="mix-figure${topClass}">
         <div class="ms-imgwrap"><img src="${top.img}" alt="${top.name}"></div>
         <div class="ms-text">
@@ -2175,10 +2178,10 @@ function paintMix(which, dir){
           <div class="ms-code">${top.code} — ${top.color}</div>
         </div>
       </div>
-      <button class="mix-arrow" onclick="shiftMix('top',1)">&rarr;</button>
+      <button class="mix-arrow" onclick="shiftMix('top',1)" aria-label="Next top">${arrowIcon(1)}</button>
     </div>
     <div class="mix-slot">
-      <button class="mix-arrow" onclick="shiftMix('bottom',-1)">&larr;</button>
+      <button class="mix-arrow" onclick="shiftMix('bottom',-1)" aria-label="Previous bottom">${arrowIcon(-1)}</button>
       <div class="mix-figure${bottomClass}">
         <div class="ms-imgwrap"><img src="${bottom.img}" alt="${bottom.name}"></div>
         <div class="ms-text">
@@ -2187,7 +2190,7 @@ function paintMix(which, dir){
           <div class="ms-code">${bottom.code} — ${bottom.color}</div>
         </div>
       </div>
-      <button class="mix-arrow" onclick="shiftMix('bottom',1)">&rarr;</button>
+      <button class="mix-arrow" onclick="shiftMix('bottom',1)" aria-label="Next bottom">${arrowIcon(1)}</button>
     </div>`;
   const match = mixMatchLook();
   if(preview){
