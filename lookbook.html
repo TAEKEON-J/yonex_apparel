@@ -360,6 +360,18 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-cta button:disabled{background:none;color:var(--muted);border-color:var(--line);cursor:default;}
 .mix-cta button:not(:disabled):hover{opacity:.8;}
 .mix-cta .mc-note{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:14px;}
+.mix-body{max-width:1160px;margin:0 auto;}
+/* laptop/tablet: mannequin preview and the ghost-cut top/bottom picker
+   sit side by side instead of stacked, with the mannequin enlarged */
+@media(min-width:760px){
+  .mix-body{display:grid;grid-template-columns:minmax(320px,1.15fr) minmax(300px,1fr);gap:8px 36px;align-items:start;padding:0 28px;}
+  .mix-visual{position:sticky;top:84px;}
+  .mix-preview{width:100%;max-width:480px;margin:20px auto 0;}
+  .mix-preview-note{max-width:480px;}
+  .mix-stage{max-width:none;margin:18px 0 0;padding:0;}
+  .mix-figure{width:100%;max-width:360px;}
+  .mix-cta{padding:26px 0 40px;}
+}
 @media(max-width:640px){
   .mix-stage{padding:0 16px;}
   .mix-slot{grid-template-columns:40px 1fr 40px;}
@@ -2112,10 +2124,16 @@ function renderMix(){
       <span class="eyebrow">STYLE MIX</span>
       <h2>Build Your Own Look</h2>
     </section>
-    <div class="mix-preview" id="mixPreview"></div>
-    <p class="mix-preview-note">본 이미지는 코디 참고용으로 실제 핏과 다를 수 있습니다</p>
-    <section class="mix-stage" id="mixStage"></section>
-    <section class="mix-cta" id="mixCta"></section>
+    <div class="mix-body">
+      <div class="mix-visual">
+        <div class="mix-preview" id="mixPreview"></div>
+        <p class="mix-preview-note">본 이미지는 코디 참고용으로 실제 핏과 다를 수 있습니다</p>
+      </div>
+      <div class="mix-controls">
+        <section class="mix-stage" id="mixStage"></section>
+        <section class="mix-cta" id="mixCta"></section>
+      </div>
+    </div>
   </div>`;
 }
 function mixTopCode(){ return MIX_TOPS[mixTopIdx]; }
