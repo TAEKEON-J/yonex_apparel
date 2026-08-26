@@ -1971,6 +1971,7 @@ function lookKeyNav(e){
 /* ---------------- PRODUCT MODAL ---------------- */
 let currentPmCode = null;
 let currentPmLookId = null;
+function isWorldCollectionCode(code){ return /(YX|EX)$/.test(code); }
 function openProduct(code, lookId){
   const p = PRODUCTS[code];
   if(!p) return;
@@ -1990,6 +1991,7 @@ function openProduct(code, lookId){
     </div>` : ''}
     <div class="pm-code">${p.gender.toUpperCase()}</div>
     <div class="pm-name">${p.code}</div>
+    ${isWorldCollectionCode(p.code) ? `<div class="pm-line">WORLD COLLECTION</div>` : ''}
     ${p.line ? `<div class="pm-line">${p.line}</div>` : ''}
     ${(p.note1 || p.note2) ? `<div class="pm-note-row">${p.note1?`<span class="pm-note">${p.note1}</span>`:''}${p.note2?`<span class="pm-note">${p.note2}</span>`:''}</div>` : ''}
     ${p.color ? `<div class="pm-row"><span>COLOR</span><span>${p.color}</span></div>` : ''}
