@@ -325,9 +325,17 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-hero .eyebrow{justify-content:center;display:flex;}
 .mix-hero h2{font-size:clamp(30px,5vw,48px);letter-spacing:-.03em;margin-top:14px;text-transform:uppercase;}
 .mix-preview{position:relative;width:280px;aspect-ratio:6/7;margin:20px auto 0;background:var(--paper-2);border-radius:4px;overflow:hidden;}
-.mix-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transform:scale(1.045);transition:opacity .45s var(--ease-out),transform .5s var(--ease-out);}
-.mix-preview img.mp-in{opacity:1;transform:scale(1);}
-.mix-preview img.mp-out{opacity:0;transform:scale(1.02);transition:opacity .4s var(--ease-out),transform .45s var(--ease-out);}
+/* Pure opacity crossfade only — no scale/translate here. These layers
+   (base/bottom/top) are pre-aligned PNGs meant to sit pixel-registered
+   on the same mannequin canvas; a scale "settle" effect looks nice on
+   a single standalone image, but on a *stack* of independently
+   transitioning layers it moves each garment's edges at a different
+   rate than its neighbors mid-transition, which briefly opens a
+   visible seam/gap between e.g. the shirt hem and the shorts
+   waistband — that's what read as jerky and "overlapping". */
+.mix-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .4s linear;}
+.mix-preview img.mp-in{opacity:1;}
+.mix-preview img.mp-out{opacity:0;}
 .mix-preview .mp-base{z-index:1;}
 .mix-preview .mp-bottom{z-index:2;}
 .mix-preview .mp-top{z-index:3;}
@@ -2153,26 +2161,31 @@ function mixMatchLook(){
   });
 }
 /* Crossfades one mannequin composite layer (base/top/bottom) to a new
-   src instead of hard-replacing it: the incoming image fades/settles in
-   while the outgoing one fades/recedes out and is removed once the
+   src instead of hard-replacing it: the incoming image fades in while
+   the previously-active one fades out and is removed once the
    transition finishes, so garment swaps read as one smooth motion
    rather than a pop-in. No-ops if the layer is already showing src.
 
    Tapping the arrow buttons a few times quickly fires this several
-   times before earlier calls finish decoding, so it can't rely on a
-   "current" node captured at call-start — that reference goes stale
-   mid-flight and leaves orphaned images stuck at full opacity (a real
-   flicker/ghosting bug, not just cosmetic). mixLayerReq tracks the
-   latest requested src per layer: a call whose request gets
-   superseded before it resolves discards its image outright, and the
-   call that IS still current retires every other sibling of that
-   layer still in the DOM, not just one snapshot. */
-const mixLayerReq = {};
+   times before earlier calls finish decoding. Tracking "the node to
+   retire" via a DOM query at resolve-time (an earlier version of this
+   did that) is unsafe: a call resolving early can sweep up and mark
+   mp-out on a DIFFERENT, still-pending image that hasn't shown itself
+   yet — including the one that's actually supposed to win — and that
+   image then gets torn down by the sweep's own cleanup timer before
+   it ever became visible, sometimes leaving the layer with nothing
+   showing at all. Instead each layer's state (mixLayer[cls]) tracks
+   exactly one canonical "active" node explicitly; a resolving request
+   only ever retires *that* specific node, never a broad DOM sweep, so
+   a still-in-flight sibling can never be mistaken for old state. */
+const mixLayer = {};
 function mixSetLayer(preview, cls, src){
-  const showing = [...preview.querySelectorAll('img.'+cls)].find(n=>!n.classList.contains('mp-out'));
-  if(showing && showing.dataset.src===src && mixLayerReq[cls]?.src===src) return;
-  const req = {src};
-  mixLayerReq[cls] = req;
+  const state = mixLayer[cls] || (mixLayer[cls] = {});
+  if(state.pendingSrc === src) return;
+  if(!state.pendingSrc && state.activeImg && state.activeImg.dataset.src === src) return;
+  state.pendingSrc = src;
+  const req = {};
+  state.req = req;
   const img = document.createElement('img');
   img.className = cls;
   img.alt = '';
@@ -2188,23 +2201,39 @@ function mixSetLayer(preview, cls, src){
     img.addEventListener('error', rej, {once:true});
   });
   ready.then(()=>{
-    if(mixLayerReq[cls] !== req){ img.remove(); return; }
+    if(state.req !== req){ img.remove(); return; } /* superseded before it finished decoding */
+    /* Update the bookkeeping (pendingSrc/activeImg) synchronously,
+       right here — NOT inside the rAF below. A later mixSetLayer call
+       can land in the gap between this promise resolving and an rAF
+       callback running (~1-2 frames, ~16-32ms), and it reads
+       state.activeImg to decide whether to no-op. If that read saw a
+       stale pre-swap value, it could wrongly conclude "already
+       showing that" and silently drop a legitimate request — the
+       actual bug behind swaps sometimes not taking effect. Only the
+       CSS class flip (the visual part) needs to wait for a paint. */
+    state.pendingSrc = null;
+    const prev = state.activeImg;
+    state.activeImg = img;
     /* double rAF: guarantees the browser has painted the opacity:0
        starting state at least once before we flip to mp-in, so the
        transition always actually animates instead of occasionally
-       collapsing into an instant snap. */
-    requestAnimationFrame(()=>requestAnimationFrame(()=>img.classList.add('mp-in')));
-    preview.querySelectorAll('img.'+cls).forEach(node=>{
-      if(node===img) return;
-      node.classList.remove('mp-in');
-      node.classList.add('mp-out');
-      let cleaned = false;
-      const cleanup = ()=>{ if(!cleaned){ cleaned = true; node.remove(); } };
-      node.addEventListener('transitionend', cleanup, {once:true});
-      setTimeout(cleanup, 600); /* safety net if transitionend never fires */
-    });
+       collapsing into an instant snap. Flipping the incoming image to
+       mp-in and the outgoing one to mp-out in the SAME callback keeps
+       it a real crossfade — doing them a frame apart briefly dips
+       both below full opacity together. */
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      img.classList.add('mp-in');
+      if(prev && prev !== img){
+        prev.classList.remove('mp-in');
+        prev.classList.add('mp-out');
+        let cleaned = false;
+        const cleanup = ()=>{ if(!cleaned){ cleaned = true; prev.remove(); } };
+        prev.addEventListener('transitionend', cleanup, {once:true});
+        setTimeout(cleanup, 600); /* safety net if transitionend never fires */
+      }
+    }));
   }).catch(()=>{
-    if(mixLayerReq[cls] === req) preview.classList.add('mp-broken');
+    if(state.req === req){ state.pendingSrc = null; preview.classList.add('mp-broken'); }
     img.remove();
   });
 }
