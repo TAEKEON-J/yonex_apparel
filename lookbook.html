@@ -307,7 +307,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .lightbox-close{position:absolute;top:20px;right:20px;width:40px;height:40px;background:none;border:none;cursor:pointer;font-size:26px;line-height:1;color:#F5F4F0;opacity:.8;transition:opacity .2s,transform .25s var(--ease);}
 .lightbox-close:hover{opacity:1;transform:rotate(90deg);}
 .pm-body{padding:74px 34px 50px;}
-.pm-figure{background:var(--paper);border:1px solid var(--line-soft);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;margin-bottom:28px;}
+.pm-figure{background:var(--paper);border:1px solid var(--line-soft);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;margin-bottom:28px;touch-action:pan-y;}
 .pm-figure img{max-width:74%;max-height:74%;object-fit:contain;filter:drop-shadow(0 16px 24px rgba(20,20,15,.12));transition:transform .3s var(--ease),opacity .25s var(--ease);}
 .pm-view-toggle{display:flex;width:fit-content;margin:-14px auto 24px;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);}
 .pm-view-toggle button{font-family:var(--display);font-size:9.5px;font-weight:600;letter-spacing:.06em;padding:5px 13px;background:none;border:none;border-radius:999px;cursor:pointer;color:var(--muted);transition:background .25s var(--ease-out),color .25s var(--ease-out);}
@@ -2050,6 +2050,24 @@ function openProduct(code, lookId){
   `;
   document.getElementById('pmBackdrop').classList.add('show');
   document.getElementById('pmPanel').classList.add('show');
+  if(p.imgBack) bindPmSwipe();
+}
+function bindPmSwipe(){
+  const figure = document.querySelector('.pm-figure');
+  if(!figure) return;
+  let sx=null, sy=null;
+  figure.addEventListener('touchstart', e=>{
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+  }, {passive:true});
+  figure.addEventListener('touchend', e=>{
+    if(sx===null) return;
+    const dx = e.changedTouches[0].clientX - sx;
+    const dy = e.changedTouches[0].clientY - sy;
+    if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)*1.5){
+      setPmView(dx < 0 ? 'back' : 'front');
+    }
+    sx = null; sy = null;
+  }, {passive:true});
 }
 function setPmView(view){
   const p = PRODUCTS[currentPmCode];
