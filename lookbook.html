@@ -1257,20 +1257,23 @@ const LOOKS = [
    the thumb on first call. Safe to call after any render or state change;
    no-ops if the container or an active button isn't present. Wrapped in
    rAF so it reads layout after the browser has painted the new markup. */
+/* runs synchronously (no rAF) so a freshly-inserted toggle gets its thumb
+   sized and positioned before the browser's first paint — deferring this
+   to a later frame left a visible gap where the toggle showed no active
+   fill at all, then the pill popped in a frame later, reading as a flicker
+   every time a look-detail page (and its toggles) got rebuilt on nav. */
 function positionToggleThumb(container){
   if(!container) return;
-  requestAnimationFrame(()=>{
-    const active = container.querySelector(':scope > button.active');
-    if(!active) return;
-    let thumb = container.querySelector(':scope > .toggle-thumb');
-    if(!thumb){
-      thumb = document.createElement('span');
-      thumb.className = 'toggle-thumb';
-      container.insertBefore(thumb, container.firstChild);
-    }
-    thumb.style.width = active.offsetWidth + 'px';
-    thumb.style.transform = `translateX(${active.offsetLeft}px)`;
-  });
+  const active = container.querySelector(':scope > button.active');
+  if(!active) return;
+  let thumb = container.querySelector(':scope > .toggle-thumb');
+  if(!thumb){
+    thumb = document.createElement('span');
+    thumb.className = 'toggle-thumb';
+    container.insertBefore(thumb, container.firstChild);
+  }
+  thumb.style.width = active.offsetWidth + 'px';
+  thumb.style.transform = `translateX(${active.offsetLeft}px)`;
 }
 
 /* Full candidate pool for STYLE MIX — every Game Wear top/bottom SKU
