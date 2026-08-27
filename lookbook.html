@@ -234,7 +234,11 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-split{display:grid;grid-template-columns:65fr 35fr;gap:0;align-items:stretch;min-height:78vh;border:1px solid var(--line-soft);}
 .ld-visual{position:relative;background:var(--paper-3);overflow:hidden;min-height:420px;cursor:zoom-in;}
 .ld-visual img{width:100%;height:100%;object-fit:cover;object-position:top center;}
-#ldHeroImg{transition:opacity .32s var(--ease-out),transform .32s var(--ease-out);}
+/* the next/prev photo revealed underneath as a finger drags the current
+   one aside — gives the swipe live, continuous feedback instead of a
+   dead zone until release, which is what actually read as "choppy". */
+.ld-drag-peek{position:absolute;left:0;top:0;z-index:1;pointer-events:none;}
+#ldHeroImg{position:relative;z-index:2;transition:opacity .32s var(--ease-out),transform .32s var(--ease-out);}
 #ldHeroImg.ld-hero-swap{opacity:0;}
 #ldHeroImg.ld-hero-swap-next{transform:translateX(28px);}
 #ldHeroImg.ld-hero-swap-prev{transform:translateX(-28px);}
@@ -254,10 +258,10 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-dot::after{content:'';width:7px;height:7px;border-radius:50%;border:1.5px solid rgba(255,255,255,.7);background:rgba(255,255,255,.25);transition:background .2s,transform .15s ease;}
 .ld-dot.active::after{background:#fff;}
 .ld-dot:active::after{transform:scale(.85);}
-.ld-caption{position:absolute;left:24px;bottom:24px;color:#fff;z-index:2;}
+.ld-caption{position:absolute;left:24px;bottom:24px;color:#fff;z-index:4;}
 .ld-caption .eyebrow{color:rgba(255,255,255,.75);}
 .ld-caption h3{color:#fff;font-size:26px;margin-top:6px;letter-spacing:-.01em;}
-.ld-visual .vscrim{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,0) 30%);pointer-events:none;}
+.ld-visual .vscrim{position:absolute;inset:0;z-index:3;background:linear-gradient(0deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,0) 30%);pointer-events:none;}
 
 .ld-items{background:var(--paper);display:flex;flex-direction:column;justify-content:center;border-left:1px solid var(--line-soft);}
 .ld-item{flex:0 0 auto;display:flex;flex-direction:column;padding:28px 30px;border-right:none;border-bottom:1px solid var(--line-soft);cursor:pointer;transition:background .25s;position:relative;}
@@ -1367,7 +1371,15 @@ function parseHash(){
 
 function render(){
   const {view, param} = parseHash();
-  const isLookToLook = view==='look' && document.querySelector('.look-detail') && !REDUCE_MOTION;
+  /* a live-dragged swipe (see bindLookInteractions) already animates the
+     hero photo all the way to its resting position with its own finger-
+     tracking motion before calling go() — set this flag right before that
+     call so render() doesn't layer a second, independent crossfade on top
+     of a transition the drag already finished. */
+  const skipHeroAnim = window.__skipHeroAnim === true;
+  window.__skipHeroAnim = false;
+  const isLookToLook = view==='look' && document.querySelector('.look-detail');
+  const playHeroAnim = isLookToLook && !REDUCE_MOTION && !skipHeroAnim;
 
   /* snapshot the outgoing hero photo (and which direction we're headed)
      before anything gets torn down, so the old and new photo can visibly
@@ -1376,7 +1388,7 @@ function render(){
      next or prev neighbor — true for the arrows, edge-tap zones and the
      swipe gesture alike, so all three get the same continuous motion. */
   let heroGhost = null, navDir = null;
-  if(isLookToLook){
+  if(playHeroAnim){
     document.querySelectorAll('.ld-hero-ghost').forEach(g=>g.remove());
     const oldDetail = document.querySelector('.look-detail');
     const oldImg = document.getElementById('ldHeroImg');
@@ -1391,6 +1403,15 @@ function render(){
       document.body.appendChild(heroGhost);
     }
   }
+
+  /* the related-looks strip ("MORE IN ...") is rebuilt from scratch on
+     every look render along with the rest of the page, so a fresh
+     .ld-related-strip always starts scrolled to 0 — clicking a thumb
+     partway across it used to visibly snap the strip back to the start
+     right as the new page appeared. Carry the old scroll position over
+     instead so the strip stays where it was. */
+  const oldStrip = document.querySelector('.ld-related-strip');
+  const relatedScrollLeft = oldStrip ? oldStrip.scrollLeft : null;
 
   document.querySelectorAll('#catnav button').forEach(b=>b.classList.toggle('active', view==='category' && b.dataset.cat===param));
   document.body.dataset.cat = view==='category'||view==='look' ? (view==='category'?param:LOOKS.find(l=>l.id===param)?.cat) : '';
@@ -1409,6 +1430,11 @@ function render(){
   else if(view==='mix') app.innerHTML = renderMix();
   else app.innerHTML = renderCover();
 
+  if(view==='look' && relatedScrollLeft!==null){
+    const newStrip = document.querySelector('.ld-related-strip');
+    if(newStrip) newStrip.scrollLeft = relatedScrollLeft;
+  }
+
   const viewEl = app.querySelector('.view');
   if(isLookToLook && viewEl){
     /* skip the big blur/scale/translateY page-entrance animation — only
@@ -1416,17 +1442,19 @@ function render(){
        everything else (breadcrumb, item panel, related strip) can just be
        there, already-updated, with no animation of its own. */
     viewEl.classList.remove('view');
-    const img = document.getElementById('ldHeroImg');
-    if(img){
-      img.classList.add('ld-hero-swap');
-      if(navDir==='next') img.classList.add('ld-hero-swap-next');
-      else if(navDir==='prev') img.classList.add('ld-hero-swap-prev');
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        img.classList.remove('ld-hero-swap','ld-hero-swap-next','ld-hero-swap-prev');
-        if(heroGhost) heroGhost.classList.add(navDir==='next' ? 'ld-ghost-exit-next' : navDir==='prev' ? 'ld-ghost-exit-prev' : 'ld-ghost-exit');
-      }));
+    if(playHeroAnim){
+      const img = document.getElementById('ldHeroImg');
+      if(img){
+        img.classList.add('ld-hero-swap');
+        if(navDir==='next') img.classList.add('ld-hero-swap-next');
+        else if(navDir==='prev') img.classList.add('ld-hero-swap-prev');
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{
+          img.classList.remove('ld-hero-swap','ld-hero-swap-next','ld-hero-swap-prev');
+          if(heroGhost) heroGhost.classList.add(navDir==='next' ? 'ld-ghost-exit-next' : navDir==='prev' ? 'ld-ghost-exit-prev' : 'ld-ghost-exit');
+        }));
+      }
+      if(heroGhost) setTimeout(()=>heroGhost.remove(), 400);
     }
-    if(heroGhost) setTimeout(()=>heroGhost.remove(), 400);
   } else if(viewEl){
     viewEl.classList.add('view');
     if(heroGhost) heroGhost.remove();
@@ -1948,24 +1976,105 @@ function bindLookInteractions(id){
   document.querySelectorAll('.ii-gtoggle').forEach(positionToggleThumb);
 
   const detail = document.querySelector('.look-detail');
-  let swipeX = null, swipeY = null, wasSwipe = false;
+  let wasSwipe = false;
+
+  /* Live finger-tracking swipe: the hero photo (and a peek of the next/
+     prev look underneath) follow the drag in real time instead of just
+     reacting once on release — a released-then-canned-animation swipe
+     has a dead zone the whole time your finger is moving, which is what
+     actually read as choppy, not the release animation itself. Always
+     navigates to the next/prev look (see bindLookInteractions comment
+     history) regardless of MEN/WOMEN pairing — gender switching stays on
+     the explicit toggle. */
+  const DRAG_THRESHOLD = 70;
+  let swipeX = null, swipeY = null, dragLocked = false, dragging = false, dragDX = 0, dragDir = null, dragPeek = null;
+
+  function peekPhotoFor(dir){
+    const targetId = dir==='next' ? detail.dataset.next : detail.dataset.prev;
+    const l = LOOKS.find(x=>x.id===targetId);
+    return l ? (l.fitImg || l.img) : null;
+  }
+  function endDrag(){
+    dragLocked = false; dragging = false; swipeX = null; swipeY = null;
+  }
+
   visual.addEventListener('touchstart', e=>{
+    if(e.touches.length!==1) return;
     swipeX = e.touches[0].clientX; swipeY = e.touches[0].clientY;
+    dragLocked = false; dragging = false; dragDX = 0;
   }, {passive:true});
-  visual.addEventListener('touchend', e=>{
-    if(swipeX===null) return;
-    const dx = e.changedTouches[0].clientX - swipeX;
-    const dy = e.changedTouches[0].clientY - swipeY;
-    if(Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy)*1.5){
-      wasSwipe = true;
-      /* swipe always moves to the next/prev look, same direction as the
-         arrows and edge-tap zones — kept consistent regardless of whether
-         this look has a MEN/WOMEN pair, since a gesture that means
-         something different look-to-look reads as unpredictable. Gender
-         switching stays on the explicit MEN/WOMEN toggle instead. */
-      go('look', dx < 0 ? detail.dataset.next : detail.dataset.prev);
+
+  visual.addEventListener('touchmove', e=>{
+    if(swipeX===null || e.touches.length!==1 || REDUCE_MOTION) return;
+    const dx = e.touches[0].clientX - swipeX;
+    const dy = e.touches[0].clientY - swipeY;
+    if(!dragLocked){
+      if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      dragLocked = true;
+      dragging = Math.abs(dx) > Math.abs(dy) * 1.3;
+      if(dragging){
+        dragDir = dx < 0 ? 'next' : 'prev';
+        const photo = peekPhotoFor(dragDir);
+        const img = document.getElementById('ldHeroImg');
+        if(photo && img){
+          dragPeek = document.createElement('img');
+          dragPeek.className = 'ld-drag-peek';
+          dragPeek.src = photo;
+          dragPeek.alt = '';
+          const cs = getComputedStyle(img);
+          dragPeek.style.width = img.offsetWidth + 'px';
+          dragPeek.style.height = img.offsetHeight + 'px';
+          dragPeek.style.objectFit = cs.objectFit;
+          dragPeek.style.objectPosition = cs.objectPosition;
+          visual.insertBefore(dragPeek, img);
+        }
+      }
     }
-    swipeX = null; swipeY = null;
+    if(!dragging) return;
+    e.preventDefault();
+    dragDX = dx;
+    const img = document.getElementById('ldHeroImg');
+    if(img){
+      img.style.transition = 'none';
+      img.style.transform = `translateX(${dx}px)`;
+    }
+    if(dragPeek){
+      const w = img ? img.offsetWidth : window.innerWidth;
+      const off = dragDir==='next' ? w : -w;
+      dragPeek.style.transition = 'none';
+      dragPeek.style.transform = `translateX(${off + dx}px)`;
+    }
+  }, {passive:false});
+
+  visual.addEventListener('touchend', ()=>{
+    if(swipeX===null) return;
+    const wasDragging = dragging;
+    const dx = dragDX;
+    const peek = dragPeek;
+    const img = document.getElementById('ldHeroImg');
+    dragPeek = null;
+    endDrag();
+    if(!wasDragging) return;
+    wasSwipe = true;
+    const committed = Math.abs(dx) > DRAG_THRESHOLD;
+    const w = img ? img.offsetWidth : window.innerWidth;
+    if(img){
+      img.style.transition = 'transform .22s var(--ease-out)';
+      img.style.transform = committed ? `translateX(${dragDir==='next' ? -w : w}px)` : 'translateX(0px)';
+    }
+    if(peek){
+      peek.style.transition = 'transform .22s var(--ease-out)';
+      peek.style.transform = committed ? 'translateX(0px)' : `translateX(${dragDir==='next' ? w : -w}px)`;
+    }
+    const targetId = dragDir==='next' ? detail.dataset.next : detail.dataset.prev;
+    setTimeout(()=>{
+      peek?.remove();
+      if(img){ img.style.transition = ''; img.style.transform = ''; }
+      if(committed){
+        window.__skipHeroAnim = true;
+        go('look', targetId);
+      }
+    }, 220);
   }, {passive:true});
 
   /* Pinch directly on the hero photo (before the lightbox is open): the
