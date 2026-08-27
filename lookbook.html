@@ -1968,11 +1968,13 @@ function bindLookInteractions(id){
     if(wasSwipe){ wasSwipe = false; return; }
     if(wasPinch){ wasPinch = false; return; }
     if(e.target.closest('.ec-arrow, .ld-gallery-dots')) return;
-    /* the prev/next arrows live in the outer ~70px of the photo — treat that
-       whole strip as an arrow zone (not just the circle itself) so a tap
-       anywhere near either edge never mis-fires the zoom lightbox. */
+    /* the outer ~70px strip on either side of the photo is a tap-to-nav
+       zone — same idea as the prev/next arrows sitting there, just without
+       needing to land exactly on the small circle — instead of merely
+       blocking the zoom lightbox, a tap there jumps to that look. */
     const vr = visual.getBoundingClientRect();
-    if(e.clientX - vr.left < 70 || vr.right - e.clientX < 70) return;
+    if(e.clientX - vr.left < 70){ go('look', detail.dataset.prev); return; }
+    if(vr.right - e.clientX < 70){ go('look', detail.dataset.next); return; }
     const img = document.getElementById('ldHeroImg');
     if(img) openLightbox(img.src, img.alt);
   });
