@@ -1968,6 +1968,11 @@ function bindLookInteractions(id){
     if(wasSwipe){ wasSwipe = false; return; }
     if(wasPinch){ wasPinch = false; return; }
     if(e.target.closest('.ec-arrow, .ld-gallery-dots')) return;
+    /* the prev/next arrows live in the outer ~70px of the photo — treat that
+       whole strip as an arrow zone (not just the circle itself) so a tap
+       anywhere near either edge never mis-fires the zoom lightbox. */
+    const vr = visual.getBoundingClientRect();
+    if(e.clientX - vr.left < 70 || vr.right - e.clientX < 70) return;
     const img = document.getElementById('ldHeroImg');
     if(img) openLightbox(img.src, img.alt);
   });
