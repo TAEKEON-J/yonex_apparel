@@ -234,8 +234,18 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-split{display:grid;grid-template-columns:65fr 35fr;gap:0;align-items:stretch;min-height:78vh;border:1px solid var(--line-soft);}
 .ld-visual{position:relative;background:var(--paper-3);overflow:hidden;min-height:420px;cursor:zoom-in;}
 .ld-visual img{width:100%;height:100%;object-fit:cover;object-position:top center;}
-#ldHeroImg{transition:opacity .2s var(--ease-out);}
+#ldHeroImg{transition:opacity .32s var(--ease-out),transform .32s var(--ease-out);}
 #ldHeroImg.ld-hero-swap{opacity:0;}
+#ldHeroImg.ld-hero-swap-next{transform:translateX(28px);}
+#ldHeroImg.ld-hero-swap-prev{transform:translateX(-28px);}
+/* a snapshot of the outgoing hero photo, positioned over the old spot and
+   left in place while the fresh page underneath renders — without it the
+   old photo just vanishes on DOM swap and the new one fades in from
+   nothing, which reads as a stutter rather than one continuous motion. */
+.ld-hero-ghost{position:fixed;z-index:250;pointer-events:none;transition:opacity .32s var(--ease-out),transform .32s var(--ease-out);}
+.ld-hero-ghost.ld-ghost-exit-next{opacity:0;transform:translateX(-28px);}
+.ld-hero-ghost.ld-ghost-exit-prev{opacity:0;transform:translateX(28px);}
+.ld-hero-ghost.ld-ghost-exit{opacity:0;}
 .ld-gallery-dots{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);z-index:3;display:flex;gap:4px;}
 /* the button itself is a larger invisible hit area (touch-target sizing);
    the visible dot mark is a fixed-size ::after so enlarging the tap target
@@ -1358,6 +1368,30 @@ function parseHash(){
 function render(){
   const {view, param} = parseHash();
   const isLookToLook = view==='look' && document.querySelector('.look-detail') && !REDUCE_MOTION;
+
+  /* snapshot the outgoing hero photo (and which direction we're headed)
+     before anything gets torn down, so the old and new photo can visibly
+     overlap and cross past each other instead of a blank-then-fade-in
+     stutter. Direction comes from whether the target id is this look's
+     next or prev neighbor — true for the arrows, edge-tap zones and the
+     swipe gesture alike, so all three get the same continuous motion. */
+  let heroGhost = null, navDir = null;
+  if(isLookToLook){
+    document.querySelectorAll('.ld-hero-ghost').forEach(g=>g.remove());
+    const oldDetail = document.querySelector('.look-detail');
+    const oldImg = document.getElementById('ldHeroImg');
+    if(oldDetail && oldImg){
+      navDir = oldDetail.dataset.next===param ? 'next' : (oldDetail.dataset.prev===param ? 'prev' : null);
+      const r = oldImg.getBoundingClientRect();
+      const cs = getComputedStyle(oldImg);
+      heroGhost = document.createElement('img');
+      heroGhost.className = 'ld-hero-ghost';
+      heroGhost.src = oldImg.currentSrc || oldImg.src;
+      heroGhost.style.cssText = `left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;object-fit:${cs.objectFit};object-position:${cs.objectPosition};`;
+      document.body.appendChild(heroGhost);
+    }
+  }
+
   document.querySelectorAll('#catnav button').forEach(b=>b.classList.toggle('active', view==='category' && b.dataset.cat===param));
   document.body.dataset.cat = view==='category'||view==='look' ? (view==='category'?param:LOOKS.find(l=>l.id===param)?.cat) : '';
   const cat = document.body.dataset.cat;
@@ -1385,10 +1419,17 @@ function render(){
     const img = document.getElementById('ldHeroImg');
     if(img){
       img.classList.add('ld-hero-swap');
-      requestAnimationFrame(()=>requestAnimationFrame(()=>img.classList.remove('ld-hero-swap')));
+      if(navDir==='next') img.classList.add('ld-hero-swap-next');
+      else if(navDir==='prev') img.classList.add('ld-hero-swap-prev');
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        img.classList.remove('ld-hero-swap','ld-hero-swap-next','ld-hero-swap-prev');
+        if(heroGhost) heroGhost.classList.add(navDir==='next' ? 'ld-ghost-exit-next' : navDir==='prev' ? 'ld-ghost-exit-prev' : 'ld-ghost-exit');
+      }));
     }
+    if(heroGhost) setTimeout(()=>heroGhost.remove(), 400);
   } else if(viewEl){
     viewEl.classList.add('view');
+    if(heroGhost) heroGhost.remove();
   }
   observeReveal();
   if(view==='look') bindLookInteractions(param);
@@ -1896,7 +1937,6 @@ function bindLookItemClicks(id){
 function bindLookInteractions(id){
   const visual = document.getElementById('ldVisual');
   if(!visual) return;
-  const look = LOOKS.find(l=>l.id===id);
 
   document.querySelectorAll('.ld-look-gtoggle button').forEach(btn=>{
     btn.addEventListener('click', ()=>swapLookPair(id, btn.dataset.lg));
@@ -1918,11 +1958,12 @@ function bindLookInteractions(id){
     const dy = e.changedTouches[0].clientY - swipeY;
     if(Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy)*1.5){
       wasSwipe = true;
-      if(look && look.pair){
-        swapLookPair(id, lookPairView==='W' ? 'M' : 'W');
-      } else {
-        go('look', dx < 0 ? detail.dataset.next : detail.dataset.prev);
-      }
+      /* swipe always moves to the next/prev look, same direction as the
+         arrows and edge-tap zones — kept consistent regardless of whether
+         this look has a MEN/WOMEN pair, since a gesture that means
+         something different look-to-look reads as unpredictable. Gender
+         switching stays on the explicit MEN/WOMEN toggle instead. */
+      go('look', dx < 0 ? detail.dataset.next : detail.dataset.prev);
     }
     swipeX = null; swipeY = null;
   }, {passive:true});
