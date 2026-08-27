@@ -203,7 +203,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .fl-swatches{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
 .fl-swatch{width:16px;height:16px;padding:0;border-radius:50%;cursor:pointer;border:1px solid rgba(0,0,0,.14);box-shadow:0 0 0 1px var(--paper) inset;transition:transform .15s var(--ease),box-shadow .15s;}
 .fl-swatch:hover{transform:scale(1.12);}
-.fl-swatch:active{transform:scale(.94);}
+.fl-swatch:active{transform:scale(.96);}
 .fl-swatch.active{box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--ink);}
 @media(max-width:980px){.fl-grid{grid-template-columns:repeat(4,1fr);gap:22px 14px;}}
 @media(max-width:640px){.full-lineup{padding:0 18px 90px;} .fl-head{padding:34px 0 22px;} .fl-grid{grid-template-columns:repeat(3,1fr);gap:18px 10px;} .fl-card .fl-code{font-size:9.5px;} .fl-card .fl-sub{font-size:8.5px;} .fl-swatch{width:14px;height:14px;}}
@@ -310,7 +310,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .pm-swatches{display:flex;flex-wrap:wrap;gap:8px;padding:10px 0 18px;}
 .pm-swatch{width:22px;height:22px;padding:0;border-radius:50%;cursor:pointer;border:1px solid rgba(0,0,0,.14);box-shadow:0 0 0 1px var(--paper) inset;transition:transform .15s var(--ease),box-shadow .15s;}
 .pm-swatch:hover{transform:scale(1.1);}
-.pm-swatch:active{transform:scale(.92);}
+.pm-swatch:active{transform:scale(.96);}
 .pm-swatch.active{box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--ink);}
 .pm-row:first-of-type{margin-top:30px;}
 .pm-row span:first-child{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--muted);}
@@ -357,7 +357,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-arrow{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;transition:background .22s var(--ease-out),border-color .22s var(--ease-out),color .22s var(--ease-out),transform .15s ease;justify-self:center;}
 .mix-arrow svg{width:16px;height:16px;}
 .mix-arrow:hover{background:var(--ink);border-color:var(--ink);color:var(--paper);}
-.mix-arrow:active{transform:scale(.88);}
+.mix-arrow:active{transform:scale(.96);}
 .mix-figure{display:flex;align-items:center;gap:16px;text-align:left;width:380px;margin:0 auto;}
 .mix-figure.mix-slide-next{animation:mixSlideNext .3s var(--ease-out) both;}
 .mix-figure.mix-slide-prev{animation:mixSlidePrev .3s var(--ease-out) both;}
@@ -379,7 +379,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 /* laptop/tablet: mannequin preview and the ghost-cut top/bottom picker
    sit side by side instead of stacked, with the mannequin enlarged */
 @media(min-width:760px){
-  .mix-body{display:grid;grid-template-columns:minmax(320px,1.15fr) minmax(300px,1fr);gap:8px 36px;align-items:start;padding:0 28px;}
+  .mix-body{display:grid;grid-template-columns:minmax(320px,1.15fr) minmax(300px,1fr);gap:8px 36px;align-items:center;padding:0 28px;}
   .mix-visual{position:sticky;top:84px;}
   .mix-preview{width:100%;max-width:480px;margin:20px auto 0;}
   .mix-preview-note{max-width:480px;}
@@ -2072,7 +2072,7 @@ function onSearchInput(value){
       <div class="sr-figure"><img src="${r.product.img}" alt=""></div>
       <div class="sr-info">
         <div class="sr-code">${r.product.code}</div>
-        <div class="sr-name">${r.product.color ? `${r.product.name} · ${r.product.color}` : r.product.name}</div>
+        <div class="sr-name" title="${r.product.color ? `${r.product.name} · ${r.product.color}` : r.product.name}">${r.product.color ? `${r.product.name} · ${r.product.color}` : r.product.name}</div>
       </div>
       <div class="sr-look">LOOK ${String(r.look.num).padStart(2,'0')}</div>
     </div>`).join('');
