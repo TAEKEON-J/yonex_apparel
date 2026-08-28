@@ -1873,12 +1873,35 @@ function genderInfo(code){
    element, that can't show old-fading-out and new-fading-in at once;
    it reads as a dip-to-nothing-then-refade, which is what looked
    flickery/unnatural. This is a real two-layer dissolve instead. */
+let heroXfade = null; /* the in-flight transition, if any: { next } */
 function crossfadeHeroTo(photo, altText){
   const visual = document.getElementById('ldVisual');
   const img = document.getElementById('ldHeroImg');
   if(!visual || !img || !photo) return;
-  if(img.getAttribute('src') === photo) return;
-  if(REDUCE_MOTION){ img.src = photo; return; }
+  if(!heroXfade && img.getAttribute('src') === photo) return;
+  if(REDUCE_MOTION){
+    if(heroXfade){ heroXfade.next.remove(); heroXfade = null; }
+    img.style.transition = '';
+    img.style.opacity = '';
+    img.src = photo;
+    return;
+  }
+  /* a still-in-flight transition from a previous rapid tap has to be
+     cancelled before starting a new one — two overlapping transitions
+     can each finish and try to promote their own <img> to #ldHeroImg,
+     leaving a stale photo on top with nothing to signal it's wrong
+     (the toggle button and item codes update synchronously elsewhere
+     in swapLookPair and were always correct; only this async photo
+     swap could fall behind on a quick double-tap). Snap the base img
+     back to a clean, fully-visible baseline before restarting. */
+  if(heroXfade){
+    heroXfade.next.remove();
+    heroXfade = null;
+    img.style.transition = 'none';
+    img.style.opacity = '1';
+    void img.offsetWidth;
+    img.style.transition = '';
+  }
   const next = document.createElement('img');
   next.src = photo;
   next.alt = altText != null ? altText : img.alt;
@@ -1891,21 +1914,32 @@ function crossfadeHeroTo(photo, altText){
   next.style.zIndex = '3';
   next.style.opacity = '0';
   visual.appendChild(next);
+  const state = { next };
+  heroXfade = state;
   const loadReady = (next.complete && next.naturalWidth > 0) ? Promise.resolve() : new Promise((res,rej)=>{
     next.addEventListener('load', res, {once:true});
     next.addEventListener('error', rej, {once:true});
   });
   const ready = next.decode ? Promise.race([next.decode(), loadReady]) : loadReady;
   ready.then(()=>{
+    if(heroXfade !== state) return; /* superseded by a newer call while loading */
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      if(heroXfade !== state) return;
       next.style.transition = 'opacity .32s var(--ease-out)';
       img.style.transition = 'opacity .32s var(--ease-out)';
       next.style.opacity = '1';
       img.style.opacity = '0';
       let cleaned = false;
       const cleanup = ()=>{
-        if(cleaned) return;
+        /* also guards the 500ms safety-net timer: if this call was
+           cancelled by a newer one after this point (heroXfade no
+           longer === state) but before either trigger fired, the
+           timer must NOT be allowed to promote/remove anything late —
+           that stale promotion racing a newer, already-settled one is
+           what could leave the wrong photo on screen. */
+        if(cleaned || heroXfade !== state) return;
         cleaned = true;
+        heroXfade = null;
         img.remove();
         next.removeAttribute('style');
         next.id = 'ldHeroImg';
@@ -1914,6 +1948,8 @@ function crossfadeHeroTo(photo, altText){
       setTimeout(cleanup, 500);
     }));
   }).catch(()=>{
+    if(heroXfade !== state) return;
+    heroXfade = null;
     next.remove();
     img.src = photo;
   });
