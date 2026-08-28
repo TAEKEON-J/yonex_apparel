@@ -311,8 +311,14 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 }
 
 .ld-nav{max-width:1320px;margin:0 auto;padding:28px 28px 90px;}
-.ld-related-strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+/* mouse users have no swipe gesture for this horizontal strip — cursor:grab
+   plus bindDragScroll() (JS) lets a click-and-drag scroll it the way a
+   touch swipe already does on mobile. scroll-snap is suspended mid-drag
+   (.dragging) so the strip tracks the cursor 1:1 instead of fighting the
+   snap points. */
+.ld-related-strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;cursor:grab;user-select:none;}
 .ld-related-strip::-webkit-scrollbar{display:none;}
+.ld-related-strip.dragging{cursor:grabbing;scroll-snap-type:none;}
 .ld-related-thumb{flex:0 0 calc((100% - 70px)/8);aspect-ratio:4/5;cursor:pointer;scroll-snap-align:start;overflow:hidden;background:var(--paper-3);border:1px solid var(--line-soft);transition:border-color .2s,transform .15s ease;}
 .ld-related-thumb:active{transform:scale(.96);}
 .ld-related-thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .4s var(--ease);}
@@ -1309,6 +1315,51 @@ function positionToggleThumb(container){
   thumb.style.transform = `translateX(${active.offsetLeft}px)`;
 }
 
+/* Click-and-drag scroll for horizontal strips (currently the related-looks
+   strip) — the touch swipe those already support has no mouse equivalent,
+   so a desktop user with no touchscreen has no way to reach anything past
+   the first screenful. mousemove/mouseup are bound once at module scope
+   (not inside bindDragScroll) since bindLookInteractions calls this fresh
+   on every render; per-element listeners are fine to re-add since each
+   render's .ld-related-strip is itself a brand new element. */
+let dragScrollEl = null, dragScrollDown = false, dragScrollStartX = 0, dragScrollStartLeft = 0, dragScrollMoved = false;
+function bindDragScroll(el){
+  if(!el) return;
+  el.addEventListener('mousedown', e=>{
+    if(e.button !== 0) return;
+    dragScrollEl = el;
+    dragScrollDown = true;
+    dragScrollMoved = false;
+    dragScrollStartX = e.clientX;
+    dragScrollStartLeft = el.scrollLeft;
+  });
+  el.addEventListener('click', e=>{
+    if(dragScrollMoved){
+      e.preventDefault();
+      e.stopPropagation();
+      dragScrollMoved = false;
+    }
+  }, true);
+  el.addEventListener('dragstart', e=>e.preventDefault());
+}
+window.addEventListener('mousemove', e=>{
+  if(!dragScrollDown || !dragScrollEl) return;
+  const dx = e.clientX - dragScrollStartX;
+  if(!dragScrollMoved && Math.abs(dx) > 4){
+    dragScrollMoved = true;
+    dragScrollEl.classList.add('dragging');
+  }
+  if(dragScrollMoved){
+    e.preventDefault();
+    dragScrollEl.scrollLeft = dragScrollStartLeft - dx;
+  }
+});
+window.addEventListener('mouseup', ()=>{
+  if(!dragScrollDown) return;
+  dragScrollDown = false;
+  dragScrollEl?.classList.remove('dragging');
+});
+
 /* Full candidate pool for STYLE MIX — every Game Wear top/bottom SKU
    that could ever appear here. The pool never needs editing just to
    surface a new upload: MIX_TOPS/MIX_BOTTOMS below are the subset of
@@ -1989,6 +2040,7 @@ function bindLookInteractions(id){
   positionToggleThumb(document.querySelector('.ld-look-gtoggle'));
   positionToggleThumb(document.querySelector('.fl-toggle'));
   document.querySelectorAll('.ii-gtoggle').forEach(positionToggleThumb);
+  bindDragScroll(document.querySelector('.ld-related-strip'));
 
   const detail = document.querySelector('.look-detail');
   let wasSwipe = false;
