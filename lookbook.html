@@ -1865,16 +1865,24 @@ function genderInfo(code){
    (code/color/price) actually depend on the variant, so this updates just
    those two instead of re-rendering the whole page — the breadcrumb, nav
    arrows and related-looks strip never change, and don't need to flicker. */
-/* Crossfades #ldHeroImg to a new photo by layering a second <img> on
-   top and fading opacity on both simultaneously, then promoting the
-   new one to the #ldHeroImg id and dropping the old one. The previous
-   approach faded the SAME element to opacity:0 and swapped its src
-   mid-fade (at 180ms into a 320ms transition) — since it's one
-   element, that can't show old-fading-out and new-fading-in at once;
-   it reads as a dip-to-nothing-then-refade, which is what looked
-   flickery/unnatural. This is a real two-layer dissolve instead. */
+/* Slides #ldHeroImg to a new photo: a second <img> enters from one side
+   while the current one exits the other, then the new one is promoted
+   to the #ldHeroImg id and the old one dropped. This deliberately
+   mirrors the drag-swipe's own translateX motion instead of doing an
+   opacity crossfade — an opacity dissolve only looks clean between two
+   images that share structure (like the STYLE MIX mannequin layers,
+   pixel-registered on the same pose). These are two completely
+   different photos/poses, so fading one into the other shows both at
+   once mid-transition as a double-exposure ghost (an arm or racket
+   from the outgoing photo visible through the incoming one) — that
+   double-exposure is what read as a glitchy "bounce", not an
+   animation-timing issue. A slide never overlaps two photos at partial
+   opacity, so there's nothing to ghost.
+   dir: 1 slides the new photo in from the right (old exits left),
+        -1 the reverse — pass whichever side conceptually matches the
+        change (e.g. the WOMEN button sits right of MEN in the pill). */
 let heroXfade = null; /* the in-flight transition, if any: { next } */
-function crossfadeHeroTo(photo, altText){
+function crossfadeHeroTo(photo, dir, altText){
   const visual = document.getElementById('ldVisual');
   const img = document.getElementById('ldHeroImg');
   if(!visual || !img || !photo) return;
@@ -1882,7 +1890,7 @@ function crossfadeHeroTo(photo, altText){
   if(REDUCE_MOTION){
     if(heroXfade){ heroXfade.next.remove(); heroXfade = null; }
     img.style.transition = '';
-    img.style.opacity = '';
+    img.style.transform = '';
     img.src = photo;
     return;
   }
@@ -1893,15 +1901,17 @@ function crossfadeHeroTo(photo, altText){
      (the toggle button and item codes update synchronously elsewhere
      in swapLookPair and were always correct; only this async photo
      swap could fall behind on a quick double-tap). Snap the base img
-     back to a clean, fully-visible baseline before restarting. */
+     back to a clean, centered baseline before restarting. */
   if(heroXfade){
     heroXfade.next.remove();
     heroXfade = null;
     img.style.transition = 'none';
-    img.style.opacity = '1';
+    img.style.transform = 'translateX(0)';
     void img.offsetWidth;
     img.style.transition = '';
   }
+  const enterFrom = dir > 0 ? '100%' : '-100%';
+  const exitTo = dir > 0 ? '-100%' : '100%';
   const next = document.createElement('img');
   next.src = photo;
   next.alt = altText != null ? altText : img.alt;
@@ -1912,7 +1922,7 @@ function crossfadeHeroTo(photo, altText){
   next.style.objectFit = 'cover';
   next.style.objectPosition = 'top center';
   next.style.zIndex = '3';
-  next.style.opacity = '0';
+  next.style.transform = `translateX(${enterFrom})`;
   visual.appendChild(next);
   const state = { next };
   heroXfade = state;
@@ -1927,14 +1937,12 @@ function crossfadeHeroTo(photo, altText){
       if(heroXfade !== state) return;
       /* short duration on purpose — this is a high-frequency toggle a
          shopper taps back and forth repeatedly, not a one-off page
-         transition. A 300ms+ crossfade never finishes settling before
-         the next tap retriggers it, which is what read as "bouncy"
-         and stuttery under real back-and-forth use, not a one-time
-         glitch. */
-      next.style.transition = 'opacity .18s var(--ease-out)';
-      img.style.transition = 'opacity .18s var(--ease-out)';
-      next.style.opacity = '1';
-      img.style.opacity = '0';
+         transition; it needs to feel immediate even under back-to-back
+         taps rather than each one queuing up a leisurely animation. */
+      next.style.transition = 'transform .2s var(--ease-out)';
+      img.style.transition = 'transform .2s var(--ease-out)';
+      next.style.transform = 'translateX(0)';
+      img.style.transform = `translateX(${exitTo})`;
       let cleaned = false;
       const cleanup = ()=>{
         /* also guards the safety-net timer: if this call was
@@ -1951,7 +1959,7 @@ function crossfadeHeroTo(photo, altText){
         next.id = 'ldHeroImg';
       };
       next.addEventListener('transitionend', cleanup, {once:true});
-      setTimeout(cleanup, 280);
+      setTimeout(cleanup, 300);
     }));
   }).catch(()=>{
     if(heroXfade !== state) return;
@@ -1974,7 +1982,7 @@ function swapLookPair(id, view, skipPhotoAnim){
      Only run this fade for entry points that never animated the photo
      themselves (toggle buttons, edge-tap zone). */
   if(!skipPhotoAnim){
-    crossfadeHeroTo(variant.fitImg || variant.img);
+    crossfadeHeroTo(variant.fitImg || variant.img, showW ? 1 : -1);
   }
 
   const itemsEl = document.querySelector('.ld-items');
@@ -2132,8 +2140,9 @@ function selectLookPhoto(i){
   if(!look) return;
   const photos = look.photos && look.photos.length ? look.photos : [look.fitImg||look.img];
   if(i===lookGalleryIdx || !photos[i]) return;
+  const dir = i > lookGalleryIdx ? 1 : -1;
   lookGalleryIdx = i;
-  crossfadeHeroTo(photos[i]);
+  crossfadeHeroTo(photos[i], dir);
   document.querySelectorAll('.ld-dot').forEach((d,idx)=>d.classList.toggle('active', idx===i));
 }
 
