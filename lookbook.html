@@ -1865,15 +1865,21 @@ function genderInfo(code){
    (code/color/price) actually depend on the variant, so this updates just
    those two instead of re-rendering the whole page — the breadcrumb, nav
    arrows and related-looks strip never change, and don't need to flicker. */
-function swapLookPair(id, view){
+function swapLookPair(id, view, skipPhotoAnim){
   const look = LOOKS.find(l=>l.id===id);
   if(!look || !look.pair || lookPairView===view) return;
   lookPairView = view;
   const showW = view === 'W';
   const variant = showW ? look.pair : look;
 
+  /* skipPhotoAnim: the drag-swipe handler already slid the correct photo
+     into place itself (finger-tracked, frame by frame) before calling
+     here — redoing the crossfade on top of that snapped the old photo
+     back for a frame and then re-faded it, which read as a flicker.
+     Only run this fade for entry points that never animated the photo
+     themselves (toggle buttons, edge-tap zone). */
   const img = document.getElementById('ldHeroImg');
-  if(img){
+  if(img && !skipPhotoAnim){
     const photo = variant.fitImg || variant.img;
     if(REDUCE_MOTION){
       img.src = photo;
@@ -2238,12 +2244,23 @@ function bindLookInteractions(id){
       peek.style.transform = committed ? 'translateX(0px)' : `translateX(${dragDir==='next' ? w : -w}px)`;
     }
     const isPaired = look && look.pair;
+    const nextView = lookPairView==='W' ? 'M' : 'W';
     setTimeout(()=>{
       peek?.remove();
-      if(img){ img.style.transition = ''; img.style.transform = ''; }
+      if(img){
+        img.style.transition = '';
+        img.style.transform = '';
+        /* the peek image already showed this exact (cached) photo in the
+           same spot a moment ago — swap the src in the same tick as the
+           reset so no frame shows the old photo snapping back first. */
+        if(committed && isPaired){
+          const nextVariant = nextView==='W' ? look.pair : look;
+          img.src = nextVariant.fitImg || nextVariant.img;
+        }
+      }
       if(committed){
         if(isPaired){
-          swapLookPair(id, lookPairView==='W' ? 'M' : 'W');
+          swapLookPair(id, nextView, true);
         } else {
           const targetId = dragDir==='next' ? detail.dataset.next : detail.dataset.prev;
           window.__skipHeroAnim = true;
