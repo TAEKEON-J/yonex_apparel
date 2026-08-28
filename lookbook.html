@@ -63,7 +63,7 @@ nav.catnav button.active::after{transform:scaleX(1);}
 .search-panel.open{opacity:1;visibility:visible;transform:translateY(0);}
 .search-input-row{display:flex;align-items:center;border-bottom:1px solid transparent;transition:border-color .15s;}
 .search-panel:has(#searchResults:not(:empty)) .search-input-row{border-bottom-color:var(--line-soft);}
-.search-input-row input{flex:1;min-width:0;border:none;background:none;padding:13px 14px;font-family:var(--sans);font-size:13px;color:var(--ink);outline:none;}
+.search-input-row input{flex:1;min-width:0;border:none;background:none;padding:13px 14px;font-family:var(--sans);font-size:13px;color:var(--ink);}
 .search-input-row input::placeholder{color:var(--muted);}
 .search-close{border:none;background:none;color:var(--muted);font-size:20px;line-height:1;cursor:pointer;padding:8px 12px;flex:none;}
 .search-close:hover{color:var(--ink);}
@@ -270,7 +270,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 /* the button itself is a larger invisible hit area (touch-target sizing);
    the visible dot mark is a fixed-size ::after so enlarging the tap target
    doesn't change how the indicator actually looks. */
-.ld-dot{width:20px;height:20px;padding:0;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.ld-dot{width:24px;height:24px;padding:0;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .ld-dot::after{content:'';width:7px;height:7px;border-radius:50%;border:1.5px solid rgba(255,255,255,.7);background:rgba(255,255,255,.25);transition:background .2s,transform .15s ease;}
 .ld-dot.active::after{background:#fff;}
 .ld-dot:active::after{transform:scale(.85);}
@@ -303,7 +303,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-item .ii-color{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:10px;text-align:right;}
 .ld-item .ii-code{font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:4px;text-align:right;}
 .ii-gtoggle{position:relative;display:inline-flex;align-self:flex-start;margin-top:12px;gap:2px;padding:2px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);}
-.ii-gtoggle button{position:relative;z-index:1;font-family:var(--display);font-size:9px;font-weight:600;letter-spacing:.03em;min-width:22px;height:22px;padding:0 7px;border-radius:999px;background:none;border:none;cursor:pointer;color:var(--muted);transition:color .2s var(--ease-out);}
+.ii-gtoggle button{position:relative;z-index:1;font-family:var(--display);font-size:9px;font-weight:600;letter-spacing:.03em;min-width:24px;height:24px;padding:0 7px;border-radius:999px;background:none;border:none;cursor:pointer;color:var(--muted);transition:color .2s var(--ease-out);}
 .ii-gtoggle button.active{color:var(--paper);}
 .ii-mix-link{display:inline-flex;align-items:center;align-self:flex-start;gap:5px;padding:6px 12px 6px 10px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--ink-soft);font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.05em;cursor:pointer;transition:border-color .2s,color .2s,background .2s,transform .15s ease;}
 .ii-mix-link svg{flex:none;}
@@ -321,7 +321,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .ld-item .ii-name{font-size:15px;margin-top:0;}
   .ld-item .ii-color{font-size:10px;margin-top:4px;}
   .ld-item .ii-code{font-size:10.5px;margin-top:2px;}
-  .ii-mix-link{padding:5px;}
+  .ii-mix-link{padding:6px;}
   .ii-mix-link span{display:none;}
 }
 
@@ -1333,6 +1333,14 @@ const LOOKS = [
    every time a look-detail page (and its toggles) got rebuilt on nav. */
 function positionToggleThumb(container){
   if(!container) return;
+  /* these pill groups (FRONT/BACK, MEN/WOMEN, gender filters) carry their
+     selected state only through the sliding thumb's color contrast — a
+     screen reader has no way to tell which button is current. Syncing
+     aria-pressed here, once, covers every pill-toggle group in the site
+     through this one shared positioning call. */
+  container.querySelectorAll(':scope > button').forEach(b=>{
+    b.setAttribute('aria-pressed', b.classList.contains('active') ? 'true' : 'false');
+  });
   const active = container.querySelector(':scope > button.active');
   if(!active) return;
   let thumb = container.querySelector(':scope > .toggle-thumb');
@@ -1993,7 +2001,11 @@ function swapLookPair(id, view, skipPhotoAnim){
   }
 
   document.querySelectorAll('.ld-look-gtoggle button').forEach(b=>b.classList.toggle('active', b.dataset.lg===view));
-  document.querySelectorAll('.ld-pair-dots .ld-dot').forEach((d,i)=>d.classList.toggle('active', (i===0)===(view==='M')));
+  document.querySelectorAll('.ld-pair-dots .ld-dot').forEach((d,i)=>{
+    const isActive = (i===0)===(view==='M');
+    d.classList.toggle('active', isActive);
+    d.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
   positionToggleThumb(document.querySelector('.ld-look-gtoggle'));
 
   document.querySelectorAll('.ld-related-thumb[data-related-id]').forEach(thumb=>{
@@ -2059,12 +2071,12 @@ function renderLook(id){
   const photos = !look.pair && look.photos && look.photos.length ? look.photos : [variant.fitImg || variant.img];
   const activePhoto = photos[Math.min(lookGalleryIdx, photos.length - 1)];
   const dotsHtml = photos.length > 1 ? `<div class="ld-gallery-dots">${photos.map((_,i)=>
-    `<button type="button" class="ld-dot${i===lookGalleryIdx?' active':''}" onclick="event.stopPropagation();selectLookPhoto(${i})" aria-label="Photo ${i+1}"></button>`
+    `<button type="button" class="ld-dot${i===lookGalleryIdx?' active':''}" onclick="event.stopPropagation();selectLookPhoto(${i})" aria-label="Photo ${i+1}" aria-pressed="${i===lookGalleryIdx}"></button>`
   ).join('')}</div>` : '';
 
   const pairToggleHtml = look.pair ? `<div class="ld-look-gtoggle">
-      <button type="button" class="${showW?'':'active'}" data-lg="M">MEN</button>
-      <button type="button" class="${showW?'active':''}" data-lg="W">WOMEN</button>
+      <button type="button" class="${showW?'':'active'}" data-lg="M" aria-pressed="${!showW}">MEN</button>
+      <button type="button" class="${showW?'active':''}" data-lg="W" aria-pressed="${showW}">WOMEN</button>
     </div>` : '';
 
   /* two-dot indicator under the hero photo for paired looks — signals that
@@ -2072,8 +2084,8 @@ function renderLook(id){
      nothing about a plain photo otherwise hints that a swipe does anything.
      Mirrors the multi-photo gallery dots (mutually exclusive with those). */
   const pairDotsHtml = look.pair ? `<div class="ld-gallery-dots ld-pair-dots">
-    <button type="button" class="ld-dot${showW?'':' active'}" onclick="event.stopPropagation();swapLookPair('${look.id}','M');" aria-label="Men"></button>
-    <button type="button" class="ld-dot${showW?' active':''}" onclick="event.stopPropagation();swapLookPair('${look.id}','W');" aria-label="Women"></button>
+    <button type="button" class="ld-dot${showW?'':' active'}" onclick="event.stopPropagation();swapLookPair('${look.id}','M');" aria-label="Men" aria-pressed="${!showW}"></button>
+    <button type="button" class="ld-dot${showW?' active':''}" onclick="event.stopPropagation();swapLookPair('${look.id}','W');" aria-label="Women" aria-pressed="${showW}"></button>
   </div>` : '';
 
   const heroHtml = `
@@ -2143,7 +2155,10 @@ function selectLookPhoto(i){
   const dir = i > lookGalleryIdx ? 1 : -1;
   lookGalleryIdx = i;
   crossfadeHeroTo(photos[i], dir);
-  document.querySelectorAll('.ld-dot').forEach((d,idx)=>d.classList.toggle('active', idx===i));
+  document.querySelectorAll('.ld-dot').forEach((d,idx)=>{
+    d.classList.toggle('active', idx===i);
+    d.setAttribute('aria-pressed', idx===i ? 'true' : 'false');
+  });
 }
 
 /* item-panel click handlers only — these need re-binding every time
