@@ -228,9 +228,14 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-back:hover{opacity:.6;}
 .ld-crumb b{color:var(--ink);font-weight:700;}
 .ld-crumb .sep{opacity:.4;}
-.ld-look-gtoggle{position:relative;margin-left:auto;display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);}
+.ld-crumb-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.ld-look-gtoggle{position:relative;display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);}
 .ld-look-gtoggle button{position:relative;z-index:1;font-family:var(--display);font-size:9.5px;font-weight:600;letter-spacing:.06em;padding:5px 13px;background:none;border:none;border-radius:999px;cursor:pointer;color:var(--muted);transition:color .25s var(--ease-out);}
 .ld-look-gtoggle button.active{color:var(--paper);}
+.ld-share{display:flex;align-items:center;gap:5px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--ink-soft);font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.06em;cursor:pointer;transition:border-color .2s,color .2s,transform .15s ease;}
+.ld-share:hover{border-color:var(--ink);color:var(--ink);}
+.ld-share:active{transform:scale(.96);}
+@media(max-width:480px){.ld-share span{display:none;}.ld-share{padding:6px;}}
 /* min-height used to be a flat 78vh with no cap — combined with
    .look-detail's old 1440px max-width, the wide visual column stretched
    the portrait hero photo (object-fit:cover, no explicit aspect-ratio) to
@@ -345,6 +350,9 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .lightbox img{max-width:92vw;max-height:92vh;object-fit:contain;box-shadow:0 30px 70px rgba(0,0,0,.4);touch-action:none;cursor:zoom-in;}
 .lightbox-close{position:absolute;top:20px;right:20px;width:40px;height:40px;background:none;border:none;cursor:pointer;font-size:26px;line-height:1;color:#F5F4F0;opacity:.8;transition:opacity .2s,transform .25s var(--ease);}
 .lightbox-close:hover{opacity:1;transform:rotate(90deg);}
+.share-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(12px);background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;padding:11px 20px;border-radius:999px;box-shadow:0 14px 32px rgba(0,0,0,.22);opacity:0;pointer-events:none;transition:opacity .22s var(--ease-out),transform .22s var(--ease-out);z-index:500;}
+.share-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@media(prefers-reduced-motion:reduce){.share-toast{transition:opacity .01ms;}}
 .pm-body{padding:74px 34px 50px;}
 .pm-figure{background:var(--paper);border:1px solid var(--line-soft);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;margin-bottom:28px;touch-action:pan-y;}
 .pm-figure img{max-width:74%;max-height:74%;object-fit:contain;filter:drop-shadow(0 16px 24px rgba(20,20,15,.12));transition:transform .3s var(--ease),opacity .25s var(--ease);}
@@ -1961,7 +1969,13 @@ function renderLook(id){
       <div class="ld-crumb">
         <a class="ld-back" href="#category/${look.cat}" onclick="event.preventDefault();go('category','${look.cat}')">&larr; ${c.label}</a>
         <span class="sep">/</span><b>LOOK ${String(look.num).padStart(2,'0')}</b>
-        ${pairToggleHtml}
+        <div class="ld-crumb-right">
+          ${pairToggleHtml}
+          <button type="button" class="ld-share" onclick="shareLook('${id}', this)" aria-label="Share this look">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="12.5" cy="3.5" r="2" stroke="currentColor" stroke-width="1.4"/><circle cx="3.5" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/><circle cx="12.5" cy="12.5" r="2" stroke="currentColor" stroke-width="1.4"/><line x1="5.3" y1="7" x2="10.8" y2="4.3" stroke="currentColor" stroke-width="1.4"/><line x1="5.3" y1="9" x2="10.8" y2="11.7" stroke="currentColor" stroke-width="1.4"/></svg>
+            <span>공유</span>
+          </button>
+        </div>
       </div>
       <div class="ld-split">
         <div class="ld-visual" id="ldVisual">
@@ -2027,6 +2041,46 @@ function bindLookItemClicks(id){
       });
     });
   });
+}
+/* Share the current look's URL: native share sheet where available
+   (mobile), clipboard copy + toast everywhere else. */
+function shareLook(id, btn){
+  const look = LOOKS.find(l=>l.id===id);
+  const url = `${location.origin}${location.pathname}#/look/${id}`;
+  const title = look ? `YONEX ${CATEGORIES[look.cat].label} — LOOK ${String(look.num).padStart(2,'0')}` : document.title;
+  if(navigator.share){
+    navigator.share({title, url}).catch(()=>{});
+    return;
+  }
+  const done = () => showShareToast('링크가 복사되었습니다');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(done).catch(()=>{ legacyCopy(url); done(); });
+  } else {
+    legacyCopy(url); done();
+  }
+}
+function legacyCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none;';
+  document.body.appendChild(ta);
+  ta.select();
+  try{ document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta);
+}
+let shareToastTimer = null;
+function showShareToast(msg){
+  let toast = document.getElementById('shareToast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'shareToast';
+    toast.className = 'share-toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  requestAnimationFrame(()=>toast.classList.add('show'));
+  clearTimeout(shareToastTimer);
+  shareToastTimer = setTimeout(()=>toast.classList.remove('show'), 1800);
 }
 function bindLookInteractions(id){
   const visual = document.getElementById('ldVisual');
