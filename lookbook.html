@@ -3056,7 +3056,7 @@ if('serviceWorker' in navigator){
       if(deferredPrompt) return; /* shouldn't fire on iOS, but don't stack banners if it somehow did */
       showBanner(`<img class="pwa-icon" src="images/icons/icon-192.png?v=3" alt="">
         <div class="pwa-text"><b>앱처럼 설치하기</b>하단 공유 <span class="pwa-share-glyph"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></span> 버튼 → "홈 화면에 추가"를 눌러주세요.</div>`);
-    }, 2000);
+    }, 1500);
   }
 })();
 </script>
