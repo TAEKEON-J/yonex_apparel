@@ -231,8 +231,8 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 @media(max-width:640px){.full-lineup{padding:0 18px 90px;} .fl-head{padding:34px 0 22px;} .fl-grid{grid-template-columns:repeat(3,1fr);gap:18px 10px;} .fl-card .fl-code{font-size:9.5px;} .fl-card .fl-sub{font-size:8.5px;}}
 
 /* ===== LOOK DETAIL ===== */
-.look-detail{max-width:900px;margin:0 auto;padding:28px 28px 0;}
-.ld-crumb{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;padding:14px 0 26px;}
+.look-detail{max-width:900px;margin:0 auto;padding:20px 28px 48px;}
+.ld-crumb{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;padding:14px 0 8px;}
 .ld-back{color:var(--ink);font-weight:700;text-decoration:none;transition:opacity .2s;}
 .ld-back:hover{opacity:.6;}
 .ld-crumb b{color:var(--ink);font-weight:700;}
@@ -320,6 +320,12 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 }
 
 .ld-nav{max-width:1320px;margin:0 auto;padding:28px 28px 90px;}
+/* the same strip, repositioned above the hero as a "pick a different
+   outfit" picker instead of a "here's more" afterthought — needs its own
+   (much shorter) top/bottom spacing instead of the standalone .ld-nav's,
+   plus a divider so it doesn't visually run into the hero photo below. */
+.ld-nav-top{padding:18px 28px 22px;border-bottom:1px solid var(--line-soft);}
+.ld-nav-top .ec-head{padding-bottom:6px;}
 /* mouse users have no swipe gesture for this horizontal strip — cursor:grab
    plus bindDragScroll() (JS) lets a click-and-drag scroll it the way a
    touch swipe already does on mobile. scroll-snap is suspended mid-drag
@@ -337,8 +343,11 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 }
 @media(max-width:640px){
   .ld-nav{padding:22px 18px 60px;}
+  .ld-nav-top{padding:14px 18px 16px;}
   .ld-related-strip{gap:8px;}
-  .ld-related-thumb{flex:0 0 calc((100% - 32px)/4.5);}
+  .ld-related-thumb{flex:0 0 calc((100% - 40px)/5.2);}
+  .look-detail{padding:16px 18px 16px;}
+  .fl-head{padding:20px 0 22px;}
 }
 
 /* ===== PRODUCT MODAL ===== */
@@ -1971,7 +1980,24 @@ function renderLook(id){
     return `<a class="ld-related-thumb" data-related-id="${l.id}" href="#look/${l.id}" onclick="navClick(event,'look','${l.id}')">${lookImgTag(v.items, 'model', v.fitImg, `alt="${l.caption}" loading="lazy"`)}</a>`;
   }).join('');
 
+  /* arrows/swipe/edge-taps mean one of two totally different things
+     depending on the look: for a paired look they toggle MEN/WOMEN (the
+     related-looks carousel above now owns "jump to a different outfit"),
+     for an unpaired look there's no variant to toggle so they fall back
+     to prev/next look, same as before. lookPairView is read live inside
+     the onclick (not baked at render time) so the arrows keep toggling
+     correctly after the first tap. */
+  const heroArrowsHtml = look.pair
+    ? `<button type="button" class="ec-arrow ec-arrow-prev" onclick="event.stopPropagation();swapLookPair('${id}', lookPairView==='W'?'M':'W')" aria-label="Toggle men/women">&#8249;</button>
+       <button type="button" class="ec-arrow ec-arrow-next" onclick="event.stopPropagation();swapLookPair('${id}', lookPairView==='W'?'M':'W')" aria-label="Toggle men/women">&#8250;</button>`
+    : `<button type="button" class="ec-arrow ec-arrow-prev" onclick="event.stopPropagation();go('look','${prev.id}')" aria-label="Previous look">&#8249;</button>
+       <button type="button" class="ec-arrow ec-arrow-next" onclick="event.stopPropagation();go('look','${next.id}')" aria-label="Next look">&#8250;</button>`;
+
   return `<div class="view">
+    <nav class="ld-nav ld-nav-top">
+      <div class="ec-head"><h4>MORE IN ${c.label}</h4><span class="ec-count">${String(catLooks.length-1).padStart(2,'0')}</span></div>
+      <div class="ld-related-strip">${otherLooksHtml}</div>
+    </nav>
     <section class="look-detail" data-prev="${prev.id}" data-next="${next.id}" data-id="${id}">
       <div class="ld-crumb">
         <a class="ld-back" href="#category/${look.cat}" onclick="event.preventDefault();go('category','${look.cat}')">&larr; ${c.label}</a>
@@ -1981,16 +2007,11 @@ function renderLook(id){
       <div class="ld-split">
         <div class="ld-visual" id="ldVisual">
           ${heroHtml}
-          <button type="button" class="ec-arrow ec-arrow-prev" onclick="event.stopPropagation();go('look','${prev.id}')" aria-label="Previous look">&#8249;</button>
-          <button type="button" class="ec-arrow ec-arrow-next" onclick="event.stopPropagation();go('look','${next.id}')" aria-label="Next look">&#8250;</button>
+          ${heroArrowsHtml}
         </div>
         <div class="ld-items">${itemsHtml}</div>
       </div>
     </section>
-    <nav class="ld-nav">
-      <div class="ec-head"><h4>MORE IN ${c.label}</h4><span class="ec-count">${String(catLooks.length-1).padStart(2,'0')}</span></div>
-      <div class="ld-related-strip">${otherLooksHtml}</div>
-    </nav>
     ${renderFullLineup(look.cat)}
   </div>`;
 }
@@ -2102,20 +2123,28 @@ function bindLookInteractions(id){
   bindDragScroll(document.querySelector('.ld-related-strip'));
 
   const detail = document.querySelector('.look-detail');
+  const look = LOOKS.find(l=>l.id===id);
   let wasSwipe = false;
 
-  /* Live finger-tracking swipe: the hero photo (and a peek of the next/
-     prev look underneath) follow the drag in real time instead of just
-     reacting once on release — a released-then-canned-animation swipe
-     has a dead zone the whole time your finger is moving, which is what
-     actually read as choppy, not the release animation itself. Always
-     navigates to the next/prev look (see bindLookInteractions comment
-     history) regardless of MEN/WOMEN pairing — gender switching stays on
-     the explicit toggle. */
+  /* Live finger-tracking swipe: the hero photo (and a peek underneath)
+     follow the drag in real time instead of just reacting once on
+     release — a released-then-canned-animation swipe has a dead zone the
+     whole time your finger is moving, which is what actually read as
+     choppy, not the release animation itself.
+     A paired look has nothing to "go to next/prev" for on this screen
+     any more — the related-looks carousel above the hero owns jumping to
+     a different outfit — so drag/arrows/edge-taps toggle MEN/WOMEN
+     instead; the peek is just whichever gender isn't showing. Unpaired
+     looks keep the original prev/next-look behavior since there's no
+     variant to toggle. */
   const DRAG_THRESHOLD = 70;
   let swipeX = null, swipeY = null, dragLocked = false, dragging = false, dragDX = 0, dragDir = null, dragPeek = null;
 
   function peekPhotoFor(dir){
+    if(look && look.pair){
+      const other = lookPairView==='W' ? look : look.pair;
+      return other.fitImg || other.img;
+    }
     const targetId = dir==='next' ? detail.dataset.next : detail.dataset.prev;
     const l = LOOKS.find(x=>x.id===targetId);
     return l ? (l.fitImg || l.img) : null;
@@ -2192,13 +2221,18 @@ function bindLookInteractions(id){
       peek.style.transition = 'transform .22s var(--ease-out)';
       peek.style.transform = committed ? 'translateX(0px)' : `translateX(${dragDir==='next' ? w : -w}px)`;
     }
-    const targetId = dragDir==='next' ? detail.dataset.next : detail.dataset.prev;
+    const isPaired = look && look.pair;
     setTimeout(()=>{
       peek?.remove();
       if(img){ img.style.transition = ''; img.style.transform = ''; }
       if(committed){
-        window.__skipHeroAnim = true;
-        go('look', targetId);
+        if(isPaired){
+          swapLookPair(id, lookPairView==='W' ? 'M' : 'W');
+        } else {
+          const targetId = dragDir==='next' ? detail.dataset.next : detail.dataset.prev;
+          window.__skipHeroAnim = true;
+          go('look', targetId);
+        }
       }
     }, 220);
   }, {passive:true});
@@ -2244,13 +2278,19 @@ function bindLookInteractions(id){
     if(wasSwipe){ wasSwipe = false; return; }
     if(wasPinch){ wasPinch = false; return; }
     if(e.target.closest('.ec-arrow, .ld-gallery-dots')) return;
-    /* the outer ~70px strip on either side of the photo is a tap-to-nav
-       zone — same idea as the prev/next arrows sitting there, just without
-       needing to land exactly on the small circle — instead of merely
-       blocking the zoom lightbox, a tap there jumps to that look. */
+    /* the outer ~70px strip on either side of the photo is a tap zone —
+       same idea as the arrows sitting there, just without needing to land
+       exactly on the small circle — instead of merely blocking the zoom
+       lightbox, a tap there does whatever the arrows do (toggle for a
+       paired look, prev/next look otherwise). */
     const vr = visual.getBoundingClientRect();
-    if(e.clientX - vr.left < 70){ go('look', detail.dataset.prev); return; }
-    if(vr.right - e.clientX < 70){ go('look', detail.dataset.next); return; }
+    const inLeftZone = e.clientX - vr.left < 70;
+    const inRightZone = vr.right - e.clientX < 70;
+    if(inLeftZone || inRightZone){
+      if(look && look.pair) swapLookPair(id, lookPairView==='W' ? 'M' : 'W');
+      else go('look', inLeftZone ? detail.dataset.prev : detail.dataset.next);
+      return;
+    }
     const img = document.getElementById('ldHeroImg');
     if(img) openLightbox(img.src, img.alt);
   });
