@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23121212'/><text x='50' y='68' font-family='Georgia,serif' font-weight='700' font-size='58' fill='%23F5F4F0' text-anchor='middle'>Y</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Archivo:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chivo:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Archivo:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#FFFFFF; --paper-2:#F6F5F1; --paper-3:#EFEDE6;
@@ -16,7 +16,7 @@
   --line:rgba(19,19,19,.12); --line-soft:rgba(19,19,19,.07);
   --accent:#0C8F3D;
   --game:#D2240C; --casual:#194193; --easy:#55914C;
-  --sans:'Inter','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --sans:'Chivo','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
   --display:'Archivo','Noto Sans KR',var(--sans);
   --ease:cubic-bezier(.16,.8,.24,1);
@@ -100,8 +100,13 @@ main#app.app-out{opacity:0;transform:translateY(-8px);filter:blur(3px);}
 .cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%;}
 .cover .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,0) 0%,rgba(8,8,8,.12) 45%,rgba(6,6,6,.88) 100%);}
 .cover-in{position:relative;z-index:2;max-width:1320px;margin:0 auto;width:100%;padding:0 28px 64px;color:#fff;}
-.cover-eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:rgba(255,255,255,.78);margin-bottom:18px;}
 .cover h1{font-size:clamp(38px,7.4vw,92px);line-height:.98;color:#fff;letter-spacing:-.03em;text-transform:uppercase;max-width:980px;}
+/* the season line is part of the headline block itself now, not a
+   separate small-label-floating-above-a-big-headline "chip" — that
+   shape reads as the default AI-generated hero template. Tightly
+   attached as the h1's own first line instead, like a magazine
+   masthead's issue line sitting directly on the title. */
+.cover h1 .cover-season{display:block;font-family:var(--mono);font-size:clamp(13px,1.7vw,16px);font-weight:500;letter-spacing:.14em;text-transform:none;color:rgba(255,255,255,.68);margin-bottom:12px;}
 .cover-cats{display:flex;gap:0;margin-top:44px;border-top:1px solid rgba(255,255,255,.28);flex-wrap:wrap;}
 .cover-cats button{flex:1 1 200px;text-align:left;background:none;border:none;border-right:1px solid rgba(255,255,255,.28);cursor:pointer;padding:20px 22px 22px;color:#fff;transition:background .25s,transform .15s ease;font-family:var(--sans);}
 .cover-cats button:last-child{border-right:none;}
@@ -1586,8 +1591,7 @@ function renderCover(){
       <img src="images/hero/MAIN-HERO.jpg" alt="YONEX 2026 Fall/Winter model look">
       <div class="scrim"></div>
       <div class="cover-in">
-        <div class="cover-eyebrow">2026 FALL / WINTER</div>
-        <h1>Performance<br>in Motion</h1>
+        <h1><span class="cover-season">2026 Fall / Winter</span>Performance<br>in Motion</h1>
         <div class="cover-cats">
           ${Object.entries(CATEGORIES).map(([k,c],i)=>`
             <button onclick="go('category','${k}')">
