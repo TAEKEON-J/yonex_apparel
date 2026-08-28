@@ -305,6 +305,10 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ii-gtoggle{position:relative;display:inline-flex;align-self:flex-start;margin-top:12px;gap:2px;padding:2px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);}
 .ii-gtoggle button{position:relative;z-index:1;font-family:var(--display);font-size:9px;font-weight:600;letter-spacing:.03em;min-width:22px;height:22px;padding:0 7px;border-radius:999px;background:none;border:none;cursor:pointer;color:var(--muted);transition:color .2s var(--ease-out);}
 .ii-gtoggle button.active{color:var(--paper);}
+.ii-mix-link{display:inline-flex;align-items:center;align-self:flex-start;gap:5px;padding:6px 12px 6px 10px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--ink-soft);font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.05em;cursor:pointer;transition:border-color .2s,color .2s,background .2s,transform .15s ease;}
+.ii-mix-link svg{flex:none;}
+.ii-mix-link:hover{border-color:var(--accent-cat);color:var(--accent-cat);}
+.ii-mix-link:active{transform:scale(.96);}
 
 @media(max-width:980px){
   .ld-split{grid-template-columns:1fr;min-height:0;}
@@ -317,6 +321,8 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .ld-item .ii-name{font-size:15px;margin-top:0;}
   .ld-item .ii-color{font-size:10px;margin-top:4px;}
   .ld-item .ii-code{font-size:10.5px;margin-top:2px;}
+  .ii-mix-link{padding:5px;}
+  .ii-mix-link span{display:none;}
 }
 
 .ld-nav{max-width:1320px;margin:0 auto;padding:28px 28px 90px;}
@@ -1910,8 +1916,18 @@ function buildItemsHtml(look, variant){
       : '';
     const colorLine = p && p.color ? `<div class="ii-color">${p.color}</div>` : '';
     const figureHtml = isBottom ? '' : `<div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>`;
+    /* only offer the jump when this item's code actually has a mannequin
+       cutout in the STYLE MIX pool — otherwise the button would land on
+       Style Mix without actually showing the item, which reads as broken. */
+    const inMixPool = (isBottom ? MIX_BOTTOM_POOL : MIX_TOP_POOL).includes(it.code);
+    const mixBtnHtml = inMixPool
+      ? `<button type="button" class="ii-mix-link" onclick="event.stopPropagation();openInStyleMix(this.closest('.ld-item'))" aria-label="STYLE MIX에서 보기">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 4.5h2.6L11 11.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 11.5h2.6L11 4.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.2 2.7 14 4.5l-1.8 1.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.2 9.7l1.8 1.8-1.8 1.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>STYLE MIX</span>
+        </button>`
+      : '';
     return `<div class="ld-item" data-slot="${it.slot.toLowerCase()}" data-active-code="${it.code}" data-code-m="${gi?gi.m:''}" data-code-w="${gi?gi.w:''}">
-      <div class="ii-top"><span class="ii-slot">${it.slot}</span></div>
+      <div class="ii-top"><span class="ii-slot">${it.slot}</span>${mixBtnHtml}</div>
       ${figureHtml}
       <div class="ii-name">${p?p.code:it.code}</div>
       ${colorLine}
@@ -2598,6 +2614,33 @@ function renderMix(){
 }
 function mixTopCode(){ return MIX_TOPS[mixTopIdx]; }
 function mixBottomCode(){ return MIX_BOTTOMS[mixBottomIdx]; }
+
+/* Jump from a look's item card straight to STYLE MIX with that item
+   already selected — reads the item's *current* code off the DOM rather
+   than baking it in at render time, since the M/W toggle on a top can
+   change data-active-code after the page rendered. The pool may not have
+   loaded yet (first visit this session), so the target code is stashed
+   and applied by paintMix() itself once MIX_TOPS/MIX_BOTTOMS are ready. */
+let pendingMixTop = null, pendingMixBottom = null;
+function openInStyleMix(itemEl){
+  if(!itemEl) return;
+  const code = itemEl.dataset.activeCode;
+  if(itemEl.dataset.slot === 'bottom') pendingMixBottom = code;
+  else pendingMixTop = code;
+  go('mix');
+}
+function applyPendingMixSelection(){
+  if(pendingMixTop){
+    const i = MIX_TOPS.indexOf(pendingMixTop);
+    if(i >= 0) mixTopIdx = i;
+    pendingMixTop = null;
+  }
+  if(pendingMixBottom){
+    const i = MIX_BOTTOMS.indexOf(pendingMixBottom);
+    if(i >= 0) mixBottomIdx = i;
+    pendingMixBottom = null;
+  }
+}
 function mixMatchLook(){
   return LOOKS.find(l=>{
     const codes = l.items.map(i=>i.code);
@@ -2686,6 +2729,7 @@ function paintMix(which, dir){
   const cta = document.getElementById('mixCta');
   const preview = document.getElementById('mixPreview');
   if(!stage) return;
+  applyPendingMixSelection();
   if(!MIX_TOPS.length || !MIX_BOTTOMS.length){
     stage.innerHTML = '<div class="mix-loading">업로드된 코디 이미지가 아직 없습니다</div>';
     if(cta) cta.innerHTML = '';
