@@ -2761,34 +2761,30 @@ function paintMix(which, dir){
   }
   const top = PRODUCTS[mixTopCode()], bottom = PRODUCTS[mixBottomCode()];
   const slideClass = REDUCE_MOTION || !dir ? '' : dir > 0 ? ' mix-slide-next' : ' mix-slide-prev';
-  const topClass = which === 'top' ? slideClass : '';
-  const bottomClass = which === 'bottom' ? slideClass : '';
   const arrowIcon = dir => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${dir<0?'M15 6l-6 6 6 6':'M9 6l6 6-6 6'}"/></svg>`;
-  stage.innerHTML = `
-    <div class="mix-slot">
-      <button class="mix-arrow" onclick="shiftMix('top',-1)" aria-label="Previous top">${arrowIcon(-1)}</button>
-      <div class="mix-figure${topClass}">
-        <div class="ms-imgwrap"><img src="${top.img}" alt="${top.name}"></div>
-        <div class="ms-text">
-          <div class="ms-label">TOP</div>
-          <div class="ms-name">${top.name}</div>
-          <div class="ms-code">${top.code} — ${top.color}</div>
-        </div>
+  const mixSlotHtml = (kind, product, cls) => `
+    <button class="mix-arrow" onclick="shiftMix('${kind}',-1)" aria-label="Previous ${kind}">${arrowIcon(-1)}</button>
+    <div class="mix-figure${cls}">
+      <div class="ms-imgwrap"><img src="${product.img}" alt="${product.name}"></div>
+      <div class="ms-text">
+        <div class="ms-label">${kind.toUpperCase()}</div>
+        <div class="ms-name">${product.name}</div>
+        <div class="ms-code">${product.code} — ${product.color}</div>
       </div>
-      <button class="mix-arrow" onclick="shiftMix('top',1)" aria-label="Next top">${arrowIcon(1)}</button>
     </div>
-    <div class="mix-slot">
-      <button class="mix-arrow" onclick="shiftMix('bottom',-1)" aria-label="Previous bottom">${arrowIcon(-1)}</button>
-      <div class="mix-figure${bottomClass}">
-        <div class="ms-imgwrap"><img src="${bottom.img}" alt="${bottom.name}"></div>
-        <div class="ms-text">
-          <div class="ms-label">BOTTOM</div>
-          <div class="ms-name">${bottom.name}</div>
-          <div class="ms-code">${bottom.code} — ${bottom.color}</div>
-        </div>
-      </div>
-      <button class="mix-arrow" onclick="shiftMix('bottom',1)" aria-label="Next bottom">${arrowIcon(1)}</button>
-    </div>`;
+    <button class="mix-arrow" onclick="shiftMix('${kind}',1)" aria-label="Next ${kind}">${arrowIcon(1)}</button>`;
+  /* only rewrite the slot that actually changed — replacing both slots'
+     DOM (arrows included) on every arrow tap, even the untouched one,
+     was pure overhead that read as sluggish on real devices. */
+  let topSlot = stage.querySelector('.mix-slot[data-kind="top"]');
+  let bottomSlot = stage.querySelector('.mix-slot[data-kind="bottom"]');
+  if(!topSlot || !bottomSlot){
+    stage.innerHTML = '<div class="mix-slot" data-kind="top"></div><div class="mix-slot" data-kind="bottom"></div>';
+    topSlot = stage.querySelector('.mix-slot[data-kind="top"]');
+    bottomSlot = stage.querySelector('.mix-slot[data-kind="bottom"]');
+  }
+  if(!which || which==='top') topSlot.innerHTML = mixSlotHtml('top', top, which==='top' ? slideClass : '');
+  if(!which || which==='bottom') bottomSlot.innerHTML = mixSlotHtml('bottom', bottom, which==='bottom' ? slideClass : '');
   const match = mixMatchLook();
   if(preview){
     preview.classList.remove('mp-broken');
