@@ -1865,6 +1865,59 @@ function genderInfo(code){
    (code/color/price) actually depend on the variant, so this updates just
    those two instead of re-rendering the whole page — the breadcrumb, nav
    arrows and related-looks strip never change, and don't need to flicker. */
+/* Crossfades #ldHeroImg to a new photo by layering a second <img> on
+   top and fading opacity on both simultaneously, then promoting the
+   new one to the #ldHeroImg id and dropping the old one. The previous
+   approach faded the SAME element to opacity:0 and swapped its src
+   mid-fade (at 180ms into a 320ms transition) — since it's one
+   element, that can't show old-fading-out and new-fading-in at once;
+   it reads as a dip-to-nothing-then-refade, which is what looked
+   flickery/unnatural. This is a real two-layer dissolve instead. */
+function crossfadeHeroTo(photo, altText){
+  const visual = document.getElementById('ldVisual');
+  const img = document.getElementById('ldHeroImg');
+  if(!visual || !img || !photo) return;
+  if(img.getAttribute('src') === photo) return;
+  if(REDUCE_MOTION){ img.src = photo; return; }
+  const next = document.createElement('img');
+  next.src = photo;
+  next.alt = altText != null ? altText : img.alt;
+  next.style.position = 'absolute';
+  next.style.inset = '0';
+  next.style.width = '100%';
+  next.style.height = '100%';
+  next.style.objectFit = 'cover';
+  next.style.objectPosition = 'top center';
+  next.style.zIndex = '3';
+  next.style.opacity = '0';
+  visual.appendChild(next);
+  const loadReady = (next.complete && next.naturalWidth > 0) ? Promise.resolve() : new Promise((res,rej)=>{
+    next.addEventListener('load', res, {once:true});
+    next.addEventListener('error', rej, {once:true});
+  });
+  const ready = next.decode ? Promise.race([next.decode(), loadReady]) : loadReady;
+  ready.then(()=>{
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      next.style.transition = 'opacity .32s var(--ease-out)';
+      img.style.transition = 'opacity .32s var(--ease-out)';
+      next.style.opacity = '1';
+      img.style.opacity = '0';
+      let cleaned = false;
+      const cleanup = ()=>{
+        if(cleaned) return;
+        cleaned = true;
+        img.remove();
+        next.removeAttribute('style');
+        next.id = 'ldHeroImg';
+      };
+      next.addEventListener('transitionend', cleanup, {once:true});
+      setTimeout(cleanup, 500);
+    }));
+  }).catch(()=>{
+    next.remove();
+    img.src = photo;
+  });
+}
 function swapLookPair(id, view, skipPhotoAnim){
   const look = LOOKS.find(l=>l.id===id);
   if(!look || !look.pair || lookPairView===view) return;
@@ -1878,18 +1931,8 @@ function swapLookPair(id, view, skipPhotoAnim){
      back for a frame and then re-faded it, which read as a flicker.
      Only run this fade for entry points that never animated the photo
      themselves (toggle buttons, edge-tap zone). */
-  const img = document.getElementById('ldHeroImg');
-  if(img && !skipPhotoAnim){
-    const photo = variant.fitImg || variant.img;
-    if(REDUCE_MOTION){
-      img.src = photo;
-    } else {
-      img.classList.add('ld-hero-swap');
-      setTimeout(()=>{
-        img.src = photo;
-        img.classList.remove('ld-hero-swap');
-      }, 180);
-    }
+  if(!skipPhotoAnim){
+    crossfadeHeroTo(variant.fitImg || variant.img);
   }
 
   const itemsEl = document.querySelector('.ld-items');
@@ -2044,16 +2087,11 @@ function wornWithFor(code, excludeLookId){
 
 function selectLookPhoto(i){
   const look = LOOKS.find(l=>l.id===parseHash().param);
-  const img = document.getElementById('ldHeroImg');
-  if(!look || !img) return;
+  if(!look) return;
   const photos = look.photos && look.photos.length ? look.photos : [look.fitImg||look.img];
   if(i===lookGalleryIdx || !photos[i]) return;
   lookGalleryIdx = i;
-  img.classList.add('ld-hero-swap');
-  setTimeout(()=>{
-    img.src = photos[i];
-    img.classList.remove('ld-hero-swap');
-  }, REDUCE_MOTION ? 0 : 180);
+  crossfadeHeroTo(photos[i]);
   document.querySelectorAll('.ld-dot').forEach((d,idx)=>d.classList.toggle('active', idx===i));
 }
 
@@ -2147,6 +2185,14 @@ function bindLookInteractions(id){
   const detail = document.querySelector('.look-detail');
   const look = LOOKS.find(l=>l.id===id);
   let wasSwipe = false;
+
+  /* prefetch the other gender's photo the moment a paired look opens,
+     so the first MEN/WOMEN tap doesn't have to wait on a network fetch
+     before the crossfade can even start. */
+  if(look && look.pair){
+    const other = lookPairView==='W' ? look : look.pair;
+    new Image().src = other.fitImg || other.img;
+  }
 
   /* Live finger-tracking swipe: the hero photo (and a peek underneath)
      follow the drag in real time instead of just reacting once on
