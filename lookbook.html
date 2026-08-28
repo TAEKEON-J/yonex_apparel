@@ -2699,11 +2699,17 @@ function mixSetLayer(preview, cls, src){
   /* decode() (not just 'load') waits until the browser has fully
      decoded pixel data, so the fade-in never overlaps with decode
      jank — that overlap is what reads as a flicker/pop rather than a
-     clean crossfade. Falls back to load/error for older browsers. */
-  const ready = img.decode ? img.decode() : new Promise((res,rej)=>{
+     clean crossfade. Some WebKit builds have been seen to leave the
+     decode() promise neither resolving nor rejecting for a stacked,
+     absolutely-positioned <img> like these layers, which left a layer
+     stuck invisible forever with no error surfaced — so it's raced
+     against the plain load/error pair (which always fires) rather than
+     relied on alone; whichever settles first wins. */
+  const loadReady = (img.complete && img.naturalWidth > 0) ? Promise.resolve() : new Promise((res,rej)=>{
     img.addEventListener('load', res, {once:true});
     img.addEventListener('error', rej, {once:true});
   });
+  const ready = img.decode ? Promise.race([img.decode(), loadReady]) : loadReady;
   ready.then(()=>{
     if(state.req !== req){ img.remove(); return; } /* superseded before it finished decoding */
     /* Update the bookkeeping (pendingSrc/activeImg) synchronously,
