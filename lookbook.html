@@ -222,7 +222,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 @media(max-width:640px){.full-lineup{padding:0 18px 90px;} .fl-head{padding:34px 0 22px;} .fl-grid{grid-template-columns:repeat(3,1fr);gap:18px 10px;} .fl-card .fl-code{font-size:9.5px;} .fl-card .fl-sub{font-size:8.5px;}}
 
 /* ===== LOOK DETAIL ===== */
-.look-detail{max-width:1440px;margin:0 auto;padding:28px 28px 0;}
+.look-detail{max-width:900px;margin:0 auto;padding:28px 28px 0;}
 .ld-crumb{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;padding:14px 0 26px;}
 .ld-back{color:var(--ink);font-weight:700;text-decoration:none;transition:opacity .2s;}
 .ld-back:hover{opacity:.6;}
@@ -231,7 +231,14 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-look-gtoggle{position:relative;margin-left:auto;display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);}
 .ld-look-gtoggle button{position:relative;z-index:1;font-family:var(--display);font-size:9.5px;font-weight:600;letter-spacing:.06em;padding:5px 13px;background:none;border:none;border-radius:999px;cursor:pointer;color:var(--muted);transition:color .25s var(--ease-out);}
 .ld-look-gtoggle button.active{color:var(--paper);}
-.ld-split{display:grid;grid-template-columns:65fr 35fr;gap:0;align-items:stretch;min-height:78vh;border:1px solid var(--line-soft);}
+/* min-height used to be a flat 78vh with no cap — combined with
+   .look-detail's old 1440px max-width, the wide visual column stretched
+   the portrait hero photo (object-fit:cover, no explicit aspect-ratio) to
+   whatever height that width implied, well past a screenful on a normal
+   desktop window. The real fix is .look-detail's narrower max-width below
+   (900px keeps the photo's natural ~4:5 crop around 680px tall); this is
+   just the floor so very short item-panel content never collapses it. */
+.ld-split{display:grid;grid-template-columns:65fr 35fr;gap:0;align-items:stretch;min-height:min(78vh,680px);border:1px solid var(--line-soft);}
 .ld-visual{position:relative;background:var(--paper-3);overflow:hidden;min-height:420px;cursor:zoom-in;}
 .ld-visual img{width:100%;height:100%;object-fit:cover;object-position:top center;}
 /* the next/prev photo revealed underneath as a finger drags the current
@@ -263,20 +270,28 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-caption h3{color:#fff;font-size:26px;margin-top:6px;letter-spacing:-.01em;}
 .ld-visual .vscrim{position:absolute;inset:0;z-index:3;background:linear-gradient(0deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,0) 30%);pointer-events:none;}
 
+/* the item panel's per-card padding/figure size were tuned for a narrow
+   single-column mobile flow. On desktop, .ld-items stacks vertically
+   beside the hero photo and CSS grid's align-items:stretch forces the
+   photo to match whatever height the item stack naturally needs — with
+   two generously-padded 200px-tall figures, that stack alone could run
+   past 700px, dragging the (object-fit:cover) photo into an oversized,
+   over-zoomed crop along with it. Trimmed so the panel's natural desktop
+   height lands close to the .ld-split floor instead of driving past it. */
 .ld-items{background:var(--paper);display:flex;flex-direction:column;justify-content:center;border-left:1px solid var(--line-soft);}
-.ld-item{flex:0 0 auto;display:flex;flex-direction:column;padding:28px 30px;border-right:none;border-bottom:1px solid var(--line-soft);cursor:pointer;transition:background .25s;position:relative;}
+.ld-item{flex:0 0 auto;display:flex;flex-direction:column;padding:22px 28px;border-right:none;border-bottom:1px solid var(--line-soft);cursor:pointer;transition:background .25s;position:relative;}
 .ld-item:last-child{border-bottom:none;}
 .ld-item.hover-active{background:var(--paper-2);}
-.ld-item .ii-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;}
+.ld-item .ii-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;}
 .ld-item .ii-slot{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--accent-cat);}
-.ld-item .ii-figure{width:100%;height:200px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+.ld-item .ii-figure{width:100%;height:150px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
 .ld-item .ii-figure img{max-height:100%;max-width:70%;object-fit:contain;filter:drop-shadow(0 14px 22px rgba(20,20,15,.10));transition:transform .35s var(--ease);}
 @media(hover:hover) and (pointer:fine){
   .ld-item:hover{background:var(--paper-2);}
   .ld-item:hover .ii-figure img{transform:translateY(-3px) scale(1.02);}
 }
-.ld-item .ii-name{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:-.01em;text-align:right;margin-top:24px;}
-.ld-item .ii-color{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:12px;text-align:right;}
+.ld-item .ii-name{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:-.01em;text-align:right;margin-top:14px;}
+.ld-item .ii-color{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:10px;text-align:right;}
 .ld-item .ii-code{font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:4px;text-align:right;}
 .ii-gtoggle{position:relative;display:inline-flex;align-self:flex-start;margin-top:12px;gap:2px;padding:2px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);}
 .ii-gtoggle button{position:relative;z-index:1;font-family:var(--display);font-size:9px;font-weight:600;letter-spacing:.03em;min-width:22px;height:22px;padding:0 7px;border-radius:999px;background:none;border:none;cursor:pointer;color:var(--muted);transition:color .2s var(--ease-out);}
@@ -295,7 +310,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .ld-item .ii-code{font-size:10.5px;margin-top:2px;}
 }
 
-.ld-nav{max-width:1440px;margin:0 auto;padding:28px 28px 90px;}
+.ld-nav{max-width:1320px;margin:0 auto;padding:28px 28px 90px;}
 .ld-related-strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .ld-related-strip::-webkit-scrollbar{display:none;}
 .ld-related-thumb{flex:0 0 calc((100% - 70px)/8);aspect-ratio:4/5;cursor:pointer;scroll-snap-align:start;overflow:hidden;background:var(--paper-3);border:1px solid var(--line-soft);transition:border-color .2s,transform .15s ease;}
