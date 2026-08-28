@@ -2345,7 +2345,14 @@ function bindLookInteractions(id){
     setTimeout(()=>{
       peek?.remove();
       if(img){
-        img.style.transition = '';
+        /* must reset with transition:none, not '' — clearing the inline
+           transition falls back to #ldHeroImg's own stylesheet rule
+           (transition: transform .32s), and changing transform right
+           after that takes effect animates the snap-back over 320ms
+           instead of applying it instantly. That unintended slow drift
+           back to center, arriving AFTER the swipe already visually
+           finished, is what read as the photo "bouncing" into place. */
+        img.style.transition = 'none';
         img.style.transform = '';
         /* the peek image already showed this exact (cached) photo in the
            same spot a moment ago — swap the src in the same tick as the
@@ -2354,6 +2361,8 @@ function bindLookInteractions(id){
           const nextVariant = nextView==='W' ? look.pair : look;
           img.src = nextVariant.fitImg || nextVariant.img;
         }
+        void img.offsetWidth;
+        img.style.transition = '';
       }
       if(committed){
         if(isPaired){
