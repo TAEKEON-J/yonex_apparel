@@ -386,6 +386,22 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .share-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(12px);background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;padding:11px 20px;border-radius:999px;box-shadow:0 14px 32px rgba(0,0,0,.22);opacity:0;pointer-events:none;transition:opacity .22s var(--ease-out),transform .22s var(--ease-out);z-index:500;}
 .share-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 @media(prefers-reduced-motion:reduce){.share-toast{transition:opacity .01ms;}}
+
+/* Add-to-home-screen prompt: Android gets a real one-tap install via
+   beforeinstallprompt; iOS has no such API (Apple only allows the
+   manual Share > Add to Home Screen flow), so it gets a guided nudge
+   toward that instead. Both share one bottom-sheet-style banner. */
+.pwa-banner{position:fixed;left:16px;right:16px;bottom:16px;z-index:400;max-width:420px;margin:0 auto;background:var(--ink);color:var(--paper);border-radius:16px;padding:14px 14px 14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 16px 40px rgba(0,0,0,.28);transform:translateY(140%);opacity:0;transition:transform .32s var(--ease-out),opacity .32s var(--ease-out);}
+.pwa-banner.show{transform:translateY(0);opacity:1;}
+.pwa-banner .pwa-icon{width:38px;height:38px;border-radius:10px;flex:none;display:block;}
+.pwa-banner .pwa-text{flex:1;min-width:0;font-size:12px;line-height:1.45;color:rgba(255,255,255,.82);}
+.pwa-banner .pwa-text b{display:block;font-family:var(--display);font-weight:800;font-size:13px;color:var(--paper);text-transform:uppercase;letter-spacing:.01em;margin-bottom:2px;}
+.pwa-banner .pwa-text .pwa-share-glyph{display:inline-flex;vertical-align:-3px;margin:0 2px;}
+.pwa-banner button.pwa-install-btn{flex:none;background:var(--paper);color:var(--ink);border:none;padding:9px 14px;border-radius:999px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.02em;cursor:pointer;white-space:nowrap;transition:transform .15s ease;}
+.pwa-banner button.pwa-install-btn:active{transform:scale(.96);}
+.pwa-banner button.pwa-close{flex:none;background:none;border:none;color:rgba(255,255,255,.55);cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center;}
+@media(prefers-reduced-motion:reduce){.pwa-banner{transition:opacity .01ms;}}
+@media(max-width:420px){.pwa-banner{left:10px;right:10px;bottom:10px;}}
 .pm-body{padding:74px 34px 50px;}
 .pm-figure{background:var(--paper);border:1px solid var(--line-soft);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;margin-bottom:28px;touch-action:pan-y;}
 .pm-figure img{max-width:74%;max-height:74%;object-fit:contain;filter:drop-shadow(0 16px 24px rgba(20,20,15,.12));transition:transform .3s var(--ease),opacity .25s var(--ease);}
@@ -2975,6 +2991,74 @@ if('serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js').catch(()=>{});
   });
 }
+
+/* Add-to-home-screen nudge. Android/Chrome exposes a real install API
+   (beforeinstallprompt) that turns "menu > install app" into one tap;
+   iOS has no such API at all — Apple only allows the manual
+   Share > Add to Home Screen flow — so iOS instead gets a one-time
+   pointer toward that flow instead of a fake "install" button. */
+(function(){
+  const DISMISS_KEY = 'pwaBannerDismissed';
+  function isStandalone(){
+    return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  }
+  let dismissedAlready = false;
+  try{ dismissedAlready = localStorage.getItem(DISMISS_KEY) === '1'; }catch(e){}
+  if(isStandalone() || dismissedAlready) return;
+
+  let banner = null;
+  function ensureBanner(){
+    if(banner) return banner;
+    banner = document.createElement('div');
+    banner.className = 'pwa-banner';
+    banner.setAttribute('role','status');
+    document.body.appendChild(banner);
+    return banner;
+  }
+  function dismiss(){
+    if(banner) banner.classList.remove('show');
+    try{ localStorage.setItem(DISMISS_KEY, '1'); }catch(e){}
+  }
+  const closeBtnHtml = `<button type="button" class="pwa-close" aria-label="닫기"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 3l10 10M13 3L3 13"/></svg></button>`;
+  function showBanner(html){
+    const b = ensureBanner();
+    b.innerHTML = html + closeBtnHtml;
+    b.querySelector('.pwa-close').onclick = dismiss;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>b.classList.add('show')));
+  }
+
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e)=>{
+    e.preventDefault();
+    deferredPrompt = e;
+    setTimeout(()=>{
+      if(!deferredPrompt) return;
+      showBanner(`<img class="pwa-icon" src="images/icons/icon-192.png?v=3" alt="">
+        <div class="pwa-text"><b>앱처럼 설치하기</b>홈 화면에 추가하면 브라우저 없이 바로 실행돼요.</div>
+        <button type="button" class="pwa-install-btn" id="pwaInstallBtn">설치</button>`);
+      document.getElementById('pwaInstallBtn').onclick = async ()=>{
+        if(!deferredPrompt) return;
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice.catch(()=>{});
+        deferredPrompt = null;
+        dismiss();
+      };
+    }, 1500);
+  });
+  window.addEventListener('appinstalled', ()=>{
+    deferredPrompt = null;
+    dismiss();
+  });
+
+  const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if(isIOS){
+    setTimeout(()=>{
+      if(deferredPrompt) return; /* shouldn't fire on iOS, but don't stack banners if it somehow did */
+      showBanner(`<img class="pwa-icon" src="images/icons/icon-192.png?v=3" alt="">
+        <div class="pwa-text"><b>앱처럼 설치하기</b>하단 공유 <span class="pwa-share-glyph"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></span> 버튼 → "홈 화면에 추가"를 눌러주세요.</div>`);
+    }, 2000);
+  }
+})();
 </script>
 </body>
 </html>
