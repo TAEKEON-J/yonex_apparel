@@ -1581,6 +1581,23 @@ function render(){
     const oldImg = document.getElementById('ldHeroImg');
     if(oldDetail && oldImg){
       navDir = oldDetail.dataset.next===param ? 'next' : (oldDetail.dataset.prev===param ? 'prev' : null);
+      if(navDir===null){
+        /* not strictly adjacent — the related-looks carousel jumps freely
+           around the category, so this is the common case now, not the
+           rare one. Without a direction the photo just crossfades flatly
+           in place, which between two unrelated poses/photos reads as a
+           plain cut rather than a transition. Fall back to a direction
+           inferred from list order (which side of the current look the
+           target sits on within the same category) so every carousel tap
+           still gets a purposeful left/right slide. */
+        const oldLook = LOOKS.find(l=>l.id===oldDetail.dataset.id);
+        if(oldLook){
+          const catLooks = LOOKS.filter(l=>l.cat===oldLook.cat);
+          const oldIdx = catLooks.findIndex(l=>l.id===oldLook.id);
+          const newIdx = catLooks.findIndex(l=>l.id===param);
+          if(oldIdx!==-1 && newIdx!==-1 && oldIdx!==newIdx) navDir = newIdx>oldIdx ? 'next' : 'prev';
+        }
+      }
       const r = oldImg.getBoundingClientRect();
       const cs = getComputedStyle(oldImg);
       heroGhost = document.createElement('img');
