@@ -270,15 +270,26 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-drag-peek{position:absolute;left:0;top:0;z-index:1;pointer-events:none;}
 #ldHeroImg{position:relative;z-index:2;transition:opacity .42s var(--ease-out),transform .42s var(--ease-out);}
 #ldHeroImg.ld-hero-swap{opacity:0;}
-#ldHeroImg.ld-hero-swap-next{transform:translateX(28px);}
-#ldHeroImg.ld-hero-swap-prev{transform:translateX(-28px);}
+/* a directional hand-off (the common case — arrows, edge-taps, and now
+   the related-looks carousel all resolve to a direction) is a real
+   slide, not a crossfade: the incoming photo starts fully opaque just
+   off-screen and only its position animates, so it's never partially
+   see-through the outgoing one mid-transition. opacity:1 here
+   overrides the plain .ld-hero-swap rule above, which still applies on
+   its own for the rare undirected case (crossing categories, nothing
+   to slide toward). */
+#ldHeroImg.ld-hero-swap-next{opacity:1;transform:translateX(100%);}
+#ldHeroImg.ld-hero-swap-prev{opacity:1;transform:translateX(-100%);}
 /* a snapshot of the outgoing hero photo, positioned over the old spot and
    left in place while the fresh page underneath renders — without it the
    old photo just vanishes on DOM swap and the new one fades in from
    nothing, which reads as a stutter rather than one continuous motion. */
 .ld-hero-ghost{position:fixed;z-index:250;pointer-events:none;transition:opacity .42s var(--ease-out),transform .42s var(--ease-out);}
-.ld-hero-ghost.ld-ghost-exit-next{opacity:0;transform:translateX(-28px);}
-.ld-hero-ghost.ld-ghost-exit-prev{opacity:0;transform:translateX(28px);}
+/* pure slide, opacity untouched — the outgoing photo exits fully opaque
+   the opposite side the incoming one enters from, so the two never
+   double-expose over each other. */
+.ld-hero-ghost.ld-ghost-exit-next{transform:translateX(-100%);}
+.ld-hero-ghost.ld-ghost-exit-prev{transform:translateX(100%);}
 .ld-hero-ghost.ld-ghost-exit{opacity:0;}
 .ld-gallery-dots{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);z-index:3;display:flex;gap:4px;}
 /* the button itself is a larger invisible hit area (touch-target sizing);
