@@ -268,29 +268,15 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
    one aside — gives the swipe live, continuous feedback instead of a
    dead zone until release, which is what actually read as "choppy". */
 .ld-drag-peek{position:absolute;left:0;top:0;z-index:1;pointer-events:none;}
-#ldHeroImg{position:relative;z-index:2;transition:opacity .42s var(--ease-out),transform .42s var(--ease-out);}
-#ldHeroImg.ld-hero-swap{opacity:0;}
-/* a directional hand-off (the common case — arrows, edge-taps, and now
-   the related-looks carousel all resolve to a direction) is a real
-   slide, not a crossfade: the incoming photo starts fully opaque just
-   off-screen and only its position animates, so it's never partially
-   see-through the outgoing one mid-transition. opacity:1 here
-   overrides the plain .ld-hero-swap rule above, which still applies on
-   its own for the rare undirected case (crossing categories, nothing
-   to slide toward). */
-#ldHeroImg.ld-hero-swap-next{opacity:1;transform:translateX(100%);}
-#ldHeroImg.ld-hero-swap-prev{opacity:1;transform:translateX(-100%);}
-/* a snapshot of the outgoing hero photo, positioned over the old spot and
-   left in place while the fresh page underneath renders — without it the
-   old photo just vanishes on DOM swap and the new one fades in from
-   nothing, which reads as a stutter rather than one continuous motion. */
-.ld-hero-ghost{position:fixed;z-index:250;pointer-events:none;transition:opacity .42s var(--ease-out),transform .42s var(--ease-out);}
-/* pure slide, opacity untouched — the outgoing photo exits fully opaque
-   the opposite side the incoming one enters from, so the two never
-   double-expose over each other. */
-.ld-hero-ghost.ld-ghost-exit-next{transform:translateX(-100%);}
-.ld-hero-ghost.ld-ghost-exit-prev{transform:translateX(100%);}
-.ld-hero-ghost.ld-ghost-exit{opacity:0;}
+#ldHeroImg{position:relative;z-index:2;}
+/* a snapshot of the outgoing hero photo, held in place over the old spot
+   with no animation of its own while the fresh page renders underneath —
+   without it the old photo just vanishes on DOM swap and the new one is
+   blank until it finishes loading. render() removes it in one hard cut
+   the instant the incoming photo is actually ready (see the isLookToLook
+   block below) — a crossfade and then a full-width slide were both tried
+   here and explicitly didn't land, so this is intentionally motion-free. */
+.ld-hero-ghost{position:fixed;z-index:250;pointer-events:none;}
 .ld-gallery-dots{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);z-index:3;display:flex;gap:4px;}
 /* the button itself is a larger invisible hit area (touch-target sizing);
    the visible dot mark is a fixed-size ::after so enlarging the tap target
@@ -1608,36 +1594,19 @@ function render(){
      ghost off-screen entirely). */
   window.scrollTo({top:0,behavior:'instant'});
 
-  /* snapshot the outgoing hero photo (and which direction we're headed)
-     before anything gets torn down, so the old and new photo can visibly
-     overlap and cross past each other instead of a blank-then-fade-in
-     stutter. Direction comes from whether the target id is this look's
-     next or prev neighbor — true for the arrows, edge-tap zones and the
-     swipe gesture alike, so all three get the same continuous motion. */
-  let heroGhost = null, navDir = null;
+  /* snapshot the outgoing hero photo before anything gets torn down, so
+     it can stay on screen — no animation of its own, just held in place
+     — until the incoming photo has actually finished loading. Without
+     this, the fresh #ldHeroImg goes blank for however long that load
+     takes, which is the real problem this solves; sliding/crossfading
+     it in on top was tried and explicitly didn't land (read as an
+     off-putting "flying off the edges" effect), so the swap below is a
+     hard, instant cut the moment the new photo is ready. */
+  let heroGhost = null;
   if(playHeroAnim){
     document.querySelectorAll('.ld-hero-ghost').forEach(g=>g.remove());
-    const oldDetail = document.querySelector('.look-detail');
     const oldImg = document.getElementById('ldHeroImg');
-    if(oldDetail && oldImg){
-      navDir = oldDetail.dataset.next===param ? 'next' : (oldDetail.dataset.prev===param ? 'prev' : null);
-      if(navDir===null){
-        /* not strictly adjacent — the related-looks carousel jumps freely
-           around the category, so this is the common case now, not the
-           rare one. Without a direction the photo just crossfades flatly
-           in place, which between two unrelated poses/photos reads as a
-           plain cut rather than a transition. Fall back to a direction
-           inferred from list order (which side of the current look the
-           target sits on within the same category) so every carousel tap
-           still gets a purposeful left/right slide. */
-        const oldLook = LOOKS.find(l=>l.id===oldDetail.dataset.id);
-        if(oldLook){
-          const catLooks = LOOKS.filter(l=>l.cat===oldLook.cat);
-          const oldIdx = catLooks.findIndex(l=>l.id===oldLook.id);
-          const newIdx = catLooks.findIndex(l=>l.id===param);
-          if(oldIdx!==-1 && newIdx!==-1 && oldIdx!==newIdx) navDir = newIdx>oldIdx ? 'next' : 'prev';
-        }
-      }
+    if(oldImg){
       const r = oldImg.getBoundingClientRect();
       /* a <canvas> snapshot instead of a second <img src="same-cached-
          url">: a freshly-created <img> — even pointed at a URL the
@@ -1731,39 +1700,19 @@ function render(){
        everything else (breadcrumb, item panel, related strip) can just be
        there, already-updated, with no animation of its own. */
     viewEl.classList.remove('view');
-    if(playHeroAnim){
+    if(playHeroAnim && heroGhost){
       const img = document.getElementById('ldHeroImg');
-      if(img){
-        img.classList.add('ld-hero-swap');
-        if(navDir==='next') img.classList.add('ld-hero-swap-next');
-        else if(navDir==='prev') img.classList.add('ld-hero-swap-prev');
-        const startSwap = ()=>{
-          requestAnimationFrame(()=>requestAnimationFrame(()=>{
-            img.classList.remove('ld-hero-swap','ld-hero-swap-next','ld-hero-swap-prev');
-            if(heroGhost){
-              heroGhost.classList.add(navDir==='next' ? 'ld-ghost-exit-next' : navDir==='prev' ? 'ld-ghost-exit-prev' : 'ld-ghost-exit');
-              setTimeout(()=>heroGhost.remove(), 500);
-            }
-          }));
-        };
-        /* the ghost used to fade out on this fixed timer regardless of
-           whether the new photo had actually arrived — fine for an
-           adjacent/already-cached photo, but jumping to an arbitrary,
-           never-before-seen look (the related-looks carousel makes this
-           the common case, not the rare one) can easily take longer than
-           that over a real network. The ghost had already finished fading
-           OUT by then, leaving a real gap with nothing painted — neither
-           the old photo nor the new one — read as the hero flashing
-           blank. Hold the ghost in place until the new photo is actually
-           ready instead of on a clock. */
-        if(img.complete && img.naturalWidth > 0) startSwap();
-        else{
-          img.addEventListener('load', startSwap, {once:true});
-          img.addEventListener('error', startSwap, {once:true});
-        }
-      } else if(heroGhost){
-        setTimeout(()=>heroGhost.remove(), 500);
-      }
+      const reveal = ()=>heroGhost.remove();
+      /* hard cut the instant the new photo is actually ready — no fade,
+         no slide. Still gated on load (not a fixed timer) so a slow,
+         never-before-seen photo (the related-looks carousel makes that
+         the common case) keeps the old one covering the gap for however
+         long it takes, rather than reverting to a blank flash. */
+      if(img && img.complete && img.naturalWidth > 0) reveal();
+      else if(img){
+        img.addEventListener('load', reveal, {once:true});
+        img.addEventListener('error', reveal, {once:true});
+      } else reveal();
     }
   } else if(viewEl){
     viewEl.classList.add('view');
