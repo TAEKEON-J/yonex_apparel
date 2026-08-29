@@ -248,6 +248,21 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .fl-card:hover .fl-frame{border-color:var(--ink-soft);}
   .fl-card:hover .fl-frame img{transform:scale(1.04);}
 }
+/* .loose-crop marks a product-photo container whose source image (an
+   "...EX"-coded item — a separate product line, shot with noticeably
+   more padding around the garment than the site's own 263-prefixed
+   items) reads visibly smaller than its neighbors despite object-fit
+   sizing them identically. Zooms it back in line; each selector restates
+   its own existing hover-zoom as the combined (base × hover) transform
+   rather than layering on top, same reasoning as the daily-wear photo
+   fix — otherwise hovering would replace this zoom with a smaller one. */
+.fl-card .fl-frame.loose-crop img{transform:scale(1.25);}
+.ld-item .ii-figure.loose-crop img{transform:scale(1.25);}
+.pm-figure.loose-crop img{transform:scale(1.25);}
+@media(hover:hover) and (pointer:fine){
+  .fl-card:hover .fl-frame.loose-crop img{transform:scale(1.3);}
+  .ld-item:hover .ii-figure.loose-crop img{transform:translateY(-3px) scale(1.275);}
+}
 .fl-card .fl-code{font-family:var(--mono);font-size:11px;font-weight:700;margin-top:10px;letter-spacing:.02em;}
 .fl-card .fl-sub{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:3px;}
 .fl-swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
@@ -1937,7 +1952,7 @@ function renderFullLineup(key){
         const [defaultKey,p] = variants[0];
         return `
         <div class="fl-card reveal" style="--i:${i}" data-gender="${p.gender.toLowerCase()}" data-active-key="${defaultKey}" role="button" tabindex="0" aria-label="${p.name} ${p.code}" onclick="openFullLineupCard(this)" onkeydown="if(event.target===event.currentTarget&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openFullLineupCard(this);}">
-          <div class="fl-frame"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
+          <div class="fl-frame${isLooseCropCode(p.code)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
           <div class="fl-code">${p.code}</div>
           <div class="fl-sub">${fmtPrice(p.price)} · <span class="fl-color">${p.color}</span></div>
           ${variants.length>1 ? `<div class="fl-swatches">${variants.map(([vk,vp],vi)=>`<button type="button" class="fl-swatch${vi===0?' active':''}" data-key="${vk}" style="background-color:${colorHex(vp.color)}" title="${vp.color}" aria-label="${vp.color}" onclick="event.stopPropagation();selectFullLineupSwatch(this)"></button>`).join('')}</div>` : ''}
@@ -1982,6 +1997,20 @@ function openFullLineupCard(card){
 function itemFig(code){
   const p = PRODUCTS[code];
   return p ? p.img : 'images/products/placeholder.png';
+}
+
+/* the "...EX" / "...AEX" coded items are a separate, older product line
+   photographed with noticeably more padding around the garment than the
+   site's own 263-prefixed items — confirmed by measuring actual pixel
+   fill against a shared background threshold across a broad sample
+   (EX items ~60-65% fill, 263TS items ~75-84%, consistently, not
+   per-photo variance). Same underlying issue as the daily-wear model
+   photo framing, just for flat product shots this time: object-fit
+   can't fix a difference baked into the source file's own padding, so
+   this flags which product-photo containers should get the zoom class
+   defined right below it. */
+function isLooseCropCode(code){
+  return /EX$/.test(code || '');
 }
 
 /* a few special/commemorative items have no confirmed price in any source yet (price:0) */
@@ -2249,7 +2278,7 @@ function buildItemsHtml(look, variant){
       ? `<div class="ii-gtoggle"><button type="button" class="${gi.active==='M'?'active':''}" data-g="M">M</button><button type="button" class="${gi.active==='W'?'active':''}" data-g="W">W</button></div>`
       : '';
     const colorLine = p && p.color ? `<div class="ii-color">${p.color}</div>` : '';
-    const figureHtml = isBottom ? '' : `<div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>`;
+    const figureHtml = isBottom ? '' : `<div class="ii-figure${isLooseCropCode(p?.code)?' loose-crop':''}"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>`;
     /* only offer the jump when this item's code actually has a mannequin
        cutout uploaded — checked against MIX_TOPS/MIX_BOTTOMS (the pool
        filtered down to confirmed-existing files by initMixPool()), not
@@ -2787,7 +2816,7 @@ function openProduct(code, lookId){
   const siblings = Object.entries(PRODUCTS).filter(([,sp])=>sp.code===p.code);
   const related = wornWithFor(code, lookId).slice(0,3);
   document.getElementById('pmBody').innerHTML = `
-    <div class="pm-figure"><img src="${p.img}" alt="${p.name}" id="pmFigImg"></div>
+    <div class="pm-figure${isLooseCropCode(p.code)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" id="pmFigImg"></div>
     ${p.imgBack ? `<div class="pm-view-toggle">
       <button type="button" class="active" data-view="front" onclick="setPmView('front')">FRONT</button>
       <button type="button" data-view="back" onclick="setPmView('back')">BACK</button>
