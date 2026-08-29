@@ -1,4 +1,4 @@
-const CACHE = 'yonex-lookbook-v1';
+const CACHE = 'yonex-lookbook-v2';
 const SHELL = [
   './lookbook.html',
   './manifest.webmanifest',
