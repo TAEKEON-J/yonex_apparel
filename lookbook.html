@@ -474,7 +474,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
    waistband — that's what read as jerky and "overlapping". */
 .mix-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .4s linear;}
 .mix-preview img.mp-in{opacity:1;}
-.mix-preview img.mp-out{opacity:0;}
 .mix-preview .mp-base{z-index:1;}
 .mix-preview .mp-bottom{z-index:2;}
 .mix-preview .mp-top{z-index:3;}
@@ -2854,92 +2853,52 @@ function mixMatchLook(){
     return codes.includes(mixTopCode()) && codes.includes(mixBottomCode());
   });
 }
-/* Crossfades one mannequin composite layer (base/top/bottom) to a new
-   src instead of hard-replacing it: the incoming image fades in while
-   the previously-active one fades out and is removed once the
-   transition finishes, so garment swaps read as one smooth motion
-   rather than a pop-in. No-ops if the layer is already showing src.
-
-   Tapping the arrow buttons a few times quickly fires this several
-   times before earlier calls finish decoding. Tracking "the node to
-   retire" via a DOM query at resolve-time (an earlier version of this
-   did that) is unsafe: a call resolving early can sweep up and mark
-   mp-out on a DIFFERENT, still-pending image that hasn't shown itself
-   yet — including the one that's actually supposed to win — and that
-   image then gets torn down by the sweep's own cleanup timer before
-   it ever became visible, sometimes leaving the layer with nothing
-   showing at all. Instead each layer's state (mixLayer[cls]) tracks
-   exactly one canonical "active" node explicitly; a resolving request
-   only ever retires *that* specific node, never a broad DOM sweep, so
-   a still-in-flight sibling can never be mistaken for old state. */
-const mixLayer = {};
+/* Each layer (base/bottom/top) gets exactly ONE persistent <img>, created
+   the first time it's needed and reused for every later swap — never a
+   fresh node created and torn down per call. An earlier version did the
+   latter with a whole crossfade/cleanup dance (fade the old node out,
+   remove it after the transition), which turned out to be exactly what
+   real-device WebKit chokes on: fetching+decoding a src directly on a
+   stacked, absolutely-positioned <img> — especially several of them at
+   once, which is exactly this preview's base+bottom+top layout — has
+   been seen to leave the image permanently invisible, neither its
+   decode() promise nor even its plain load event ever firing, no error
+   surfaced either. That risk lives in the fetch+decode step itself, not
+   in "stacked", so the fix is to move that step OFF the stack entirely:
+   decode the image on a plain, detached Image() first (an ordinary,
+   non-positioned element the bug doesn't touch), and only hand the
+   result to the real, visible layer element once it's already fully
+   loaded — at that point setting .src paints from cache essentially
+   immediately. No-ops if the layer is already showing (or already
+   loading) src. */
 function mixSetLayer(preview, cls, src){
-  const state = mixLayer[cls] || (mixLayer[cls] = {});
-  if(state.pendingSrc === src) return;
-  if(!state.pendingSrc && state.activeImg && state.activeImg.dataset.src === src) return;
-  state.pendingSrc = src;
-  const req = {};
-  state.req = req;
-  const img = document.createElement('img');
-  img.className = cls;
-  img.alt = '';
-  img.dataset.src = src;
-  preview.appendChild(img);
-  img.src = src;
-  /* img.decode() was tried here (to wait for fully-decoded pixels so the
-     fade-in never overlaps decode jank) but is the actual root cause of a
-     real-device bug: some WebKit builds leave decode() neither resolving
-     nor rejecting for a stacked, absolutely-positioned <img> like these
-     layers, and with base/bottom/top all appended in the same tick that
-     stall has been seen to swallow the plain load event too for whichever
-     layers aren't the last one queued — base and bottom stuck invisible
-     forever while only top ever came in. Racing load/error against
-     decode() wasn't enough since both could hang together, so decode() is
-     dropped entirely here in favor of load/error alone (universally
-     reliable, if slightly less jank-free), with a hard timeout kept as a
-     last-resort net for anything that still manages to hang. */
-  const loadReady = (img.complete && img.naturalWidth > 0) ? Promise.resolve() : new Promise((res,rej)=>{
-    img.addEventListener('load', res, {once:true});
-    img.addEventListener('error', rej, {once:true});
-  });
-  const stallNet = new Promise(res=>setTimeout(res, 4000));
-  const ready = Promise.race([loadReady, stallNet]);
-  ready.then(()=>{
-    if(state.req !== req){ img.remove(); return; } /* superseded before it finished decoding */
-    /* Update the bookkeeping (pendingSrc/activeImg) synchronously,
-       right here — NOT inside the rAF below. A later mixSetLayer call
-       can land in the gap between this promise resolving and an rAF
-       callback running (~1-2 frames, ~16-32ms), and it reads
-       state.activeImg to decide whether to no-op. If that read saw a
-       stale pre-swap value, it could wrongly conclude "already
-       showing that" and silently drop a legitimate request — the
-       actual bug behind swaps sometimes not taking effect. Only the
-       CSS class flip (the visual part) needs to wait for a paint. */
-    state.pendingSrc = null;
-    const prev = state.activeImg;
-    state.activeImg = img;
-    /* double rAF: guarantees the browser has painted the opacity:0
-       starting state at least once before we flip to mp-in, so the
-       transition always actually animates instead of occasionally
-       collapsing into an instant snap. Flipping the incoming image to
-       mp-in and the outgoing one to mp-out in the SAME callback keeps
-       it a real crossfade — doing them a frame apart briefly dips
-       both below full opacity together. */
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      img.classList.add('mp-in');
-      if(prev && prev !== img){
-        prev.classList.remove('mp-in');
-        prev.classList.add('mp-out');
-        let cleaned = false;
-        const cleanup = ()=>{ if(!cleaned){ cleaned = true; prev.remove(); } };
-        prev.addEventListener('transitionend', cleanup, {once:true});
-        setTimeout(cleanup, 600); /* safety net if transitionend never fires */
-      }
-    }));
-  }).catch(()=>{
-    if(state.req === req){ state.pendingSrc = null; preview.classList.add('mp-broken'); }
-    img.remove();
-  });
+  let img = preview.querySelector(':scope > .'+cls);
+  if(!img){
+    img = document.createElement('img');
+    img.className = cls;
+    img.alt = '';
+    preview.appendChild(img);
+  }
+  if(img.dataset.targetSrc === src) return;
+  img.dataset.targetSrc = src;
+  const preloader = new Image();
+  preloader.onload = ()=>{
+    if(img.dataset.targetSrc !== src) return; /* superseded by a later call */
+    const commit = ()=>{
+      img.src = src;
+      requestAnimationFrame(()=>requestAnimationFrame(()=>img.classList.add('mp-in')));
+    };
+    if(img.classList.contains('mp-in')){
+      img.classList.remove('mp-in'); /* fade the old garment out first */
+      setTimeout(commit, 220);
+    } else {
+      commit();
+    }
+  };
+  preloader.onerror = ()=>{
+    if(img.dataset.targetSrc === src) preview.classList.add('mp-broken');
+  };
+  preloader.src = src;
 }
 function paintMix(which, dir){
   const stage = document.getElementById('mixStage');
