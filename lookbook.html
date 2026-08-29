@@ -1452,8 +1452,15 @@ function initMixPool(){
     Promise.all(MIX_TOP_POOL.map(code=>mixImgExists(`images/mannequin/tops/${code}.png`).then(ok=>ok?code:null))),
     Promise.all(MIX_BOTTOM_POOL.map(code=>mixImgExists(`images/mannequin/bottoms/${code}.png`).then(ok=>ok?code:null))),
   ]).then(([tops,bottoms])=>{
+    /* a cold-started PWA can fire all ~55 of these existence probes before
+       the network is really warmed up, spuriously failing every single one
+       even though the files are all really there — falling back to the
+       full (unfiltered) pool in that case keeps the mannequin preview from
+       silently going blank, rather than trusting an all-failed result. */
     MIX_TOPS = tops.filter(Boolean);
+    if(!MIX_TOPS.length) MIX_TOPS = [...MIX_TOP_POOL];
     MIX_BOTTOMS = bottoms.filter(Boolean);
+    if(!MIX_BOTTOMS.length) MIX_BOTTOMS = [...MIX_BOTTOM_POOL];
     if(mixTopIdx >= MIX_TOPS.length) mixTopIdx = 0;
     if(mixBottomIdx >= MIX_BOTTOMS.length) mixBottomIdx = 0;
   });
