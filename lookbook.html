@@ -497,6 +497,9 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 @media(hover:hover) and (pointer:fine){
   .mix-thumb:hover{border-color:var(--ink-soft);}
 }
+.mix-carousel .mc-info{margin-top:12px;}
+.mix-carousel .mc-name{font-size:14px;font-weight:600;}
+.mix-carousel .mc-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;}
 .mix-cta{text-align:center;padding:26px 28px 90px;}
 .mix-cta button{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;padding:12px 30px;border-radius:999px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;transition:opacity .2s,transform .15s ease;}
 .mix-cta button:not(:disabled):active{transform:scale(.96);}
@@ -2903,9 +2906,14 @@ function mixCarouselHtml(kind, codes, activeIdx){
       <img src="${p.img}" alt="" loading="lazy">
     </button>`;
   }).join('');
+  const active = PRODUCTS[codes[activeIdx]];
   return `<div class="mix-carousel" data-kind="${kind}">
     <div class="mc-head">${kind.toUpperCase()}</div>
     <div class="mc-strip">${thumbs}</div>
+    <div class="mc-info">
+      <div class="mc-name">${active?.name||''}</div>
+      <div class="mc-code">${active?.code||''} — ${active?.color||''}</div>
+    </div>
   </div>`;
 }
 function paintMix(){
@@ -2948,12 +2956,18 @@ function updateMixPreview(){
 function selectMix(kind, idx){
   if(kind==='top'){ if(idx===mixTopIdx) return; mixTopIdx = idx; }
   else{ if(idx===mixBottomIdx) return; mixBottomIdx = idx; }
-  const strip = document.querySelector(`.mix-carousel[data-kind="${kind}"] .mc-strip`);
-  if(strip){
+  const carousel = document.querySelector(`.mix-carousel[data-kind="${kind}"]`);
+  if(carousel){
+    const strip = carousel.querySelector('.mc-strip');
     const prevActive = strip.querySelector('.mix-thumb.active');
     if(prevActive){ prevActive.classList.remove('active'); prevActive.setAttribute('aria-pressed','false'); }
     const next = strip.children[idx];
     if(next){ next.classList.add('active'); next.setAttribute('aria-pressed','true'); }
+    const p = PRODUCTS[kind==='top' ? mixTopCode() : mixBottomCode()];
+    if(p){
+      carousel.querySelector('.mc-name').textContent = p.name;
+      carousel.querySelector('.mc-code').textContent = `${p.code} — ${p.color}`;
+    }
   }
   updateMixPreview();
 }
