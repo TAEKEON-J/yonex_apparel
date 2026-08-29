@@ -1611,11 +1611,38 @@ function render(){
         }
       }
       const r = oldImg.getBoundingClientRect();
-      const cs = getComputedStyle(oldImg);
-      heroGhost = document.createElement('img');
+      /* a <canvas> snapshot instead of a second <img src="same-cached-
+         url">: a freshly-created <img> — even pointed at a URL the
+         browser already has bytes for — has its own decode/paint
+         lifecycle on real-device WebKit that isn't guaranteed to
+         resolve in the same frame as the surrounding synchronous DOM
+         work (the same underlying issue already worked around this
+         session for the mannequin layers, the gender-toggle crossfade,
+         and the toggle pill). That showed up here as the ghost simply
+         not being painted yet at the exact moment the old page was torn
+         down — a real blank gap before the crossfade ever started,
+         confirmed on-device even with the load-gated swap already in
+         place. Copying the OLD img's already-decoded, already-on-screen
+         pixels into a canvas is a synchronous, immediate paint with no
+         separate lifecycle to race. */
+      const dpr = window.devicePixelRatio || 1;
+      heroGhost = document.createElement('canvas');
       heroGhost.className = 'ld-hero-ghost';
-      heroGhost.src = oldImg.currentSrc || oldImg.src;
-      heroGhost.style.cssText = `left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;object-fit:${cs.objectFit};object-position:${cs.objectPosition};`;
+      heroGhost.width = Math.max(1, Math.round(r.width * dpr));
+      heroGhost.height = Math.max(1, Math.round(r.height * dpr));
+      heroGhost.style.cssText = `left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;`;
+      const gctx = heroGhost.getContext('2d');
+      if(gctx && oldImg.naturalWidth && oldImg.naturalHeight){
+        gctx.scale(dpr, dpr);
+        /* replicate object-fit:cover + object-position:top center by
+           hand — drawImage() has no notion of either, and every hero
+           photo in .ld-visual always uses exactly this combination. */
+        const iw = oldImg.naturalWidth, ih = oldImg.naturalHeight;
+        const scale = Math.max(r.width / iw, r.height / ih);
+        const sw = r.width / scale, sh = r.height / scale;
+        const sx = (iw - sw) / 2, sy = 0;
+        gctx.drawImage(oldImg, sx, sy, sw, sh, 0, 0, r.width, r.height);
+      }
       document.body.appendChild(heroGhost);
     }
   }
