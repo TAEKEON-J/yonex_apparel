@@ -295,6 +295,11 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
    (900px keeps the photo's natural ~4:5 crop around 680px tall); this is
    just the floor so very short item-panel content never collapses it. */
 .ld-split{display:grid;grid-template-columns:65fr 35fr;grid-template-rows:auto auto;gap:0;align-items:stretch;min-height:min(78vh,680px);border:1px solid var(--line-soft);}
+/* declared here (ahead of the @media(max-width:980px) block below) so that
+   block's mobile grid-column/padding override for .ld-nav-mid actually
+   wins on mobile — two same-specificity rules resolve by source order, and
+   this one previously sat after the media block, silently cancelling it. */
+.ld-nav-mid{grid-column:1/-1;grid-row:2;padding:4px 28px;border-top:1px solid var(--line-soft);}
 .ld-visual{grid-column:1;grid-row:1;position:relative;background:var(--paper-3);overflow:hidden;min-height:420px;cursor:zoom-in;}
 .ld-visual img{width:100%;height:100%;object-fit:cover;object-position:top center;}
 /* the next/prev photo revealed underneath as a finger drags the current
@@ -356,22 +361,28 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ii-mix-link:active{transform:scale(.96);}
 
 @media(max-width:980px){
-  .ld-split{grid-template-columns:1fr;grid-template-rows:auto auto auto;min-height:0;}
+  .ld-split{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;min-height:0;}
   .ld-visual{grid-column:1;grid-row:1;aspect-ratio:4/5;min-height:0;touch-action:pan-y;}
-  .ld-nav-mid{grid-column:1;grid-row:2;padding-left:0;padding-right:0;}
-  .ld-items{grid-column:1;grid-row:3;flex-direction:row;border-left:none;border-top:1px solid var(--line-soft);}
-  .ld-item{flex:1;padding:10px 12px;border-right:1px solid var(--line-soft);border-bottom:none;}
+  .ld-nav-mid{grid-column:1;grid-row:2;min-width:0;padding-left:0;padding-right:0;}
+  .ld-items{grid-column:1;grid-row:3;min-width:0;flex-direction:row;border-left:none;border-top:1px solid var(--line-soft);}
+  .ld-item{flex:1;min-width:0;padding:10px 12px;border-right:1px solid var(--line-soft);border-bottom:none;}
   .ld-item:last-child{border-right:none;}
   .ld-item .ii-top{margin-bottom:6px;}
   .ld-item .ii-figure{display:none;}
-  .ld-item .ii-name{font-size:15px;margin-top:0;}
+  .ld-item .ii-name{font-size:15px;margin-top:0;overflow-wrap:break-word;}
   .ld-item .ii-color{font-size:10px;margin-top:4px;}
-  .ld-item .ii-code{font-size:10.5px;margin-top:2px;}
+  .ld-item .ii-code{font-size:10.5px;margin-top:2px;overflow-wrap:break-word;}
   .ii-mix-link{padding:6px;}
   .ii-mix-link span{display:none;}
 }
 
 .ld-nav{max-width:1320px;margin:0 auto;padding:28px 28px 90px;}
+/* .ld-nav-mid reuses .ld-nav's spacing but, as a grid item inside .ld-split,
+   needs to actually fill its column — the auto side margins above are meant
+   for .ld-nav's own standalone (non-grid) usage and would otherwise stop
+   this item from stretching, sizing it to its content instead and clipping
+   whatever doesn't fit. */
+.ld-nav-mid{margin:0;}
 /* the same strip, sitting between the hero photo and the item panel as a
    "pick a different outfit" picker instead of a "here's more" afterthought
    at the very top of the page (before the user has even seen the look
@@ -381,7 +392,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
    .ld-split's two hero/item columns stay side by side; this sits full-
    width in its own row underneath both rather than between them, since
    there's no side-by-side equivalent of "between" to put it in. */
-.ld-nav-mid{grid-column:1/-1;grid-row:2;padding:4px 28px;border-top:1px solid var(--line-soft);}
 /* mouse users have no swipe gesture for this horizontal strip — cursor:grab
    plus bindDragScroll() (JS) lets a click-and-drag scroll it the way a
    touch swipe already does on mobile. scroll-snap is suspended mid-drag
