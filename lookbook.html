@@ -487,14 +487,21 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-loading{padding:30px 0;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted);}
 .mix-carousel{padding:14px 0;border-top:1px solid var(--line-soft);}
 .mix-carousel:last-of-type{border-bottom:1px solid var(--line-soft);}
-.mc-strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.mc-row{display:flex;align-items:center;gap:6px;}
+.mc-strip{flex:1;min-width:0;display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .mc-strip::-webkit-scrollbar{display:none;}
-.mix-thumb{flex:0 0 calc((100% - 45px)/5.5);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:4px;border:1px solid var(--line-soft);border-radius:4px;background:var(--paper);cursor:pointer;scroll-snap-align:start;transition:border-color .2s,transform .15s ease;}
+.mix-thumb{flex:0 0 calc((100% - 40px)/5);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:4px;border:1px solid var(--line-soft);border-radius:4px;background:var(--paper);cursor:pointer;scroll-snap-align:start;transition:border-color .2s,transform .15s ease;}
 .mix-thumb:active{transform:scale(.96);}
 .mix-thumb.active{border:1.5px solid var(--ink);}
 .mix-thumb img{max-width:100%;max-height:100%;object-fit:contain;}
 @media(hover:hover) and (pointer:fine){
   .mix-thumb:hover{border-color:var(--ink-soft);}
+}
+.mc-arrow{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;line-height:1;transition:background .2s,border-color .2s,color .2s,transform .15s ease;}
+.mc-arrow:active{transform:scale(.9);}
+.mc-arrow:disabled{opacity:.3;cursor:default;}
+@media(hover:hover) and (pointer:fine){
+  .mc-arrow:not(:disabled):hover{background:var(--ink);border-color:var(--ink);color:var(--paper);}
 }
 .mix-carousel .mc-info{margin-bottom:10px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
 .mix-carousel .mc-head{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted);}
@@ -2915,8 +2922,32 @@ function mixCarouselHtml(kind, codes, activeIdx){
       <span class="mc-name">${active?.name||''}</span>
       <span class="mc-code">${active?.code||''} — ${active?.color||''}</span>
     </div>
-    <div class="mc-strip">${thumbs}</div>
+    <div class="mc-row">
+      <button type="button" class="mc-arrow mc-arrow-prev" onclick="scrollMixStrip('${kind}',-1)" aria-label="Scroll ${kind} left">&#8249;</button>
+      <div class="mc-strip">${thumbs}</div>
+      <button type="button" class="mc-arrow mc-arrow-next" onclick="scrollMixStrip('${kind}',1)" aria-label="Scroll ${kind} right">&#8250;</button>
+    </div>
   </div>`;
+}
+/* Scrolls a carousel strip by ~one page (with a little overlap so the
+   next page reads as a continuation, not a jump) instead of by a single
+   thumbnail — most strips hold more items than fit in one view, so a
+   single-thumbnail nudge would take many taps to get anywhere. */
+function scrollMixStrip(kind, dir){
+  const strip = document.querySelector(`.mix-carousel[data-kind="${kind}"] .mc-strip`);
+  if(!strip) return;
+  strip.scrollBy({left: dir * strip.clientWidth * 0.85, behavior: REDUCE_MOTION ? 'auto' : 'smooth'});
+}
+/* Disables whichever arrow points past the end of the actual scroll
+   range, so tapping one at the edge doesn't look like a dead button. */
+function updateMixArrows(kind){
+  const strip = document.querySelector(`.mix-carousel[data-kind="${kind}"] .mc-strip`);
+  const row = strip && strip.closest('.mc-row');
+  if(!row) return;
+  const prev = row.querySelector('.mc-arrow-prev');
+  const next = row.querySelector('.mc-arrow-next');
+  if(prev) prev.disabled = strip.scrollLeft <= 1;
+  if(next) next.disabled = strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 1;
 }
 function paintMix(){
   const stage = document.getElementById('mixStage');
@@ -2931,6 +2962,11 @@ function paintMix(){
     return;
   }
   stage.innerHTML = mixCarouselHtml('top', MIX_TOPS, mixTopIdx) + mixCarouselHtml('bottom', MIX_BOTTOMS, mixBottomIdx);
+  ['top','bottom'].forEach(kind=>{
+    const strip = stage.querySelector(`.mix-carousel[data-kind="${kind}"] .mc-strip`);
+    if(strip) strip.addEventListener('scroll', ()=>updateMixArrows(kind), {passive:true});
+    updateMixArrows(kind);
+  });
   updateMixPreview();
 }
 /* Refreshes just the mannequin preview + CTA — used both by the initial
