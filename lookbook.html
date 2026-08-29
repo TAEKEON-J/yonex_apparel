@@ -1493,8 +1493,16 @@ function initMixPool(){
    to know which item codes actually have a mannequin cutout — have a
    real answer well before a user reaches one, instead of only after
    they've already visited /mix once this session. initMixPool() itself
-   is memoized, so this doesn't cause a second round of requests later. */
-initMixPool();
+   is memoized, so this doesn't cause a second round of requests later.
+   Deferred to idle time rather than fired at script-parse time: ~55
+   concurrent HEAD requests competing with the page's own first paint
+   (hero photo, fonts, etc.) for a cold load's limited connections was
+   itself a source of things feeling occasionally slow/janky on mobile.
+   requestIdleCallback isn't available in Safari, hence the setTimeout
+   fallback — same intent (let the real page settle first), just a fixed
+   short delay instead of a true idle signal. */
+if('requestIdleCallback' in window) requestIdleCallback(initMixPool, {timeout: 2000});
+else setTimeout(initMixPool, 300);
 
 /* ---------------- STATE / ROUTER ---------------- */
 let mixTopIdx = 0, mixBottomIdx = 0;
