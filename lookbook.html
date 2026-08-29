@@ -490,13 +490,10 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-carousel .mc-head{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted);margin:0 0 10px;}
 .mc-strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .mc-strip::-webkit-scrollbar{display:none;}
-.mix-thumb{flex:0 0 92px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 8px;border:1px solid var(--line-soft);border-radius:4px;background:var(--paper);cursor:pointer;scroll-snap-align:start;transition:border-color .2s,transform .15s ease;}
+.mix-thumb{flex:0 0 92px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:10px 8px;border:1px solid var(--line-soft);border-radius:4px;background:var(--paper);cursor:pointer;scroll-snap-align:start;transition:border-color .2s,transform .15s ease;}
 .mix-thumb:active{transform:scale(.96);}
 .mix-thumb.active{border:1.5px solid var(--ink);}
-.mix-thumb .mt-imgwrap{width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;}
 .mix-thumb img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 10px 14px rgba(20,20,15,.1));}
-.mix-thumb .mt-code{font-family:var(--mono);font-size:9.5px;color:var(--ink);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
-.mix-thumb .mt-color{font-size:9px;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
 @media(hover:hover) and (pointer:fine){
   .mix-thumb:hover{border-color:var(--ink-soft);}
 }
@@ -2903,9 +2900,7 @@ function mixCarouselHtml(kind, codes, activeIdx){
     if(!p) return '';
     const isActive = i===activeIdx;
     return `<button type="button" class="mix-thumb${isActive?' active':''}" onclick="selectMix('${kind}',${i})" aria-label="${p.name} ${p.code} ${p.color||''}" aria-pressed="${isActive}">
-      <span class="mt-imgwrap"><img src="${p.img}" alt="" loading="lazy"></span>
-      <span class="mt-code">${p.code}</span>
-      <span class="mt-color">${p.color||''}</span>
+      <img src="${p.img}" alt="" loading="lazy">
     </button>`;
   }).join('');
   return `<div class="mix-carousel" data-kind="${kind}">
