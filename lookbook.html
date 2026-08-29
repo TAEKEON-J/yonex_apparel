@@ -327,7 +327,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 @media(max-width:980px){
   .ld-split{grid-template-columns:1fr;grid-template-rows:auto auto auto;min-height:0;}
   .ld-visual{grid-column:1;grid-row:1;aspect-ratio:4/5;min-height:0;touch-action:pan-y;}
-  .ld-nav-mid{grid-column:1;grid-row:2;}
+  .ld-nav-mid{grid-column:1;grid-row:2;padding-left:0;padding-right:0;}
   .ld-items{grid-column:1;grid-row:3;flex-direction:row;border-left:none;border-top:1px solid var(--line-soft);}
   .ld-item{flex:1;padding:10px 12px;border-right:1px solid var(--line-soft);border-bottom:none;}
   .ld-item:last-child{border-right:none;}
@@ -351,7 +351,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
    width in its own row underneath both rather than between them, since
    there's no side-by-side equivalent of "between" to put it in. */
 .ld-nav-mid{grid-column:1/-1;grid-row:2;padding:18px 28px;border-top:1px solid var(--line-soft);}
-.ld-nav-mid .ec-head{padding-bottom:6px;}
 /* mouse users have no swipe gesture for this horizontal strip — cursor:grab
    plus bindDragScroll() (JS) lets a click-and-drag scroll it the way a
    touch swipe already does on mobile. scroll-snap is suspended mid-drag
@@ -370,7 +369,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 }
 @media(max-width:640px){
   .ld-nav{padding:22px 18px 60px;}
-  .ld-nav-mid{padding:14px 18px;}
+  .ld-nav-mid{padding:14px 0;}
   .ld-related-strip{gap:8px;}
   .ld-related-thumb{flex:0 0 calc((100% - 40px)/5.2);}
   .look-detail{padding:16px 18px 16px;}
@@ -2209,8 +2208,7 @@ function renderLook(id){
           ${heroHtml}
           ${heroArrowsHtml}
         </div>
-        <nav class="ld-nav ld-nav-mid">
-          <div class="ec-head"><h3>MORE IN ${c.label}</h3><span class="ec-count">${String(catLooks.length).padStart(2,'0')}</span></div>
+        <nav class="ld-nav ld-nav-mid" aria-label="More looks in ${c.label}">
           <div class="ld-related-strip">${otherLooksHtml}</div>
         </nav>
         <div class="ld-items">${itemsHtml}</div>
