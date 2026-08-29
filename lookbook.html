@@ -1686,8 +1686,15 @@ function render(){
         if(isCurrent) a.setAttribute('aria-current','page');
         else a.removeAttribute('aria-current');
       });
-      if(relatedScrollLeft!==null) oldStrip.scrollLeft = relatedScrollLeft;
+      /* scrollLeft has to be set AFTER the node is back in the document,
+         not before — oldStrip is still detached at this point (its old
+         parent's subtree was already torn down by the innerHTML swap
+         above), and assigning scrollLeft on a detached element is a
+         no-op: there's no scrollable viewport for it yet, so the value
+         silently doesn't stick and the reattached strip lands at 0
+         regardless of what it's set to here. */
       newStrip.replaceWith(oldStrip);
+      if(relatedScrollLeft!==null) oldStrip.scrollLeft = relatedScrollLeft;
     } else if(relatedScrollLeft!==null && newStrip){
       newStrip.scrollLeft = relatedScrollLeft;
     }
