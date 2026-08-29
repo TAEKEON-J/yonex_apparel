@@ -485,24 +485,21 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-preview.mp-broken .mp-fallback{display:flex;}
 .mix-stage{max-width:920px;margin:18px auto 0;padding:0 28px;}
 .mix-loading{padding:30px 0;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted);}
-.mix-slot{display:grid;grid-template-columns:56px 1fr 56px;align-items:center;gap:10px;padding:0;}
-.mix-slot:first-of-type{padding-top:18px;border-top:1px solid var(--line-soft);}
-.mix-slot:last-of-type{padding-bottom:18px;border-bottom:1px solid var(--line-soft);}
-.mix-arrow{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;transition:background .22s var(--ease-out),border-color .22s var(--ease-out),color .22s var(--ease-out),transform .15s ease;justify-self:center;}
-.mix-arrow svg{width:16px;height:16px;}
-.mix-arrow:hover{background:var(--ink);border-color:var(--ink);color:var(--paper);}
-.mix-arrow:active{transform:scale(.96);}
-.mix-figure{display:flex;align-items:center;gap:16px;text-align:left;width:380px;margin:0 auto;}
-.mix-figure.mix-slide-next{animation:mixSlideNext .3s var(--ease-out) both;}
-.mix-figure.mix-slide-prev{animation:mixSlidePrev .3s var(--ease-out) both;}
-@keyframes mixSlideNext{from{opacity:0;transform:translateX(28px);}to{opacity:1;transform:translateX(0);}}
-@keyframes mixSlidePrev{from{opacity:0;transform:translateX(-28px);}to{opacity:1;transform:translateX(0);}}
-.mix-figure .ms-imgwrap{width:170px;height:170px;flex:none;display:flex;align-items:center;justify-content:center;}
-.mix-figure img{max-height:100%;max-width:100%;object-fit:contain;filter:drop-shadow(0 18px 26px rgba(20,20,15,.12));}
-.mix-figure .ms-text{min-width:0;flex:1;}
-.mix-figure .ms-label{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted);margin-bottom:2px;}
-.mix-figure .ms-name{font-size:14px;font-weight:600;margin-top:2px;}
-.mix-figure .ms-code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;}
+.mix-carousel{padding:14px 0;border-top:1px solid var(--line-soft);}
+.mix-carousel:last-of-type{border-bottom:1px solid var(--line-soft);}
+.mix-carousel .mc-head{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted);margin:0 0 10px;}
+.mc-strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.mc-strip::-webkit-scrollbar{display:none;}
+.mix-thumb{flex:0 0 92px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 8px;border:1px solid var(--line-soft);border-radius:4px;background:var(--paper);cursor:pointer;scroll-snap-align:start;transition:border-color .2s,transform .15s ease;}
+.mix-thumb:active{transform:scale(.96);}
+.mix-thumb.active{border:1.5px solid var(--ink);}
+.mix-thumb .mt-imgwrap{width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;}
+.mix-thumb img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 10px 14px rgba(20,20,15,.1));}
+.mix-thumb .mt-code{font-family:var(--mono);font-size:9.5px;color:var(--ink);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.mix-thumb .mt-color{font-size:9px;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+@media(hover:hover) and (pointer:fine){
+  .mix-thumb:hover{border-color:var(--ink-soft);}
+}
 .mix-cta{text-align:center;padding:26px 28px 90px;}
 .mix-cta button{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;padding:12px 30px;border-radius:999px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;transition:opacity .2s,transform .15s ease;}
 .mix-cta button:not(:disabled):active{transform:scale(.96);}
@@ -518,7 +515,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .mix-preview{width:100%;max-width:480px;margin:20px auto 0;}
   .mix-preview-note{max-width:480px;}
   .mix-stage{max-width:none;margin:18px 0 0;padding:0;}
-  .mix-figure{width:100%;max-width:360px;}
   .mix-cta{padding:26px 0 40px;}
 }
 @media(max-width:640px){
@@ -526,15 +522,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .mix-preview{width:100%;max-width:420px;margin:14px auto 0;}
   .mix-preview-note{max-width:420px;margin:6px auto 0;}
   .mix-stage{padding:0 16px;margin:10px auto 0;}
-  .mix-slot{grid-template-columns:40px 1fr 40px;}
-  .mix-slot:first-of-type{padding-top:10px;}
-  .mix-slot:last-of-type{padding-bottom:10px;}
-  .mix-arrow{width:36px;height:36px;}
-  .mix-arrow svg{width:14px;height:14px;}
-  .mix-figure{width:100%;max-width:none;gap:10px;}
-  .mix-figure .ms-imgwrap{width:72px;height:72px;}
-  .mix-figure .ms-name{font-size:13px;}
-  .mix-figure .ms-code{font-size:10px;}
+  .mix-thumb{flex:0 0 80px;padding:8px 6px;}
   .mix-cta{padding:16px 0 40px;}
   .mix-cta .mc-note{margin-top:10px;}
 }
@@ -2906,7 +2894,26 @@ function mixSetLayer(preview, cls, src){
   };
   preloader.src = src;
 }
-function paintMix(which, dir){
+/* One horizontally-scrollable strip per kind (TOP/BOTTOM) instead of a
+   single item stepped through with arrows — every candidate is visible
+   at a glance, tap any thumbnail to select it directly. */
+function mixCarouselHtml(kind, codes, activeIdx){
+  const thumbs = codes.map((code,i)=>{
+    const p = PRODUCTS[code];
+    if(!p) return '';
+    const isActive = i===activeIdx;
+    return `<button type="button" class="mix-thumb${isActive?' active':''}" onclick="selectMix('${kind}',${i})" aria-label="${p.name} ${p.code} ${p.color||''}" aria-pressed="${isActive}">
+      <span class="mt-imgwrap"><img src="${p.img}" alt="" loading="lazy"></span>
+      <span class="mt-code">${p.code}</span>
+      <span class="mt-color">${p.color||''}</span>
+    </button>`;
+  }).join('');
+  return `<div class="mix-carousel" data-kind="${kind}">
+    <div class="mc-head">${kind.toUpperCase()}</div>
+    <div class="mc-strip">${thumbs}</div>
+  </div>`;
+}
+function paintMix(){
   const stage = document.getElementById('mixStage');
   const cta = document.getElementById('mixCta');
   const preview = document.getElementById('mixPreview');
@@ -2918,32 +2925,17 @@ function paintMix(which, dir){
     if(preview) preview.innerHTML = '';
     return;
   }
-  const top = PRODUCTS[mixTopCode()], bottom = PRODUCTS[mixBottomCode()];
-  const slideClass = REDUCE_MOTION || !dir ? '' : dir > 0 ? ' mix-slide-next' : ' mix-slide-prev';
-  const arrowIcon = dir => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${dir<0?'M15 6l-6 6 6 6':'M9 6l6 6-6 6'}"/></svg>`;
-  const mixSlotHtml = (kind, product, cls) => `
-    <button class="mix-arrow" onclick="shiftMix('${kind}',-1)" aria-label="Previous ${kind}">${arrowIcon(-1)}</button>
-    <div class="mix-figure${cls}">
-      <div class="ms-imgwrap"><img src="${product.img}" alt="${product.name}"></div>
-      <div class="ms-text">
-        <div class="ms-label">${kind.toUpperCase()}</div>
-        <div class="ms-name">${product.name}</div>
-        <div class="ms-code">${product.code} — ${product.color}</div>
-      </div>
-    </div>
-    <button class="mix-arrow" onclick="shiftMix('${kind}',1)" aria-label="Next ${kind}">${arrowIcon(1)}</button>`;
-  /* only rewrite the slot that actually changed — replacing both slots'
-     DOM (arrows included) on every arrow tap, even the untouched one,
-     was pure overhead that read as sluggish on real devices. */
-  let topSlot = stage.querySelector('.mix-slot[data-kind="top"]');
-  let bottomSlot = stage.querySelector('.mix-slot[data-kind="bottom"]');
-  if(!topSlot || !bottomSlot){
-    stage.innerHTML = '<div class="mix-slot" data-kind="top"></div><div class="mix-slot" data-kind="bottom"></div>';
-    topSlot = stage.querySelector('.mix-slot[data-kind="top"]');
-    bottomSlot = stage.querySelector('.mix-slot[data-kind="bottom"]');
-  }
-  if(!which || which==='top') topSlot.innerHTML = mixSlotHtml('top', top, which==='top' ? slideClass : '');
-  if(!which || which==='bottom') bottomSlot.innerHTML = mixSlotHtml('bottom', bottom, which==='bottom' ? slideClass : '');
+  stage.innerHTML = mixCarouselHtml('top', MIX_TOPS, mixTopIdx) + mixCarouselHtml('bottom', MIX_BOTTOMS, mixBottomIdx);
+  updateMixPreview();
+}
+/* Refreshes just the mannequin preview + CTA — used both by the initial
+   full paintMix() render and by selectMix()'s lighter per-tap update,
+   which deliberately leaves the carousel strips themselves untouched so
+   picking an item further down a scrolled strip doesn't snap it back to
+   the start. */
+function updateMixPreview(){
+  const cta = document.getElementById('mixCta');
+  const preview = document.getElementById('mixPreview');
   const match = mixMatchLook();
   if(preview){
     preview.classList.remove('mp-broken');
@@ -2954,30 +2946,22 @@ function paintMix(which, dir){
     mixSetLayer(preview, 'mp-bottom', `images/mannequin/bottoms/${mixBottomCode()}.png`);
     mixSetLayer(preview, 'mp-top', `images/mannequin/tops/${mixTopCode()}.png`);
   }
-  cta.innerHTML = match
+  if(cta) cta.innerHTML = match
     ? `<button onclick="go('look','${match.id}')">VIEW STYLING &rarr;</button><div class="mc-note">LOOK ${String(match.num).padStart(2,'0')} 스타일링 있음</div>`
     : `<button disabled>VIEW STYLING</button><div class="mc-note">촬영된 조합 없음</div>`;
 }
-function shiftMix(which, dir){
-  if(which==='top') mixTopIdx = (mixTopIdx + dir + MIX_TOPS.length) % MIX_TOPS.length;
-  else mixBottomIdx = (mixBottomIdx + dir + MIX_BOTTOMS.length) % MIX_BOTTOMS.length;
-  paintMix(which, dir);
-}
-/* touch swipe on mix figures */
-let touchX = null;
-document.addEventListener('touchstart', e=>{
-  if(e.target.closest('.mix-figure')) touchX = e.touches[0].clientX;
-});
-document.addEventListener('touchend', e=>{
-  if(touchX===null) return;
-  const dx = e.changedTouches[0].clientX - touchX;
-  const fig = e.target.closest('.mix-figure');
-  if(fig && Math.abs(dx) > 40){
-    const which = fig.querySelector('.ms-label').textContent === 'TOP' ? 'top' : 'bottom';
-    shiftMix(which, dx < 0 ? 1 : -1);
+function selectMix(kind, idx){
+  if(kind==='top'){ if(idx===mixTopIdx) return; mixTopIdx = idx; }
+  else{ if(idx===mixBottomIdx) return; mixBottomIdx = idx; }
+  const strip = document.querySelector(`.mix-carousel[data-kind="${kind}"] .mc-strip`);
+  if(strip){
+    const prevActive = strip.querySelector('.mix-thumb.active');
+    if(prevActive){ prevActive.classList.remove('active'); prevActive.setAttribute('aria-pressed','false'); }
+    const next = strip.children[idx];
+    if(next){ next.classList.add('active'); next.setAttribute('aria-pressed','true'); }
   }
-  touchX = null;
-});
+  updateMixPreview();
+}
 
 /* ---------------- REVEAL ON SCROLL ---------------- */
 function observeReveal(){
