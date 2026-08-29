@@ -499,9 +499,8 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 }
 .mc-arrow{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;line-height:1;transition:background .2s,border-color .2s,color .2s,transform .15s ease;}
 .mc-arrow:active{transform:scale(.9);}
-.mc-arrow:disabled{opacity:.3;cursor:default;}
 @media(hover:hover) and (pointer:fine){
-  .mc-arrow:not(:disabled):hover{background:var(--ink);border-color:var(--ink);color:var(--paper);}
+  .mc-arrow:hover{background:var(--ink);border-color:var(--ink);color:var(--paper);}
 }
 .mix-carousel .mc-info{margin-bottom:10px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
 .mix-carousel .mc-head{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted);}
@@ -2923,31 +2922,23 @@ function mixCarouselHtml(kind, codes, activeIdx){
       <span class="mc-code">${active?.code||''} — ${active?.color||''}</span>
     </div>
     <div class="mc-row">
-      <button type="button" class="mc-arrow mc-arrow-prev" onclick="scrollMixStrip('${kind}',-1)" aria-label="Scroll ${kind} left">&#8249;</button>
+      <button type="button" class="mc-arrow mc-arrow-prev" onclick="stepMix('${kind}',-1)" aria-label="Previous ${kind}">&#8249;</button>
       <div class="mc-strip">${thumbs}</div>
-      <button type="button" class="mc-arrow mc-arrow-next" onclick="scrollMixStrip('${kind}',1)" aria-label="Scroll ${kind} right">&#8250;</button>
+      <button type="button" class="mc-arrow mc-arrow-next" onclick="stepMix('${kind}',1)" aria-label="Next ${kind}">&#8250;</button>
     </div>
   </div>`;
 }
-/* Scrolls a carousel strip by ~one page (with a little overlap so the
-   next page reads as a continuation, not a jump) instead of by a single
-   thumbnail — most strips hold more items than fit in one view, so a
-   single-thumbnail nudge would take many taps to get anywhere. */
-function scrollMixStrip(kind, dir){
+/* Arrow taps move the *selection* to the adjacent item (wrapping at the
+   ends) and scroll just far enough to bring it into view — swiping/
+   dragging the strip itself stays free scrolling, untouched by this. */
+function stepMix(kind, dir){
+  const list = kind==='top' ? MIX_TOPS : MIX_BOTTOMS;
+  const curIdx = kind==='top' ? mixTopIdx : mixBottomIdx;
+  const nextIdx = (curIdx + dir + list.length) % list.length;
+  selectMix(kind, nextIdx);
   const strip = document.querySelector(`.mix-carousel[data-kind="${kind}"] .mc-strip`);
-  if(!strip) return;
-  strip.scrollBy({left: dir * strip.clientWidth * 0.85, behavior: REDUCE_MOTION ? 'auto' : 'smooth'});
-}
-/* Disables whichever arrow points past the end of the actual scroll
-   range, so tapping one at the edge doesn't look like a dead button. */
-function updateMixArrows(kind){
-  const strip = document.querySelector(`.mix-carousel[data-kind="${kind}"] .mc-strip`);
-  const row = strip && strip.closest('.mc-row');
-  if(!row) return;
-  const prev = row.querySelector('.mc-arrow-prev');
-  const next = row.querySelector('.mc-arrow-next');
-  if(prev) prev.disabled = strip.scrollLeft <= 1;
-  if(next) next.disabled = strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 1;
+  const thumb = strip && strip.children[nextIdx];
+  if(thumb) thumb.scrollIntoView({behavior: REDUCE_MOTION ? 'auto' : 'smooth', inline: 'nearest', block: 'nearest'});
 }
 function paintMix(){
   const stage = document.getElementById('mixStage');
@@ -2962,11 +2953,6 @@ function paintMix(){
     return;
   }
   stage.innerHTML = mixCarouselHtml('top', MIX_TOPS, mixTopIdx) + mixCarouselHtml('bottom', MIX_BOTTOMS, mixBottomIdx);
-  ['top','bottom'].forEach(kind=>{
-    const strip = stage.querySelector(`.mix-carousel[data-kind="${kind}"] .mc-strip`);
-    if(strip) strip.addEventListener('scroll', ()=>updateMixArrows(kind), {passive:true});
-    updateMixArrows(kind);
-  });
   updateMixPreview();
 }
 /* Refreshes just the mannequin preview + CTA — used both by the initial
