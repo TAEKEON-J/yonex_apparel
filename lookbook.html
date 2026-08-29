@@ -2868,12 +2868,21 @@ function mixSetLayer(preview, cls, src){
      absolutely-positioned <img> like these layers, which left a layer
      stuck invisible forever with no error surfaced — so it's raced
      against the plain load/error pair (which always fires) rather than
-     relied on alone; whichever settles first wins. */
+     relied on alone; whichever settles first wins.
+
+     With all three layers (base/bottom/top) appended and decoded in the
+     same tick, that same WebKit stall has been seen to also swallow the
+     plain load event for whichever layers aren't the last one queued —
+     base and bottom stuck invisible forever while top alone came in. A
+     hard timeout is raced in as a last-resort net: nothing legitimate
+     ever takes this long to load or decode, so it only ever fires to
+     rescue a layer that both signals have already abandoned. */
   const loadReady = (img.complete && img.naturalWidth > 0) ? Promise.resolve() : new Promise((res,rej)=>{
     img.addEventListener('load', res, {once:true});
     img.addEventListener('error', rej, {once:true});
   });
-  const ready = img.decode ? Promise.race([img.decode(), loadReady]) : loadReady;
+  const stallNet = new Promise(res=>setTimeout(res, 4000));
+  const ready = img.decode ? Promise.race([img.decode(), loadReady, stallNet]) : Promise.race([loadReady, stallNet]);
   ready.then(()=>{
     if(state.req !== req){ img.remove(); return; } /* superseded before it finished decoding */
     /* Update the bookkeeping (pendingSrc/activeImg) synchronously,
