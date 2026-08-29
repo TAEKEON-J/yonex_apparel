@@ -1591,6 +1591,18 @@ function render(){
      visually instant for those users; it just no longer blanks first. */
   const playHeroAnim = isLookToLook && !skipHeroAnim;
 
+  /* must happen before the ghost snapshot below, not after it — the
+     ghost is position:fixed at coordinates read via
+     getBoundingClientRect() at snapshot time, so if the page were still
+     scrolled when that read happened, the ghost would be pinned to
+     wherever the hero was AT THAT SCROLL POSITION. Resetting scroll
+     afterwards (as this used to do) then snaps the real page — including
+     the fresh #ldHeroImg — up to the top while the already-positioned
+     ghost stays exactly where it was, opening a real gap between them
+     for the whole transition (or worse, on a long scroll, leaving the
+     ghost off-screen entirely). */
+  window.scrollTo({top:0,behavior:'instant'});
+
   /* snapshot the outgoing hero photo (and which direction we're headed)
      before anything gets torn down, so the old and new photo can visibly
      overlap and cross past each other instead of a blank-then-fade-in
@@ -1679,7 +1691,6 @@ function render(){
   const cat = document.body.dataset.cat;
   if(cat) document.documentElement.style.setProperty('--accent-cat', CATEGORIES[cat].accent);
   if(cat) document.documentElement.style.setProperty('--accent-cat-a', CATEGORIES[cat].accent+'33');
-  window.scrollTo({top:0,behavior:'instant'});
   closeProduct();
   lookGalleryIdx = 0;
   if(!isLookToLook) lookPairView = 'M';
