@@ -1378,13 +1378,33 @@ function positionToggleThumb(container){
   const active = container.querySelector(':scope > button.active');
   if(!active) return;
   let thumb = container.querySelector(':scope > .toggle-thumb');
+  const justCreated = !thumb;
   if(!thumb){
     thumb = document.createElement('span');
     thumb.className = 'toggle-thumb';
     container.insertBefore(thumb, container.firstChild);
   }
+  if(justCreated){
+    /* a brand-new thumb (every full look-to-look re-render rebuilds this
+       toggle from scratch) starts with no explicit width — on real
+       hardware the browser can composite that default near-zero-width
+       state for a frame before these styles land, and since width/
+       transform are both transitioned properties, WebKit can then
+       visibly animate FROM that wrong start instead of just appearing
+       already-correct. That read as the pill "jumping toward MEN" (MEN's
+       position sits near the default left-origin, so the same glitch is
+       invisible there) right before settling on WOMEN. Suppress the
+       transition for this first-ever positioning so it snaps straight
+       to place; the CSS transition still runs normally afterwards, for
+       the actual MEN/WOMEN tap. */
+    thumb.style.transition = 'none';
+  }
   thumb.style.width = active.offsetWidth + 'px';
   thumb.style.transform = `translateX(${active.offsetLeft}px)`;
+  if(justCreated){
+    void thumb.offsetWidth;
+    thumb.style.transition = '';
+  }
 }
 
 /* Click-and-drag scroll for horizontal strips (currently the related-looks
