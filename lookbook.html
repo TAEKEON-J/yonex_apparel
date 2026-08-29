@@ -1463,9 +1463,17 @@ function initMixPool(){
     if(!MIX_BOTTOMS.length) MIX_BOTTOMS = [...MIX_BOTTOM_POOL];
     if(mixTopIdx >= MIX_TOPS.length) mixTopIdx = 0;
     if(mixBottomIdx >= MIX_BOTTOMS.length) mixBottomIdx = 0;
+    refreshLookMixButtons();
   });
   return mixPoolPromise;
 }
+/* kicked off eagerly (not just on first STYLE MIX visit) so the LOOK
+   page's own "STYLE MIX" jump buttons — which need MIX_TOPS/MIX_BOTTOMS
+   to know which item codes actually have a mannequin cutout — have a
+   real answer well before a user reaches one, instead of only after
+   they've already visited /mix once this session. initMixPool() itself
+   is memoized, so this doesn't cause a second round of requests later. */
+initMixPool();
 
 /* ---------------- STATE / ROUTER ---------------- */
 let mixTopIdx = 0, mixBottomIdx = 0;
@@ -2072,9 +2080,12 @@ function buildItemsHtml(look, variant){
     const colorLine = p && p.color ? `<div class="ii-color">${p.color}</div>` : '';
     const figureHtml = isBottom ? '' : `<div class="ii-figure"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>`;
     /* only offer the jump when this item's code actually has a mannequin
-       cutout in the STYLE MIX pool — otherwise the button would land on
-       Style Mix without actually showing the item, which reads as broken. */
-    const inMixPool = (isBottom ? MIX_BOTTOM_POOL : MIX_TOP_POOL).includes(it.code);
+       cutout uploaded — checked against MIX_TOPS/MIX_BOTTOMS (the pool
+       filtered down to confirmed-existing files by initMixPool()), not
+       the raw candidate pool, which lists codes that don't all have a
+       file yet. Otherwise the button would land on Style Mix without
+       actually showing the item, which reads as broken. */
+    const inMixPool = (isBottom ? MIX_BOTTOMS : MIX_TOPS).includes(it.code);
     const mixBtnHtml = inMixPool
       ? `<button type="button" class="ii-mix-link" onclick="event.stopPropagation();openInStyleMix(this.closest('.ld-item'))" aria-label="STYLE MIX에서 보기">
           <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 4.5h2.6L11 11.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 11.5h2.6L11 4.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.2 2.7 14 4.5l-1.8 1.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.2 9.7l1.8 1.8-1.8 1.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2090,6 +2101,21 @@ function buildItemsHtml(look, variant){
       ${toggleHtml}
     </div>`;
   }).join('');
+}
+/* MIX_TOPS/MIX_BOTTOMS (see initMixPool()) usually aren't ready yet by
+   the time a LOOK page first renders, so its item panel initially under-
+   shows "STYLE MIX" buttons; this re-renders that panel once the pool
+   resolves, so the buttons catch up without the user needing to leave
+   and come back. No-ops on any other view or if the panel isn't mounted. */
+function refreshLookMixButtons(){
+  if(parseHash().view !== 'look') return;
+  const itemsEl = document.querySelector('.ld-items');
+  const look = LOOKS.find(l=>l.id===parseHash().param);
+  if(!itemsEl || !look) return;
+  const variant = (lookPairView==='W' && look.pair) ? look.pair : look;
+  itemsEl.innerHTML = buildItemsHtml(look, variant);
+  bindLookItemClicks(look.id);
+  document.querySelectorAll('.ii-gtoggle').forEach(positionToggleThumb);
 }
 function renderLook(id){
   const look = LOOKS.find(l=>l.id===id);
