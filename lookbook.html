@@ -1943,6 +1943,7 @@ function genderInfo(code){
         -1 the reverse — pass whichever side conceptually matches the
         change (e.g. the WOMEN button sits right of MEN in the pill). */
 let heroXfade = null; /* the in-flight transition, if any: { next } */
+let heroXfadeToken = 0;
 function crossfadeHeroTo(photo, dir, altText){
   const visual = document.getElementById('ldVisual');
   const img = document.getElementById('ldHeroImg');
@@ -1971,29 +1972,43 @@ function crossfadeHeroTo(photo, dir, altText){
     void img.offsetWidth;
     img.style.transition = '';
   }
-  const enterFrom = dir > 0 ? '100%' : '-100%';
-  const exitTo = dir > 0 ? '-100%' : '100%';
-  const next = document.createElement('img');
-  next.src = photo;
-  next.alt = altText != null ? altText : img.alt;
-  next.style.position = 'absolute';
-  next.style.inset = '0';
-  next.style.width = '100%';
-  next.style.height = '100%';
-  next.style.objectFit = 'cover';
-  next.style.objectPosition = 'top center';
-  next.style.zIndex = '3';
-  next.style.transform = `translateX(${enterFrom})`;
-  visual.appendChild(next);
-  const state = { next };
-  heroXfade = state;
-  const loadReady = (next.complete && next.naturalWidth > 0) ? Promise.resolve() : new Promise((res,rej)=>{
-    next.addEventListener('load', res, {once:true});
-    next.addEventListener('error', rej, {once:true});
-  });
-  const ready = next.decode ? Promise.race([next.decode(), loadReady]) : loadReady;
-  ready.then(()=>{
-    if(heroXfade !== state) return; /* superseded by a newer call while loading */
+  const token = ++heroXfadeToken;
+  /* preload off-DOM first, exactly like mixSetLayer's mannequin layers —
+     starting the slide on an <img> whose src was just set (still
+     in-flight) races real-device decode() for a freshly-appended,
+     absolutely-positioned element; on a slow/uncached load (typically
+     the pair variant's photo, since the default view's photo is usually
+     already cached from initial load) that race can resolve in the same
+     paint as the final frame, collapsing the whole .2s slide into a
+     single hard cut instead of animating it. */
+  const preloader = new Image();
+  preloader.src = photo;
+  if(preloader.complete && preloader.naturalWidth > 0){
+    /* already in the browser's cache — resolve on the spot rather than
+       waiting a load-event tick, so a superseded call in a rapid-tap
+       chain vacates the token before the next tap's own preload runs. */
+    startSlide();
+  } else {
+    preloader.onload = ()=>{ if(token === heroXfadeToken) startSlide(); };
+    preloader.onerror = ()=>{ if(token === heroXfadeToken) img.src = photo; };
+  }
+  function startSlide(){
+    const enterFrom = dir > 0 ? '100%' : '-100%';
+    const exitTo = dir > 0 ? '-100%' : '100%';
+    const next = document.createElement('img');
+    next.src = photo;
+    next.alt = altText != null ? altText : img.alt;
+    next.style.position = 'absolute';
+    next.style.inset = '0';
+    next.style.width = '100%';
+    next.style.height = '100%';
+    next.style.objectFit = 'cover';
+    next.style.objectPosition = 'top center';
+    next.style.zIndex = '3';
+    next.style.transform = `translateX(${enterFrom})`;
+    visual.appendChild(next);
+    const state = { next };
+    heroXfade = state;
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       if(heroXfade !== state) return;
       /* short duration on purpose — this is a high-frequency toggle a
@@ -2022,12 +2037,7 @@ function crossfadeHeroTo(photo, dir, altText){
       next.addEventListener('transitionend', cleanup, {once:true});
       setTimeout(cleanup, 300);
     }));
-  }).catch(()=>{
-    if(heroXfade !== state) return;
-    heroXfade = null;
-    next.remove();
-    img.src = photo;
-  });
+  }
 }
 function swapLookPair(id, view, skipPhotoAnim){
   const look = LOOKS.find(l=>l.id===id);
