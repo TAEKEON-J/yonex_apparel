@@ -1568,7 +1568,17 @@ function render(){
   const skipHeroAnim = window.__skipHeroAnim === true;
   window.__skipHeroAnim = false;
   const isLookToLook = view==='look' && document.querySelector('.look-detail');
-  const playHeroAnim = isLookToLook && !REDUCE_MOTION && !skipHeroAnim;
+  /* deliberately NOT gated on REDUCE_MOTION — this flag also controls
+     whether the outgoing photo gets held (as a ghost) until the incoming
+     one has actually loaded, which has nothing to do with whether the
+     hand-off is animated. Excluding reduced-motion here used to skip
+     that hold entirely, so the new #ldHeroImg's src was set directly
+     from the fresh render with nothing covering the load gap — a blank
+     photo for however long the fetch took. The global
+     prefers-reduced-motion stylesheet rule already forces every
+     transition-duration to .01ms site-wide, so this still resolves
+     visually instant for those users; it just no longer blanks first. */
+  const playHeroAnim = isLookToLook && !skipHeroAnim;
 
   /* snapshot the outgoing hero photo (and which direction we're headed)
      before anything gets torn down, so the old and new photo can visibly
@@ -2042,13 +2052,15 @@ function crossfadeHeroTo(photo, dir, altText){
   const img = document.getElementById('ldHeroImg');
   if(!visual || !img || !photo) return;
   if(!heroXfade && img.getAttribute('src') === photo) return;
-  if(REDUCE_MOTION){
-    if(heroXfade){ heroXfade.next.remove(); heroXfade = null; }
-    img.style.transition = '';
-    img.style.transform = '';
-    img.src = photo;
-    return;
-  }
+  /* no separate reduced-motion branch here on purpose — that used to
+     short-circuit straight to `img.src = photo`, which blanks the photo
+     for however long the new one takes to actually load over the
+     network (nothing was covering the gap). The global
+     prefers-reduced-motion stylesheet rule already forces every
+     transition-duration to .01ms site-wide, so falling through to the
+     normal preload-then-swap flow below still ends up visually instant
+     once the photo's ready — just without ever showing a blank photo
+     while it loads. */
   /* a still-in-flight transition from a previous rapid tap has to be
      cancelled before starting a new one — two overlapping transitions
      can each finish and try to promote their own <img> to #ldHeroImg,
