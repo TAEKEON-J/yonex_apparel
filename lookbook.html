@@ -1843,12 +1843,14 @@ function fmtPrice(price){
 }
 
 /* ---------------- images/looks/ auto-matching ----------------
-   Naming convention: {TOP code}_{BOTTOM code}[_{other codes}]_{model|editorial}.jpg
+   Naming convention: {TOP code}_{BOTTOM code}[_{other codes}]_{mo|ed}.jpg
    (lowercase, full M/F/U-suffixed codes, slots ordered TOP→BOTTOM→other; a
-   TOP-only look just omits the rest, e.g. "263ts002f_model.jpg"). Drop a file
-   matching a look's codes into images/looks/ and it's picked up automatically —
-   no code change needed. Until then the <img> quietly falls back to the
-   look's temporary placeholder photo. */
+   TOP-only look just omits the rest, e.g. "263ts002f_mo.jpg"). The older
+   _model/_editorial suffixes still work too (see SUFFIX_ALIASES below), so
+   existing files never needed renaming. Drop a file matching a look's codes
+   into images/looks/ and it's picked up automatically — no code change
+   needed. Until then the <img> quietly falls back to the look's temporary
+   placeholder photo. */
 const LOOK_IMG_SLOT_ORDER = ['TOP','BOTTOM','OUTER','BAG'];
 function lookFilenameBase(items, upper){
   const ordered = [...items].sort((a,b)=>LOOK_IMG_SLOT_ORDER.indexOf(a.slot)-LOOK_IMG_SLOT_ORDER.indexOf(b.slot));
@@ -1860,13 +1862,16 @@ function lookFilenameBase(items, upper){
 function lookImgTag(items, type, fallbackSrc, attrs=''){
   /* file case is a common real-world mismatch (static hosts are case-sensitive),
      so this tries the codes as-uploaded for ghost cuts (UPPER, matching
-     images/products/) before falling back to an all-lowercase guess. */
-  const chainFor = t => {
-    const upperBase = `images/looks/${lookFilenameBase(items, true)}_${t}`;
-    const lowerBase = `images/looks/${lookFilenameBase(items, false)}_${t}`;
+     images/products/) before falling back to an all-lowercase guess.
+     Both the short (_mo/_ed) and original (_model/_editorial) suffixes are
+     tried, so a dropped-in file works either way it happens to be named. */
+  const SUFFIX_ALIASES = {model:['mo','model'], editorial:['ed','editorial']};
+  const chainFor = t => (SUFFIX_ALIASES[t] || [t]).flatMap(suffix => {
+    const upperBase = `images/looks/${lookFilenameBase(items, true)}_${suffix}`;
+    const lowerBase = `images/looks/${lookFilenameBase(items, false)}_${suffix}`;
     return [`${upperBase}.jpg`, `${upperBase}.jpeg`, `${upperBase}.png`,
              `${lowerBase}.jpg`, `${lowerBase}.jpeg`, `${lowerBase}.png`];
-  };
+  });
   /* the look's own img/fitImg field is always the curated, correct photo —
      trust it first. The auto-guessed filename chain is only a last-resort
      backup for the rare case that field is missing or wrong, because it can
