@@ -159,24 +159,6 @@ body[data-cat="casual"] .look-grid{gap:70px 44px;grid-template-columns:repeat(2,
 body[data-cat="game"] .look-card .lc-frame,
 body[data-cat="casual"] .look-card .lc-frame{aspect-ratio:4/5;}
 body[data-cat="casual"] .look-card .lc-cap{font-weight:400;}
-/* daily wear's product photography is shot with noticeably more headroom
-   and footroom than game wear's tighter crop — confirmed against the raw
-   files, both are the same 4:5 dimensions, so this isn't a CSS cropping
-   bug, just a looser composition. Zooming these in brings them visually
-   in line with game wear's framing without re-exporting every source
-   photo. Scoped to wherever a daily-wear model photo appears: the look
-   detail hero, the category grid cards, and the related-looks strip —
-   each of the latter two already had their own hover-zoom transform, so
-   those are restated here as the combined (base × hover) scale rather
-   than just added on top, or hovering would replace this zoom with a
-   much smaller one instead of compounding it. */
-body[data-cat="casual"] .ld-visual img{transform:scale(1.08);}
-body[data-cat="casual"] .look-card .lc-frame img{transform:scale(1.08);}
-body[data-cat="casual"] .ld-related-thumb img{transform:scale(1.08);}
-@media(hover:hover) and (pointer:fine){
-  body[data-cat="casual"] .look-card:hover .lc-frame img{transform:scale(1.12);}
-  body[data-cat="casual"] .ld-related-thumb:hover img{transform:scale(1.14);}
-}
 body[data-cat="easy"] .look-grid{gap:64px 40px;}
 body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 /* desktop: 2 columns at 1320px container width makes each look photo
