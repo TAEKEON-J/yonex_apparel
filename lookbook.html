@@ -356,6 +356,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-related-strip.dragging{cursor:grabbing;scroll-snap-type:none;}
 .ld-related-thumb{flex:0 0 calc((100% - 70px)/8.4);aspect-ratio:4/5;cursor:pointer;scroll-snap-align:start;overflow:hidden;background:var(--paper-3);border:1px solid var(--line-soft);transition:border-color .2s,transform .15s ease;}
 .ld-related-thumb:active{transform:scale(.96);}
+.ld-related-thumb.active{border:2px solid var(--ink);}
 .ld-related-thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .4s var(--ease);}
 @media(hover:hover) and (pointer:fine){
   .ld-related-thumb:hover{border-color:var(--ink-soft);}
@@ -2165,15 +2166,20 @@ function renderLook(id){
 
   const itemsHtml = buildItemsHtml(look, variant);
 
-  /* All other looks in this category — replaces PREV/NEXT LOOK with a
-     swipeable strip so jumping to any other look is one tap, not a
-     click-through-them-all-in-order chain. Shows the 모델컷 (not the
-     editorial crop) for each, and follows the current MEN/WOMEN toggle
-     state: looks with a .pair show whichever gender is currently active,
-     kept in sync live by swapLookPair when the toggle is tapped. */
-  const otherLooksHtml = catLooks.filter(l=>l.id!==id).map(l=>{
+  /* All looks in this category, current one included — a swipeable strip
+     so jumping to any other look is one tap, not a click-through-them-
+     all-in-order chain, replacing PREV/NEXT LOOK. Shows the 모델컷 (not
+     the editorial crop) for each, and follows the current MEN/WOMEN
+     toggle state: looks with a .pair show whichever gender is currently
+     active, kept in sync live by swapLookPair when the toggle is tapped.
+     The current look stays in the strip (rather than being filtered out)
+     so its thumbnail can be marked active — a "you are here" landmark in
+     the strip; tapping it is a harmless no-op (go() already no-ops on
+     navigating to the current hash). */
+  const otherLooksHtml = catLooks.map(l=>{
     const v = (lookPairView==='W' && l.pair) ? l.pair : l;
-    return `<a class="ld-related-thumb" data-related-id="${l.id}" href="#look/${l.id}" onclick="navClick(event,'look','${l.id}')">${lookImgTag(v.items, 'model', v.fitImg, `alt="${l.caption}" loading="lazy"`)}</a>`;
+    const isCurrent = l.id===id;
+    return `<a class="ld-related-thumb${isCurrent?' active':''}" data-related-id="${l.id}" href="#look/${l.id}" onclick="navClick(event,'look','${l.id}')" ${isCurrent?'aria-current="page"':''}>${lookImgTag(v.items, 'model', v.fitImg, `alt="${l.caption}" loading="lazy"`)}</a>`;
   }).join('');
 
   /* arrows/swipe/edge-taps mean one of two totally different things
@@ -2191,7 +2197,7 @@ function renderLook(id){
 
   return `<div class="view">
     <nav class="ld-nav ld-nav-top">
-      <div class="ec-head"><h3>MORE IN ${c.label}</h3><span class="ec-count">${String(catLooks.length-1).padStart(2,'0')}</span></div>
+      <div class="ec-head"><h3>MORE IN ${c.label}</h3><span class="ec-count">${String(catLooks.length).padStart(2,'0')}</span></div>
       <div class="ld-related-strip">${otherLooksHtml}</div>
     </nav>
     <section class="look-detail" data-prev="${prev.id}" data-next="${next.id}" data-id="${id}">
