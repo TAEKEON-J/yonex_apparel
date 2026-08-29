@@ -1654,12 +1654,33 @@ function render(){
         img.classList.add('ld-hero-swap');
         if(navDir==='next') img.classList.add('ld-hero-swap-next');
         else if(navDir==='prev') img.classList.add('ld-hero-swap-prev');
-        requestAnimationFrame(()=>requestAnimationFrame(()=>{
-          img.classList.remove('ld-hero-swap','ld-hero-swap-next','ld-hero-swap-prev');
-          if(heroGhost) heroGhost.classList.add(navDir==='next' ? 'ld-ghost-exit-next' : navDir==='prev' ? 'ld-ghost-exit-prev' : 'ld-ghost-exit');
-        }));
+        const startSwap = ()=>{
+          requestAnimationFrame(()=>requestAnimationFrame(()=>{
+            img.classList.remove('ld-hero-swap','ld-hero-swap-next','ld-hero-swap-prev');
+            if(heroGhost){
+              heroGhost.classList.add(navDir==='next' ? 'ld-ghost-exit-next' : navDir==='prev' ? 'ld-ghost-exit-prev' : 'ld-ghost-exit');
+              setTimeout(()=>heroGhost.remove(), 400);
+            }
+          }));
+        };
+        /* the ghost used to fade out on this fixed timer regardless of
+           whether the new photo had actually arrived — fine for an
+           adjacent/already-cached photo, but jumping to an arbitrary,
+           never-before-seen look (the related-looks carousel makes this
+           the common case, not the rare one) can easily take longer than
+           that over a real network. The ghost had already finished fading
+           OUT by then, leaving a real gap with nothing painted — neither
+           the old photo nor the new one — read as the hero flashing
+           blank. Hold the ghost in place until the new photo is actually
+           ready instead of on a clock. */
+        if(img.complete && img.naturalWidth > 0) startSwap();
+        else{
+          img.addEventListener('load', startSwap, {once:true});
+          img.addEventListener('error', startSwap, {once:true});
+        }
+      } else if(heroGhost){
+        setTimeout(()=>heroGhost.remove(), 400);
       }
-      if(heroGhost) setTimeout(()=>heroGhost.remove(), 400);
     }
   } else if(viewEl){
     viewEl.classList.add('view');
