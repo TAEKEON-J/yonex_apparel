@@ -261,8 +261,8 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
    desktop window. The real fix is .look-detail's narrower max-width below
    (900px keeps the photo's natural ~4:5 crop around 680px tall); this is
    just the floor so very short item-panel content never collapses it. */
-.ld-split{display:grid;grid-template-columns:65fr 35fr;gap:0;align-items:stretch;min-height:min(78vh,680px);border:1px solid var(--line-soft);}
-.ld-visual{position:relative;background:var(--paper-3);overflow:hidden;min-height:420px;cursor:zoom-in;}
+.ld-split{display:grid;grid-template-columns:65fr 35fr;grid-template-rows:auto auto;gap:0;align-items:stretch;min-height:min(78vh,680px);border:1px solid var(--line-soft);}
+.ld-visual{grid-column:1;grid-row:1;position:relative;background:var(--paper-3);overflow:hidden;min-height:420px;cursor:zoom-in;}
 .ld-visual img{width:100%;height:100%;object-fit:cover;object-position:top center;}
 /* the next/prev photo revealed underneath as a finger drags the current
    one aside — gives the swipe live, continuous feedback instead of a
@@ -301,7 +301,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
    past 700px, dragging the (object-fit:cover) photo into an oversized,
    over-zoomed crop along with it. Trimmed so the panel's natural desktop
    height lands close to the .ld-split floor instead of driving past it. */
-.ld-items{background:var(--paper);display:flex;flex-direction:column;justify-content:center;border-left:1px solid var(--line-soft);}
+.ld-items{grid-column:2;grid-row:1;background:var(--paper);display:flex;flex-direction:column;justify-content:center;border-left:1px solid var(--line-soft);}
 .ld-item{flex:0 0 auto;display:flex;flex-direction:column;padding:22px 28px;border-right:none;border-bottom:1px solid var(--line-soft);cursor:pointer;transition:background .25s;position:relative;}
 .ld-item:last-child{border-bottom:none;}
 .ld-item.hover-active{background:var(--paper-2);}
@@ -325,9 +325,10 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ii-mix-link:active{transform:scale(.96);}
 
 @media(max-width:980px){
-  .ld-split{grid-template-columns:1fr;min-height:0;}
-  .ld-visual{aspect-ratio:4/5;min-height:0;touch-action:pan-y;}
-  .ld-items{flex-direction:row;border-left:none;border-top:1px solid var(--line-soft);}
+  .ld-split{grid-template-columns:1fr;grid-template-rows:auto auto auto;min-height:0;}
+  .ld-visual{grid-column:1;grid-row:1;aspect-ratio:4/5;min-height:0;touch-action:pan-y;}
+  .ld-nav-mid{grid-column:1;grid-row:2;}
+  .ld-items{grid-column:1;grid-row:3;flex-direction:row;border-left:none;border-top:1px solid var(--line-soft);}
   .ld-item{flex:1;padding:10px 12px;border-right:1px solid var(--line-soft);border-bottom:none;}
   .ld-item:last-child{border-right:none;}
   .ld-item .ii-top{margin-bottom:6px;}
@@ -340,12 +341,17 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 }
 
 .ld-nav{max-width:1320px;margin:0 auto;padding:28px 28px 90px;}
-/* the same strip, repositioned above the hero as a "pick a different
-   outfit" picker instead of a "here's more" afterthought — needs its own
-   (much shorter) top/bottom spacing instead of the standalone .ld-nav's,
-   plus a divider so it doesn't visually run into the hero photo below. */
-.ld-nav-top{padding:18px 28px 22px;border-bottom:1px solid var(--line-soft);}
-.ld-nav-top .ec-head{padding-bottom:6px;}
+/* the same strip, sitting between the hero photo and the item panel as a
+   "pick a different outfit" picker instead of a "here's more" afterthought
+   at the very top of the page (before the user has even seen the look
+   they clicked into) — needs its own (much shorter) top/bottom spacing
+   instead of the standalone .ld-nav's, plus dividers so it doesn't
+   visually run into the hero above or the item panel below. On desktop
+   .ld-split's two hero/item columns stay side by side; this sits full-
+   width in its own row underneath both rather than between them, since
+   there's no side-by-side equivalent of "between" to put it in. */
+.ld-nav-mid{grid-column:1/-1;grid-row:2;padding:18px 28px;border-top:1px solid var(--line-soft);}
+.ld-nav-mid .ec-head{padding-bottom:6px;}
 /* mouse users have no swipe gesture for this horizontal strip — cursor:grab
    plus bindDragScroll() (JS) lets a click-and-drag scroll it the way a
    touch swipe already does on mobile. scroll-snap is suspended mid-drag
@@ -364,7 +370,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 }
 @media(max-width:640px){
   .ld-nav{padding:22px 18px 60px;}
-  .ld-nav-top{padding:14px 18px 16px;}
+  .ld-nav-mid{padding:14px 18px;}
   .ld-related-strip{gap:8px;}
   .ld-related-thumb{flex:0 0 calc((100% - 40px)/5.2);}
   .look-detail{padding:16px 18px 16px;}
@@ -2192,10 +2198,6 @@ function renderLook(id){
        <button type="button" class="ec-arrow ec-arrow-next" onclick="event.stopPropagation();go('look','${next.id}')" aria-label="Next look">&#8250;</button>`;
 
   return `<div class="view">
-    <nav class="ld-nav ld-nav-top">
-      <div class="ec-head"><h3>MORE IN ${c.label}</h3><span class="ec-count">${String(catLooks.length).padStart(2,'0')}</span></div>
-      <div class="ld-related-strip">${otherLooksHtml}</div>
-    </nav>
     <section class="look-detail" data-prev="${prev.id}" data-next="${next.id}" data-id="${id}">
       <div class="ld-crumb">
         <a class="ld-back" href="#category/${look.cat}" onclick="event.preventDefault();go('category','${look.cat}')">&larr; ${c.label}</a>
@@ -2207,6 +2209,10 @@ function renderLook(id){
           ${heroHtml}
           ${heroArrowsHtml}
         </div>
+        <nav class="ld-nav ld-nav-mid">
+          <div class="ec-head"><h3>MORE IN ${c.label}</h3><span class="ec-count">${String(catLooks.length).padStart(2,'0')}</span></div>
+          <div class="ld-related-strip">${otherLooksHtml}</div>
+        </nav>
         <div class="ld-items">${itemsHtml}</div>
       </div>
     </section>
