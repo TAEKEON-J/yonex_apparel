@@ -1412,11 +1412,17 @@ function positionToggleThumb(container){
    so a desktop user with no touchscreen has no way to reach anything past
    the first screenful. mousemove/mouseup are bound once at module scope
    (not inside bindDragScroll) since bindLookInteractions calls this fresh
-   on every render; per-element listeners are fine to re-add since each
-   render's .ld-related-strip is itself a brand new element. */
+   on every render; per-element listeners used to be fine to re-add
+   unguarded since every render's .ld-related-strip was a brand new
+   element — that's no longer guaranteed now that a same-category
+   look-to-look navigation deliberately reuses the previous strip node
+   (see render()) to avoid re-triggering every thumbnail's lazy-load
+   fade-in, so a bound marker is needed to keep this idempotent on a
+   node that outlives more than one render. */
 let dragScrollEl = null, dragScrollDown = false, dragScrollStartX = 0, dragScrollStartLeft = 0, dragScrollMoved = false;
 function bindDragScroll(el){
-  if(!el) return;
+  if(!el || el.dataset.dragBound) return;
+  el.dataset.dragBound = '1';
   el.addEventListener('mousedown', e=>{
     if(e.button !== 0) return;
     dragScrollEl = el;
@@ -1585,13 +1591,20 @@ function render(){
     }
   }
 
-  /* the related-looks strip ("MORE IN ...") is rebuilt from scratch on
-     every look render along with the rest of the page, so a fresh
-     .ld-related-strip always starts scrolled to 0 — clicking a thumb
-     partway across it used to visibly snap the strip back to the start
-     right as the new page appeared. Carry the old scroll position over
-     instead so the strip stays where it was. */
+  /* the related-looks strip ("MORE IN ...") lists the same looks (same
+     .ld-related-thumb ids, in the same order) whether tapping it jumps
+     to look 3 or look 7 of the category — only which thumb carries
+     .active moves. Rebuilding it from scratch on every navigation gave
+     every thumbnail a brand-new <img loading="lazy"> that always starts
+     at opacity:0 and has to wait for its own fresh 'load' event before
+     fading back in — even fully cached, that read as the whole strip
+     flickering blank on every tap. Below, once the new markup exists,
+     the old strip (already loaded, mid-transition or not) gets swapped
+     back in for the same-list case and only its active marker moves;
+     this scroll snapshot is what lets that swap land at the same scroll
+     position instead of resetting to 0. */
   const oldStrip = document.querySelector('.ld-related-strip');
+  const oldStripIds = oldStrip ? [...oldStrip.children].map(c=>c.dataset.relatedId).join(',') : null;
   const relatedScrollLeft = oldStrip ? oldStrip.scrollLeft : null;
 
   document.querySelectorAll('#catnav button').forEach(b=>b.classList.toggle('active', view==='category' && b.dataset.cat===param));
@@ -1611,9 +1624,21 @@ function render(){
   else if(view==='mix') app.innerHTML = renderMix();
   else app.innerHTML = renderCover();
 
-  if(view==='look' && relatedScrollLeft!==null){
+  if(view==='look'){
     const newStrip = document.querySelector('.ld-related-strip');
-    if(newStrip) newStrip.scrollLeft = relatedScrollLeft;
+    const newStripIds = newStrip ? [...newStrip.children].map(c=>c.dataset.relatedId).join(',') : null;
+    if(isLookToLook && oldStrip && newStrip && oldStripIds!==null && oldStripIds===newStripIds){
+      oldStrip.querySelectorAll('.ld-related-thumb').forEach(a=>{
+        const isCurrent = a.dataset.relatedId===param;
+        a.classList.toggle('active', isCurrent);
+        if(isCurrent) a.setAttribute('aria-current','page');
+        else a.removeAttribute('aria-current');
+      });
+      if(relatedScrollLeft!==null) oldStrip.scrollLeft = relatedScrollLeft;
+      newStrip.replaceWith(oldStrip);
+    } else if(relatedScrollLeft!==null && newStrip){
+      newStrip.scrollLeft = relatedScrollLeft;
+    }
   }
 
   const viewEl = app.querySelector('.view');
