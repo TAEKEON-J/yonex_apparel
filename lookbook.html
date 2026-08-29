@@ -2860,29 +2860,24 @@ function mixSetLayer(preview, cls, src){
   img.dataset.src = src;
   preview.appendChild(img);
   img.src = src;
-  /* decode() (not just 'load') waits until the browser has fully
-     decoded pixel data, so the fade-in never overlaps with decode
-     jank — that overlap is what reads as a flicker/pop rather than a
-     clean crossfade. Some WebKit builds have been seen to leave the
-     decode() promise neither resolving nor rejecting for a stacked,
-     absolutely-positioned <img> like these layers, which left a layer
-     stuck invisible forever with no error surfaced — so it's raced
-     against the plain load/error pair (which always fires) rather than
-     relied on alone; whichever settles first wins.
-
-     With all three layers (base/bottom/top) appended and decoded in the
-     same tick, that same WebKit stall has been seen to also swallow the
-     plain load event for whichever layers aren't the last one queued —
-     base and bottom stuck invisible forever while top alone came in. A
-     hard timeout is raced in as a last-resort net: nothing legitimate
-     ever takes this long to load or decode, so it only ever fires to
-     rescue a layer that both signals have already abandoned. */
+  /* img.decode() was tried here (to wait for fully-decoded pixels so the
+     fade-in never overlaps decode jank) but is the actual root cause of a
+     real-device bug: some WebKit builds leave decode() neither resolving
+     nor rejecting for a stacked, absolutely-positioned <img> like these
+     layers, and with base/bottom/top all appended in the same tick that
+     stall has been seen to swallow the plain load event too for whichever
+     layers aren't the last one queued — base and bottom stuck invisible
+     forever while only top ever came in. Racing load/error against
+     decode() wasn't enough since both could hang together, so decode() is
+     dropped entirely here in favor of load/error alone (universally
+     reliable, if slightly less jank-free), with a hard timeout kept as a
+     last-resort net for anything that still manages to hang. */
   const loadReady = (img.complete && img.naturalWidth > 0) ? Promise.resolve() : new Promise((res,rej)=>{
     img.addEventListener('load', res, {once:true});
     img.addEventListener('error', rej, {once:true});
   });
   const stallNet = new Promise(res=>setTimeout(res, 4000));
-  const ready = img.decode ? Promise.race([img.decode(), loadReady, stallNet]) : Promise.race([loadReady, stallNet]);
+  const ready = Promise.race([loadReady, stallNet]);
   ready.then(()=>{
     if(state.req !== req){ img.remove(); return; } /* superseded before it finished decoding */
     /* Update the bookkeeping (pendingSrc/activeImg) synchronously,
