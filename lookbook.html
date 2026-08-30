@@ -50,6 +50,9 @@ h1,h2,h3{font-family:var(--display);font-weight:900;margin:0;letter-spacing:-.02
 .eyebrow{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
 .serifnum{font-family:var(--mono);}
 
+.skip-link{position:absolute;left:16px;top:-60px;z-index:300;padding:12px 20px;background:var(--ink);color:var(--paper);font-family:var(--display);font-weight:700;font-size:13px;border-radius:8px;transition:top .2s var(--ease-out);}
+.skip-link:focus-visible{top:16px;}
+
 /* ===== TOP NAV ===== */
 header.topnav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft);}
 .topnav-row{max-width:1320px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 28px;}
@@ -139,7 +142,7 @@ main#app.app-out{opacity:0;transform:translateY(-8px);filter:blur(3px);}
 .cat-hero{padding:72px 28px 20px;max-width:1320px;margin:0 auto;}
 .cat-tags{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap;}
 .cat-tags span{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;color:#fff;background:var(--accent-cat);padding:5px 11px;}
-.cat-hero h2{font-size:clamp(34px,6vw,64px);letter-spacing:-.03em;text-transform:uppercase;}
+.cat-hero h1{font-size:clamp(34px,6vw,64px);letter-spacing:-.03em;text-transform:uppercase;}
 .cat-hero p{font-size:15px;color:var(--ink-soft);margin-top:14px;max-width:480px;line-height:1.7;font-weight:300;text-wrap:pretty;}
 .cat-count{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:26px;}
 
@@ -177,7 +180,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 /* ===== CAMPAIGN (editorial carousel) ===== */
 .editorial-carousel{max-width:1320px;margin:0 auto;padding:44px 28px 0;}
 .ec-head{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:18px;}
-.ec-head h3{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--ink);font-weight:700;}
+.ec-head h2{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--ink);font-weight:700;}
 .ec-count{font-family:var(--mono);font-size:11px;color:var(--muted);}
 .ec-featured{position:relative;aspect-ratio:21/9;overflow:hidden;cursor:pointer;background:var(--paper);transition:opacity .32s var(--ease);}
 .ec-featured.ec-swap{opacity:0;}
@@ -219,7 +222,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 /* ===== FULL LINE-UP (all SKUs in a category) ===== */
 .full-lineup{max-width:1320px;margin:0 auto;padding:0 28px 120px;border-top:1px solid var(--line-soft);}
 .fl-head{display:flex;align-items:baseline;justify-content:space-between;padding:46px 0 30px;flex-wrap:wrap;gap:14px;}
-.fl-head h3{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--ink);font-weight:700;}
+.fl-head h2{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--ink);font-weight:700;}
 .fl-head-right{display:flex;align-items:center;gap:16px;flex:1 1 100%;justify-content:space-between;}
 .fl-toggle{position:relative;display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);}
 .fl-toggle button{position:relative;z-index:1;font-family:var(--display);font-size:9.5px;font-weight:600;letter-spacing:.06em;padding:5px 13px;background:none;border:none;border-radius:999px;cursor:pointer;color:var(--muted);transition:color .25s var(--ease-out),transform .15s ease;}
@@ -227,7 +230,13 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .fl-toggle button:active{transform:scale(.96);}
 .fl-count{font-family:var(--mono);font-size:11px;color:var(--muted);}
 .fl-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:28px 18px;}
-.fl-card{cursor:pointer;opacity:0;transform:translateY(18px);transition:opacity .5s var(--ease),transform .5s var(--ease);transition-delay:calc(min(var(--i,0),9) * 45ms);}
+.fl-card{position:relative;cursor:pointer;opacity:0;transform:translateY(18px);transition:opacity .5s var(--ease),transform .5s var(--ease);transition-delay:calc(min(var(--i,0),9) * 45ms);}
+/* a plain full-cover hit target instead of making the whole card a
+   role="button" — that would nest the real swatch <button>s below inside
+   an element ARIA treats as a button, which forbids interactive content.
+   Sits under the swatches (z-index) so their own clicks still land on
+   them, not on this. */
+.fl-open{position:absolute;inset:0;z-index:0;margin:0;padding:0;border:none;background:none;cursor:pointer;}
 .fl-card.in{opacity:1;transform:translateY(0);}
 .fl-card.fl-hide{opacity:0 !important;transform:scale(.92) !important;pointer-events:none;transition:opacity .2s var(--ease),transform .2s var(--ease);}
 .fl-card:active .fl-frame{transform:scale(.96);}
@@ -254,7 +263,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 }
 .fl-card .fl-code{font-family:var(--mono);font-size:11px;font-weight:700;margin-top:10px;letter-spacing:.02em;}
 .fl-card .fl-sub{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:3px;}
-.fl-swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.fl-swatches{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
 /* the swatch dot stays visually small; ::before extends the actual hit
    area to the WCAG 2.5.8 24x24px minimum without touching a neighbor's
    (extension is capped at half the 8px gap on each side) */
@@ -271,7 +280,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .ld-crumb{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;padding:14px 0 8px;}
 .ld-back{color:var(--ink);font-weight:700;text-decoration:none;transition:opacity .2s;}
 .ld-back:hover{opacity:.6;}
-.ld-crumb b{color:var(--ink);font-weight:700;}
+.ld-crumb h1{display:inline;margin:0;color:var(--ink);font-size:inherit;font-family:inherit;font-weight:700;text-transform:none;letter-spacing:normal;text-wrap:initial;}
 .ld-crumb .sep{opacity:.4;}
 .ld-look-gtoggle{position:relative;margin-left:auto;display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);}
 .ld-look-gtoggle button{position:relative;z-index:1;font-family:var(--display);font-size:9.5px;font-weight:600;letter-spacing:.06em;padding:5px 13px;background:none;border:none;border-radius:999px;cursor:pointer;color:var(--muted);transition:color .25s var(--ease-out);}
@@ -403,7 +412,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .ld-related-strip{gap:8px;}
   .ld-related-thumb{flex:0 0 calc((100% - 40px)/5.2);}
   .look-detail{padding:16px 18px 16px;}
-  .fl-head{padding:20px 0 22px;}
+  .fl-head{padding:36px 0 22px;}
 }
 
 /* ===== PRODUCT MODAL ===== */
@@ -471,7 +480,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .pm-detail-lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--muted);margin:28px 0 10px;}
 .pm-detail-txt{font-size:13.5px;color:var(--ink-soft);line-height:1.7;font-weight:400;white-space:pre-line;}
 .pm-ww{margin-top:34px;}
-.pm-ww h5{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--muted);margin-bottom:14px;}
+.pm-ww h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--muted);margin-bottom:14px;}
 .pm-ww-row{display:flex;gap:12px;}
 .pm-ww-row .ww-mini{flex:1;cursor:pointer;}
 .pm-ww-row .ww-mini .frame{aspect-ratio:4/5;background:var(--paper-2);overflow:hidden;}
@@ -498,7 +507,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 /* same treatment as the home hero's season line — part of the
    headline's own first line, not a separate small-label-above-big-
    headline "chip" sitting apart from it. */
-.mix-hero h2 .mix-kicker{display:block;font-family:var(--mono);font-size:14px;font-weight:500;letter-spacing:.14em;text-transform:none;color:var(--muted);margin-bottom:10px;}
+.mix-hero h1 .mix-kicker{display:block;font-family:var(--mono);font-size:14px;font-weight:500;letter-spacing:.14em;text-transform:none;color:var(--muted);margin-bottom:10px;}
 .mix-preview{position:relative;width:280px;aspect-ratio:6/7;margin:20px auto 0;background:var(--paper-2);border-radius:4px;overflow:hidden;}
 /* Pure opacity crossfade only — no scale/translate here. These layers
    (base/bottom/top) are pre-aligned PNGs meant to sit pixel-registered
@@ -576,6 +585,7 @@ footer.lb-foot .eyebrow{justify-content:center;display:flex;text-transform:none;
 </head>
 <body data-cat="">
 
+<a class="skip-link" href="#app">본문으로 건너뛰기</a>
 <header class="topnav">
   <div class="topnav-row">
     <button class="brand" onclick="go('cover')">
@@ -1814,7 +1824,7 @@ function renderCategory(key){
      the enlarged view surfaces the real editorial art. */
   const carouselHtml = editorialLooks.length ? `
     <section class="editorial-carousel">
-      <div class="ec-head"><h3>CAMPAIGN</h3><span class="ec-count">${String(editorialLooks.length).padStart(2,'0')}</span></div>
+      <div class="ec-head"><h2>CAMPAIGN</h2><span class="ec-count">${String(editorialLooks.length).padStart(2,'0')}</span></div>
       <div class="ec-featured" id="ecFeatured">
         ${lookImgTag(featured.campaignItems || featured.items, 'editorial', featured.campaignImg || featured.img, `class="ec-bg" alt="" aria-hidden="true"`)}
         ${lookImgTag(featured.campaignItems || featured.items, 'editorial', featured.campaignImg || featured.img, `class="ec-fg" alt="${featured.caption}"`)}
@@ -1830,7 +1840,7 @@ function renderCategory(key){
   return `<div class="view">
     <section class="cat-hero">
       <div class="cat-tags">${c.keywords.map(k=>`<span>${k}</span>`).join('')}</div>
-      <h2>${c.label}</h2>
+      <h1>${c.label}</h1>
       <p>${c.tagline} ${c.desc}</p>
       <div class="cat-count">${String(looks.length).padStart(2,'0')} LOOKS</div>
     </section>
@@ -1936,7 +1946,7 @@ function renderFullLineup(key){
   if(!groups.length) return '';
   return `<section class="full-lineup">
     <div class="fl-head">
-      <h3>FULL LINE-UP</h3>
+      <h2>FULL LINE-UP</h2>
       <div class="fl-head-right">
         <span class="fl-count">${String(groups.length).padStart(2,'0')} STYLES</span>
         <div class="fl-toggle">
@@ -1950,7 +1960,8 @@ function renderFullLineup(key){
       ${groups.map((variants,i)=>{
         const [defaultKey,p] = variants[0];
         return `
-        <div class="fl-card reveal" style="--i:${i}" data-gender="${p.gender.toLowerCase()}" data-active-key="${defaultKey}" role="button" tabindex="0" aria-label="${p.name} ${p.code}" onclick="openFullLineupCard(this)" onkeydown="if(event.target===event.currentTarget&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openFullLineupCard(this);}">
+        <div class="fl-card reveal" style="--i:${i}" data-gender="${p.gender.toLowerCase()}" data-active-key="${defaultKey}">
+          <button type="button" class="fl-open" aria-label="${p.name} ${p.code}" onclick="openFullLineupCard(this.closest('.fl-card'))"></button>
           <div class="fl-frame${isLooseCropCode(p.code)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
           <div class="fl-code">${p.code}</div>
           <div class="fl-sub">${fmtPrice(p.price)} · <span class="fl-color">${p.color}</span></div>
@@ -2398,7 +2409,7 @@ function renderLook(id){
     <section class="look-detail" data-prev="${prev.id}" data-next="${next.id}" data-id="${id}">
       <div class="ld-crumb">
         <a class="ld-back" href="#category/${look.cat}" onclick="event.preventDefault();go('category','${look.cat}')">&larr; ${c.label}</a>
-        <span class="sep">/</span><b>LOOK ${String(look.num).padStart(2,'0')}</b>
+        <span class="sep">/</span><h1>LOOK ${String(look.num).padStart(2,'0')}</h1>
         ${pairToggleHtml}
       </div>
       <div class="ld-split">
@@ -2821,7 +2832,7 @@ function openProduct(code, lookId){
       <button type="button" data-view="back" onclick="setPmView('back')">BACK</button>
     </div>` : ''}
     <div class="pm-code">${p.gender.toUpperCase()}</div>
-    <div class="pm-name">${p.code}</div>
+    <h3 class="pm-name">${p.code}</h3>
     ${isWorldCollectionCode(p.code) ? `<div class="pm-line pm-line-world">WORLD COLLECTION</div>` : ''}
     ${p.line ? `<div class="pm-line">${p.line}</div>` : ''}
     ${(p.note1 || p.note2) ? `<div class="pm-note-row">${p.note1?`<span class="pm-note">${p.note1}</span>`:''}${p.note2?`<span class="pm-note">${p.note2}</span>`:''}</div>` : ''}
@@ -2832,7 +2843,7 @@ function openProduct(code, lookId){
     </div>
     <div class="pm-detail-lbl">DETAIL</div>
     <div class="pm-detail-txt">${p.material}</div>
-    ${related.length ? `<div class="pm-ww"><h5>WORN WITH</h5><div class="pm-ww-row">
+    ${related.length ? `<div class="pm-ww"><h4>WORN WITH</h4><div class="pm-ww-row">
       ${related.map(l=>`<a class="ww-mini" href="#look/${l.id}" onclick="navClick(event,'look','${l.id}')">
         <div class="frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}"`)}</div>
         <div class="lbl">LOOK ${String(l.num).padStart(2,'0')}</div>
@@ -3008,7 +3019,7 @@ function onSearchOutsideClick(e){
 function renderMix(){
   return `<div class="view">
     <section class="mix-hero">
-      <h2><span class="mix-kicker">Style Mix</span>Build Your Own Look</h2>
+      <h1><span class="mix-kicker">Style Mix</span>Build Your Own Look</h1>
     </section>
     <div class="mix-body">
       <div class="mix-visual">
