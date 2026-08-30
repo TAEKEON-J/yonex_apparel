@@ -106,6 +106,13 @@ header.topnav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.88)
 .catnav-row button:hover,.catnav-row button.active{color:var(--ink);}
 .catnav-row button.active::after{transform:scaleX(1);}
 @media(max-width:820px){.topnav-row{padding:13px 16px 8px;gap:6px;flex-wrap:nowrap;} .brand{flex:none;} .brand .name{display:none;} .topnav-right{gap:6px;} .mix-link{height:30px;padding:0 12px;font-size:11px;} .search-toggle{width:30px;height:30px;} .search-panel{position:fixed;top:58px;left:12px;right:12px;width:auto;max-width:none;} .search-input-row input{font-size:16px;letter-spacing:-.03em;} .search-input-row input::placeholder{letter-spacing:-.03em;} .catnav-row{padding:0 16px 12px;gap:20px;} .catnav-row button{font-size:12px;}}
+/* phone-width only: at wider mobile/tablet sizes space-between opens
+   up gaps between the tabs wide enough to read as disconnected rather
+   than balanced — flex-start (its default above) reads fine there since
+   the row already has real breathing room. Narrow enough to make GAME
+   WEAR/EASY WEAR meet the row's edges (matching the utility row above
+   it) only where the row is genuinely tight. */
+@media(max-width:480px){.catnav-row{justify-content:space-between;}}
 @media(max-width:400px){.brand .season{display:none;} .search-toggle{width:26px;height:26px;} .mix-link{height:26px;padding:0 10px;font-size:10px;} .catnav-row{gap:16px;} .catnav-row button{font-size:11px;}}
 
 main#app{min-height:70vh;transition:opacity .22s var(--ease-out),transform .22s var(--ease-out),filter .22s var(--ease-out);}
