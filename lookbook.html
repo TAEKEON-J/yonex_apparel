@@ -77,6 +77,8 @@ header.topnav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.88)
 .search-panel.open{opacity:1;visibility:visible;transform:translateY(0);}
 .search-input-row{display:flex;align-items:center;gap:8px;padding:10px;}
 .search-field{display:flex;align-items:center;gap:8px;flex:1;min-width:0;padding:0 12px;background:var(--paper-2);border-radius:10px;}
+.search-field:focus-within{outline:2px solid var(--ink);outline-offset:2px;}
+.search-field input:focus-visible{outline:none;}
 .search-field .search-icon{flex:none;color:var(--muted);}
 .search-field input{flex:1;min-width:0;border:none;background:none;padding:10px 0;font-family:var(--sans);font-size:13px;color:var(--ink);}
 .search-field input::placeholder{color:var(--muted);}
