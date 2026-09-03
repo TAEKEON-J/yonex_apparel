@@ -248,7 +248,13 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .fl-open{position:absolute;inset:0;z-index:0;margin:0;padding:0;border:none;background:none;cursor:pointer;}
 .fl-card.in{opacity:1;transform:translateY(0);}
 .fl-card.fl-hide{opacity:0 !important;transform:scale(.92) !important;pointer-events:none;transition:opacity .2s var(--ease),transform .2s var(--ease);}
-.fl-card:active .fl-frame{transform:scale(.96);}
+/* the press-scale lives on .fl-card itself, not .fl-frame — giving
+   .fl-frame its own transform on :active promotes it to a stacking
+   context, which (since it sits after .fl-open in source order) then
+   paints ABOVE .fl-open and swallows the tap before it ever reaches
+   the open button. Scaling the whole card avoids creating that extra
+   context between them. */
+.fl-card:active{transform:scale(.97);}
 .fl-card .fl-frame{aspect-ratio:1/1;background:var(--paper);border:1px solid var(--line-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:border-color .2s,transform .15s ease;}
 .fl-card .fl-frame img{max-width:95.5%;max-height:95.5%;object-fit:contain;transition:transform .3s var(--ease);}
 @media(hover:hover) and (pointer:fine){
