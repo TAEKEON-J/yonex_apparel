@@ -3010,7 +3010,8 @@ function jumpToSearchResult(i){
   if(!hit) return;
   closeSearch();
   const finish = ()=>{
-    if(hit.isPair) swapLookPair(hit.lookId, 'W');
+    const look = LOOKS.find(l=>l.id===hit.lookId);
+    if(look && look.pair) swapLookPair(hit.lookId, hit.isPair ? 'W' : 'M');
   };
   if(parseHash().view==='look' && parseHash().param===hit.lookId){
     finish();
