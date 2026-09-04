@@ -28,7 +28,7 @@
 <meta name="apple-mobile-web-app-title" content="YONEX LOOK">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chivo:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Archivo:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chivo:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Archivo:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#FFFFFF; --paper-2:#F6F5F1; --paper-3:#EFEDE6;
@@ -196,6 +196,14 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 @media(min-width:1024px){body[data-cat] .look-grid{grid-template-columns:repeat(4,1fr);gap:48px 28px;}}
 @media(max-width:760px){.look-grid{grid-template-columns:1fr 1fr;gap:28px 16px !important;} .cat-hero{padding:52px 18px 10px;} .cat-hero p{font-size:13.5px;line-height:1.6;margin-top:10px;} .look-grid{padding:26px 18px 80px;}}
 @media(max-width:480px){.look-grid{grid-template-columns:1fr;}}
+
+/* fallback shown in place of a look/product photo once lookImgTag()'s whole
+   filename-guess chain has failed (see imgChainNext()) -- an empty img box
+   otherwise renders the browser's native broken-image icon, which reads as
+   a bug rather than "photo not uploaded yet". */
+.img-missing{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px;text-align:center;background:repeating-linear-gradient(135deg,var(--paper-3) 0px,var(--paper-3) 7px,var(--paper-2) 7px,var(--paper-2) 14px);color:var(--muted);}
+.img-missing svg{opacity:.45;flex:none;}
+.img-missing span{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;line-height:1.4;}
 
 /* ===== CAMPAIGN (editorial carousel) ===== */
 .editorial-carousel{max-width:1320px;margin:0 auto;padding:44px 28px 0;}
@@ -2103,7 +2111,19 @@ function lookImgTag(items, type, fallbackSrc, attrs=''){
 function imgChainNext(img){
   let chain = [];
   try{ chain = JSON.parse(img.dataset.chain || '[]'); }catch(e){}
-  if(!chain.length){ img.onerror = null; return; }
+  if(!chain.length){
+    img.onerror = null;
+    const parent = img.parentElement;
+    if(parent && !parent.querySelector('.img-missing')){
+      if(getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
+      const ph = document.createElement('div');
+      ph.className = 'img-missing';
+      ph.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1" stroke="currentColor" stroke-width="1.4"/><circle cx="9" cy="10.5" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M4 16l5-4.2 3 2.4 3.5-3 4.5 5.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>PHOTO<br>COMING SOON</span>`;
+      parent.appendChild(ph);
+    }
+    img.remove();
+    return;
+  }
   img.src = chain.shift();
   img.dataset.chain = JSON.stringify(chain);
 }
@@ -2848,6 +2868,8 @@ function isWorldCollectionCode(code){ return /(YX|EX)$/.test(code); }
 function openProduct(code, lookId){
   const p = PRODUCTS[code];
   if(!p) return;
+  const pmPanel = document.getElementById('pmPanel');
+  const wasOpen = pmPanel.classList.contains('show');
   currentPmCode = code;
   currentPmLookId = lookId;
   /* sibling colorways of this same product (same .code, different key) —
@@ -2876,15 +2898,21 @@ function openProduct(code, lookId){
     <div class="pm-detail-txt">${p.material}</div>
     ${related.length ? `<div class="pm-ww"><h4>WORN WITH</h4><div class="pm-ww-row">
       ${related.map(l=>`<a class="ww-mini" href="#look/${l.id}" onclick="navClick(event,'look','${l.id}')">
-        <div class="frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}"`)}</div>
+        <div class="frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>
         <div class="lbl">LOOK ${String(l.num).padStart(2,'0')}</div>
       </a>`).join('')}
     </div></div>` : ''}
   `;
   document.getElementById('pmBackdrop').classList.add('show');
-  document.getElementById('pmPanel').classList.add('show');
+  pmPanel.classList.add('show');
   positionToggleThumb(document.querySelector('.pm-view-toggle'));
   if(p.imgBack) bindPmSwipe();
+  if(!wasOpen){
+    pmPanel.setAttribute('role','dialog');
+    pmPanel.setAttribute('aria-modal','true');
+    trapFocusIn(pmPanel);
+    pmPanel.querySelector('.pm-close')?.focus();
+  }
 }
 function bindPmSwipe(){
   const figure = document.querySelector('.pm-figure');
@@ -2923,10 +2951,39 @@ function setPmView(view){
   positionToggleThumb(document.querySelector('.pm-view-toggle'));
 }
 function closeProduct(){
+  const panel = document.getElementById('pmPanel');
+  const wasOpen = panel?.classList.contains('show');
   document.getElementById('pmBackdrop')?.classList.remove('show');
-  document.getElementById('pmPanel')?.classList.remove('show');
+  panel?.classList.remove('show');
+  if(wasOpen) releaseFocusTrap(panel);
 }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeProduct(); closeSearch(); } });
+
+/* keeps Tab/Shift+Tab cycling inside an open overlay (product modal, search
+   panel) instead of leaking focus into the page behind it, and hands focus
+   back to whatever triggered the overlay once it closes. */
+let focusTrapEl = null, focusTrapReturn = null;
+function trapFocusIn(panel){
+  focusTrapEl = panel;
+  focusTrapReturn = document.activeElement;
+  document.addEventListener('keydown', onFocusTrapKey);
+}
+function releaseFocusTrap(panel, {restoreFocus = true} = {}){
+  if(focusTrapEl !== panel) return;
+  document.removeEventListener('keydown', onFocusTrapKey);
+  if(restoreFocus && focusTrapReturn && document.contains(focusTrapReturn)) focusTrapReturn.focus();
+  focusTrapEl = null;
+  focusTrapReturn = null;
+}
+function onFocusTrapKey(e){
+  if(e.key !== 'Tab' || !focusTrapEl) return;
+  const items = [...focusTrapEl.querySelectorAll('button,a[href],input,[tabindex]:not([tabindex="-1"])')].filter(el=>el.offsetParent!==null);
+  if(!items.length) return;
+  const i = items.indexOf(document.activeElement);
+  const next = e.shiftKey ? (i<=0 ? items.length-1 : i-1) : (i===-1 || i===items.length-1 ? 0 : i+1);
+  e.preventDefault();
+  items[next].focus();
+}
 
 /* ---------------- PRODUCT CODE SEARCH ----------------
    Header search: type a product code, get live matches across every LOOK
@@ -3030,21 +3087,28 @@ function openSearch(){
   const panel = document.getElementById('searchPanel');
   if(!panel) return;
   panel.classList.add('open');
+  panel.setAttribute('role','dialog');
+  panel.setAttribute('aria-modal','true');
   const input = document.getElementById('searchInput');
   input.value = '';
   document.getElementById('searchResults').innerHTML = '';
   window.__searchResults = [];
   searchActiveIdx = -1;
+  trapFocusIn(panel);
   setTimeout(()=>input.focus(), 50);
   document.addEventListener('click', onSearchOutsideClick);
 }
-function closeSearch(){
-  document.getElementById('searchPanel')?.classList.remove('open');
+function closeSearch(opts){
+  const panel = document.getElementById('searchPanel');
+  panel?.classList.remove('open');
   document.removeEventListener('click', onSearchOutsideClick);
+  if(panel) releaseFocusTrap(panel, opts);
 }
 function onSearchOutsideClick(e){
   const wrap = document.querySelector('.search-wrap');
-  if(wrap && !wrap.contains(e.target)) closeSearch();
+  /* the click that dismisses the panel already moved focus to whatever was
+     clicked -- don't steal it back to the search toggle. */
+  if(wrap && !wrap.contains(e.target)) closeSearch({restoreFocus:false});
 }
 
 /* ---------------- MIX & MATCH ---------------- */
