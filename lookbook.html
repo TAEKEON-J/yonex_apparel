@@ -28,7 +28,7 @@
 <meta name="apple-mobile-web-app-title" content="YONEX LOOK">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chivo:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Archivo:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chivo:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Archivo:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#FFFFFF; --paper-2:#F6F5F1; --paper-3:#EFEDE6;
@@ -2876,7 +2876,7 @@ function openProduct(code, lookId){
     <div class="pm-detail-txt">${p.material}</div>
     ${related.length ? `<div class="pm-ww"><h4>WORN WITH</h4><div class="pm-ww-row">
       ${related.map(l=>`<a class="ww-mini" href="#look/${l.id}" onclick="navClick(event,'look','${l.id}')">
-        <div class="frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}"`)}</div>
+        <div class="frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>
         <div class="lbl">LOOK ${String(l.num).padStart(2,'0')}</div>
       </a>`).join('')}
     </div></div>` : ''}
