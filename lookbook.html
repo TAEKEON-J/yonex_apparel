@@ -1998,10 +1998,26 @@ function productsForCat(key){
   return Array.from(groups.values());
 }
 
+/* PRODUCTS/LOOKS are static catalog data (loaded once, never mutated at
+   runtime), so the ~49KB FULL LINE-UP markup for a given category is
+   always identical however many times it's asked for. Without this,
+   every single look-to-look navigation — even between two looks in the
+   SAME category, where this section's content doesn't change at all —
+   rebuilt all 78 cards' worth of template-literal + Array.map string
+   concatenation from scratch, measured at 60-70ms of JS work alone under
+   throttled CPU (a budget/older tablet) and the dominant cost behind the
+   long tasks (100-350ms) seen while flipping through looks. Caching by
+   category turns every navigation after a category's first visit into a
+   plain object lookup. Always starts fresh at the ALL filter/default
+   swatches (matching prior behavior — the filter/swatch state already
+   reset on every navigation before this cache existed, since renderLook
+   never persisted it either). */
+const fullLineupCache = new Map();
 function renderFullLineup(key){
+  if(fullLineupCache.has(key)) return fullLineupCache.get(key);
   const groups = productsForCat(key);
   if(!groups.length) return '';
-  return `<section class="full-lineup">
+  const html = `<section class="full-lineup">
     <div class="fl-head">
       <h2>FULL LINE-UP</h2>
       <div class="fl-head-right">
@@ -2027,6 +2043,8 @@ function renderFullLineup(key){
       }).join('')}
     </div>
   </section>`;
+  fullLineupCache.set(key, html);
+  return html;
 }
 function filterFullLineup(g){
   document.querySelectorAll('.fl-toggle button').forEach(b=>b.classList.toggle('active', b.dataset.g===g));
