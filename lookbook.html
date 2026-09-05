@@ -55,7 +55,6 @@ img[loading="lazy"].img-loaded{opacity:1;}
 button{font-family:var(--sans);touch-action:manipulation;}
 ::selection{background:var(--ink);color:var(--paper);}
 :focus-visible{outline:2px solid var(--ink);outline-offset:3px;}
-@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important;}}
 
 h1,h2,h3{font-family:var(--display);font-weight:900;margin:0;letter-spacing:-.02em;text-transform:uppercase;text-wrap:balance;}
 .eyebrow{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
@@ -88,7 +87,6 @@ header.topnav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.88)
 .search-panel.open{opacity:1;visibility:visible;transform:translateY(0);}
 .search-input-row{display:flex;align-items:center;gap:8px;padding:10px;}
 .search-field{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
-.search-field input:focus-visible{outline:none;}
 .search-field .search-icon{flex:none;color:var(--muted);}
 .search-field input{flex:1;min-width:0;border:none;background:none;padding:10px 0;font-family:var(--sans);font-size:13px;color:var(--ink);}
 .search-field input::placeholder{color:var(--muted);}
@@ -201,7 +199,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
    filename-guess chain has failed (see imgChainNext()) -- an empty img box
    otherwise renders the browser's native broken-image icon, which reads as
    a bug rather than "photo not uploaded yet". */
-.img-missing{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px;text-align:center;background:var(--paper-3);color:var(--muted);}
+.img-missing{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px;text-align:center;background:var(--paper-3);color:var(--ink-soft);}
 .img-missing svg{opacity:.45;flex:none;}
 .img-missing span{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;line-height:1.4;}
 
