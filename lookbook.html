@@ -43,7 +43,7 @@
   --ease-out:cubic-bezier(.23,1,.32,1);
   --ease-drawer:cubic-bezier(.32,.72,0,1);
 }
-*{box-sizing:border-box;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important;}}
 html{scroll-behavior:smooth;}
 html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:var(--sans);overflow-x:hidden;}
@@ -281,6 +281,10 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
    the open button. Scaling the whole card avoids creating that extra
    context between them. */
 .fl-card:active{transform:scale(.97);}
+/* border-color (not transform) on the frame itself for the tap flash —
+   changing color alone doesn't promote a stacking context, so this can't
+   reintroduce the .fl-open-swallowing bug the way scaling .fl-frame would. */
+.fl-card:active .fl-frame{border-color:var(--ink);}
 .fl-card .fl-frame{aspect-ratio:1/1;background:var(--paper);border:1px solid var(--line-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:border-color .2s,transform .15s ease;}
 .fl-card .fl-frame img{max-width:95.5%;max-height:95.5%;object-fit:contain;transition:transform .3s var(--ease);}
 @media(hover:hover) and (pointer:fine){
