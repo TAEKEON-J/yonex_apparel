@@ -2068,9 +2068,20 @@ function itemFig(code){
    photo framing, just for flat product shots this time: object-fit
    can't fix a difference baked into the source file's own padding, so
    this flags which product-photo containers should get the zoom class
-   defined right below it. */
+   defined right below it.
+
+   Pants are the exception: 61073EX/68121EX/80108EX measure only
+   ~38-47% fill on width but 72-83% on height, because pants are a
+   naturally narrow silhouette, not because they're photographed with
+   uniform excess padding like the rest of this line. The zoom below
+   scales both axes together (it's one <img>, not two independently
+   sized dimensions) — applying it here would already-correct height
+   past the frame edge chasing a width that isn't actually a framing
+   defect. Excluded so they render at the same unscaled size as a
+   normal (non-EX) item. */
+const LOOSE_CROP_EXCEPTIONS = new Set(['61073EX','68121EX','80108EX']);
 function isLooseCropCode(code){
-  return /EX$/.test(code || '');
+  return /EX$/.test(code || '') && !LOOSE_CROP_EXCEPTIONS.has(code);
 }
 
 /* a few special/commemorative items have no confirmed price in any source yet (price:0) */
