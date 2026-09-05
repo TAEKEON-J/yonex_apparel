@@ -262,9 +262,16 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 /* a plain full-cover hit target instead of making the whole card a
    role="button" — that would nest the real swatch <button>s below inside
    an element ARIA treats as a button, which forbids interactive content.
-   Sits under the swatches (z-index) so their own clicks still land on
-   them, not on this. */
-.fl-open{position:absolute;inset:0;z-index:0;margin:0;padding:0;border:none;background:none;cursor:pointer;}
+   z-index:1 (not 0): the .loose-crop <img> below (see the "EX"-coded
+   note further down) carries its own baseline `transform`, which
+   promotes it to a stacking context indistinguishable from a z-index:0
+   positioned element — at z-index:0 this button tied with that
+   promoted <img> and lost the tie to DOM order (the img sits later, in
+   .fl-frame, so it painted on top and silently swallowed every tap on
+   an EX-coded card). z-index:1 clears that unconditionally, and still
+   ties (in the button's favor, correctly, on DOM order) with
+   .fl-swatches below so swatch taps keep landing on the swatches. */
+.fl-open{position:absolute;inset:0;z-index:1;margin:0;padding:0;border:none;background:none;cursor:pointer;}
 .fl-card.in{opacity:1;transform:translateY(0);}
 .fl-card.fl-hide{opacity:0 !important;transform:scale(.92) !important;pointer-events:none;transition:opacity .2s var(--ease),transform .2s var(--ease);}
 /* the press-scale lives on .fl-card itself, not .fl-frame — giving
