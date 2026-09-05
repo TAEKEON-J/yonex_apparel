@@ -348,6 +348,15 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
    dead zone until release, which is what actually read as "choppy". */
 .ld-drag-peek{position:absolute;left:0;top:0;z-index:1;pointer-events:none;}
 #ldHeroImg{position:relative;z-index:2;}
+/* a one-time nudge on a paired look's first visit: the same swipe that
+   moves to the next/prev look elsewhere means "switch gender" here, with
+   nothing on the photo itself hinting that before the first drag. A
+   small side-to-side shimmy on arrival signals "this responds to swipe"
+   without a persistent label competing with the MEN/WOMEN pill already
+   doing that job for taps. See the localStorage-gated trigger in
+   bindLookInteractions(). */
+@keyframes pairSwipeHint{0%,100%{transform:translateX(0);}30%{transform:translateX(-14px);}62%{transform:translateX(10px);}}
+#ldHeroImg.hint-swipe{animation:pairSwipeHint .9s ease-out;}
 /* a snapshot of the outgoing hero photo, held in place over the old spot
    with no animation of its own while the fresh page renders underneath —
    without it the old photo just vanishes on DOM swap and the new one is
@@ -2607,6 +2616,24 @@ function bindLookInteractions(id){
   const look = LOOKS.find(l=>l.id===id);
   let wasSwipe = false;
 
+  /* first-ever visit to a paired look: nudge the photo once so the
+     swipe-swaps-gender behavior isn't purely undiscoverable. Never
+     again after that, on any look -- once a visitor has seen it swap,
+     repeating the nudge on every paired look would just be noise. */
+  if(look && look.pair && !REDUCE_MOTION){
+    try{
+      if(!localStorage.getItem('yx_pairSwipeHintSeen')){
+        localStorage.setItem('yx_pairSwipeHintSeen', '1');
+        requestAnimationFrame(()=>{
+          const heroImg = document.getElementById('ldHeroImg');
+          if(!heroImg) return;
+          heroImg.classList.add('hint-swipe');
+          heroImg.addEventListener('animationend', ()=>heroImg.classList.remove('hint-swipe'), {once:true});
+        });
+      }
+    }catch(e){}
+  }
+
   /* prefetch the other gender's photo the moment a paired look opens,
      so the first MEN/WOMEN tap doesn't have to wait on a network fetch
      before the crossfade can even start. */
@@ -2627,6 +2654,7 @@ function bindLookInteractions(id){
      looks keep the original prev/next-look behavior since there's no
      variant to toggle. */
   const DRAG_THRESHOLD = 70;
+  const EDGE_SAFE_ZONE = 24;
   let swipeX = null, swipeY = null, dragLocked = false, dragging = false, dragDX = 0, dragDir = null, dragPeek = null;
 
   function peekPhotoFor(dir){
@@ -2644,7 +2672,13 @@ function bindLookInteractions(id){
 
   visual.addEventListener('touchstart', e=>{
     if(e.touches.length!==1) return;
-    swipeX = e.touches[0].clientX; swipeY = e.touches[0].clientY;
+    /* a touch starting within the OS's own edge-swipe-back hot zone is left
+       untracked (swipeX stays null, which touchmove/touchend already treat
+       as "no gesture in progress") so it doesn't fight iOS/Android's
+       system back gesture for the same screen-edge swipe. */
+    const x = e.touches[0].clientX;
+    if(x < EDGE_SAFE_ZONE || x > window.innerWidth - EDGE_SAFE_ZONE) return;
+    swipeX = x; swipeY = e.touches[0].clientY;
     dragLocked = false; dragging = false; dragDX = 0;
   }, {passive:true});
 
