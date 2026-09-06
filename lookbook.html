@@ -529,7 +529,7 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 @media(prefers-reduced-motion:reduce){.pwa-banner{transition:opacity .01ms;}}
 @media(max-width:420px){.pwa-banner{left:10px;right:10px;bottom:10px;}}
 .pm-body{padding:74px 34px 50px;}
-.pm-figure{background:var(--paper);border:1px solid var(--line-soft);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;margin-bottom:28px;touch-action:pan-y;}
+.pm-figure{background:var(--paper);border:1px solid var(--line-soft);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;margin-bottom:28px;touch-action:pan-y;cursor:zoom-in;}
 .pm-figure img{max-width:74%;max-height:74%;object-fit:contain;filter:drop-shadow(0 16px 24px rgba(20,20,15,.12));transition:transform .3s var(--ease),opacity .25s var(--ease);-webkit-touch-callout:none;}
 .pm-figure img.pm-fig-swap{opacity:0;}
 .pm-view-toggle{position:relative;display:flex;width:fit-content;margin:-14px auto 24px;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);}
@@ -3429,6 +3429,7 @@ function openProduct(code, lookId){
   pmPanel.classList.add('show');
   positionToggleThumb(document.querySelector('.pm-view-toggle'));
   if(p.imgBack) bindPmSwipe();
+  bindPmZoom();
   if(!wasOpen){
     pmPanel.setAttribute('role','dialog');
     pmPanel.setAttribute('aria-modal','true');
@@ -3516,6 +3517,7 @@ function bindPmSwipe(){
   if(!figure) return;
   let sx=null, sy=null;
   figure.addEventListener('touchstart', e=>{
+    if(e.touches.length!==1) return;
     sx = e.touches[0].clientX; sy = e.touches[0].clientY;
   }, {passive:true});
   figure.addEventListener('touchend', e=>{
@@ -3527,6 +3529,52 @@ function bindPmSwipe(){
     }
     sx = null; sy = null;
   }, {passive:true});
+}
+/* Tap or pinch the product-modal photo to open it in the same lightbox
+   used elsewhere (detail shots, look hero) -- reuses its pinch/pan/
+   double-tap zoom engine (lbScale/lbPanX/lbPanY) rather than
+   reimplementing it. A two-finger touch opens the lightbox and carries
+   the same gesture straight into zoom, mirroring the look-view hero. */
+let pmPinchActive=false, pmPinchStartDist=0, pmPinchStartScale=1, wasPmPinch=false;
+function bindPmZoom(){
+  const figure = document.querySelector('.pm-figure');
+  if(!figure) return;
+  figure.addEventListener('touchstart', e=>{
+    if(e.touches.length===2){
+      e.preventDefault();
+      pmPinchActive = true; wasPmPinch = true;
+      const img = document.getElementById('pmFigImg');
+      if(img && !document.getElementById('lightbox')?.classList.contains('show')){
+        openLightbox(img.src, img.alt);
+      }
+      pmPinchStartDist = Math.hypot(e.touches[1].clientX-e.touches[0].clientX, e.touches[1].clientY-e.touches[0].clientY);
+      pmPinchStartScale = lbScale;
+    }
+  }, {passive:false});
+  figure.addEventListener('touchmove', e=>{
+    if(pmPinchActive && e.touches.length===2){
+      e.preventDefault();
+      const d = Math.hypot(e.touches[1].clientX-e.touches[0].clientX, e.touches[1].clientY-e.touches[0].clientY);
+      lbScale = Math.min(4, Math.max(1, pmPinchStartScale * (d / pmPinchStartDist)));
+      const lbImg = document.getElementById('lightboxImg');
+      if(lbImg) lbImg.style.transform = `translate(${lbPanX}px,${lbPanY}px) scale(${lbScale})`;
+    }
+  }, {passive:false});
+  figure.addEventListener('touchend', e=>{
+    if(pmPinchActive && e.touches.length<2){
+      pmPinchActive = false;
+      if(lbScale<=1.02){
+        lbScale = 1; lbPanX = 0; lbPanY = 0;
+        const lbImg = document.getElementById('lightboxImg');
+        if(lbImg) lbImg.style.transform = '';
+      }
+    }
+  }, {passive:true});
+  figure.addEventListener('click', ()=>{
+    if(wasPmPinch){ wasPmPinch = false; return; }
+    const img = document.getElementById('pmFigImg');
+    if(img) openLightbox(img.src, img.alt);
+  });
 }
 function setPmView(view){
   const p = PRODUCTS[currentPmCode];
