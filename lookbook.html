@@ -1836,14 +1836,14 @@ const MIX_BOTTOM_POOL = ['263PH001','263PH001-2','263PH002','263PH002-2','263PL0
    in by initMixPool() */
 let MIX_TOPS = [], MIX_BOTTOMS = [];
 let mixPoolPromise = null;
-function mixImgExists(src){
+function imgExistsProbe(src){
   return fetch(src, {method:'HEAD'}).then(r=>r.ok).catch(()=>false);
 }
 function initMixPool(){
   if(mixPoolPromise) return mixPoolPromise;
   mixPoolPromise = Promise.all([
-    Promise.all(MIX_TOP_POOL.map(code=>mixImgExists(`images/mannequin/tops/${code}.png`).then(ok=>ok?code:null))),
-    Promise.all(MIX_BOTTOM_POOL.map(code=>mixImgExists(`images/mannequin/bottoms/${code}.png`).then(ok=>ok?code:null))),
+    Promise.all(MIX_TOP_POOL.map(code=>imgExistsProbe(`images/mannequin/tops/${code}.png`).then(ok=>ok?code:null))),
+    Promise.all(MIX_BOTTOM_POOL.map(code=>imgExistsProbe(`images/mannequin/bottoms/${code}.png`).then(ok=>ok?code:null))),
   ]).then(([tops,bottoms])=>{
     /* a cold-started PWA can fire all ~55 of these existence probes before
        the network is really warmed up, spuriously failing every single one
@@ -1875,6 +1875,32 @@ function initMixPool(){
    short delay instead of a true idle signal. */
 if('requestIdleCallback' in window) requestIdleCallback(initMixPool, {timeout: 2000});
 else setTimeout(initMixPool, 300);
+
+/* auto-discovers back-view photos instead of requiring every PRODUCTS
+   entry that gets one to be edited by hand: any product missing
+   .imgBack is probed once for a same-name file with a _B suffix (e.g.
+   foo.jpg -> foo_B.jpg), and openProduct()'s FRONT/BACK toggle picks
+   it up automatically the next time that product is opened, purely
+   because .imgBack is now set on the shared PRODUCTS object -- no
+   per-product code changes needed on this end when a photo is added
+   later. Same probe-and-fallback shape as initMixPool() above; also
+   idle-deferred so it doesn't compete with first paint. Only ever
+   needs to run once per page load since a found result is cached
+   directly onto the product (and a not-found one isn't worth
+   re-probing this session — the pool of "recently added" products is
+   small and a hard refresh re-checks everything anyway). */
+let backPhotoPromise = null;
+function discoverBackPhotos(){
+  if(backPhotoPromise) return backPhotoPromise;
+  const candidates = Object.values(PRODUCTS).filter(p=>!p.imgBack && p.img);
+  backPhotoPromise = Promise.all(candidates.map(p=>{
+    const backSrc = p.img.replace(/\.(jpe?g|png)$/i, '_B.$1');
+    return imgExistsProbe(backSrc).then(ok=>{ if(ok) p.imgBack = backSrc; });
+  }));
+  return backPhotoPromise;
+}
+if('requestIdleCallback' in window) requestIdleCallback(discoverBackPhotos, {timeout: 2000});
+else setTimeout(discoverBackPhotos, 300);
 
 /* ---------------- STATE / ROUTER ---------------- */
 let mixTopIdx = 0, mixBottomIdx = 0;
