@@ -2116,7 +2116,17 @@ function render(){
   }
   observeReveal();
   if(view==='look') bindLookInteractions(param);
-  if(view==='category') bindCampaignInteractions(param);
+  if(view==='category'){
+    bindCampaignInteractions(param);
+    /* lineupOnly categories (BAG/ACC) render their FULL LINE-UP toggle
+       directly on the category page instead of a look-detail page, so
+       bindLookInteractions (which positions every other FULL LINE-UP
+       toggle) never runs here -- left the ALL pill's sliding thumb
+       missing (and its white "active" text unreadable against the
+       plain pill background) until the first tap called
+       filterFullLineup(), which positions it as a side effect. */
+    positionToggleThumb(document.querySelector('.fl-toggle'));
+  }
   if(view==='mix'){
     if(MIX_TOPS.length && MIX_BOTTOMS.length){
       paintMix();
