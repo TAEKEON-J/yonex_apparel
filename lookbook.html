@@ -679,6 +679,7 @@ footer.lb-foot .eyebrow{justify-content:center;display:flex;text-transform:none;
     <button data-cat="game" onclick="go('category','game')">GAME WEAR</button>
     <button data-cat="casual" onclick="go('category','casual')">DAILY WEAR</button>
     <button data-cat="easy" onclick="go('category','easy')">EASY WEAR</button>
+    <button data-cat="bagacc" onclick="go('category','bagacc')">BAG/ACC</button>
   </nav>
 </header>
 
@@ -905,6 +906,10 @@ const CATEGORIES = {
   game:{label:'GAME WEAR',accent:'#D2240C',keywords:['PERFORMANCE','DYNAMIC','TECHNICAL'],tagline:'Built for performance.',desc:'On-court silhouettes tuned for movement — matched from center line to sideline.'},
   casual:{label:'DAILY WEAR',accent:'#194193',keywords:['STYLE','DAILY','MODERN'],tagline:'Style, off the court.',desc:'Everyday pieces styled for the walk between the club and the street.'},
   easy:{label:'EASY WEAR',accent:'#4B8043',keywords:['COMFORT','RELAX','LIFESTYLE'],tagline:'Comfort, every day.',desc:'Soft, relaxed layers for downtime — before the game, after, and in between.'},
+  /* TODO: placeholder label/accent/copy -- confirm exact wording, then
+     fill PRODUCTS with collection:'Bag/Acc' entries (see COLLECTION_BY_CAT
+     below) to populate this category's FULL LINE-UP. */
+  bagacc:{label:'BAG/ACC',accent:'#6B5B3E',keywords:['GEAR','ESSENTIALS'],tagline:'Finish the kit.',desc:'Bags and accessories built to match every wear.',lineupOnly:true},
 };
 
 const HS_DEFAULT = {top:{x:24,y:13,w:52,h:39},bottom:{x:22,y:50,w:56,h:31}};
@@ -1873,6 +1878,22 @@ function renderCover(){
 function renderCategory(key){
   const c = CATEGORIES[key];
   if(!c) return renderCover();
+  /* BAG/ACC (and any future category with no model-cut photography) has
+     no LOOKS entries at all -- there's no outfit to shoot, just the
+     items themselves -- so it skips straight to FULL LINE-UP instead of
+     the CAMPAIGN carousel + look grid every other category shows. */
+  if(c.lineupOnly){
+    const groups = productsForCat(key);
+    return `<div class="view">
+      <section class="cat-hero">
+        <div class="cat-tags">${c.keywords.map(k=>`<span>${k}</span>`).join('')}</div>
+        <h1>${c.label}</h1>
+        <p>${c.tagline} ${c.desc}</p>
+        <div class="cat-count">${String(groups.length).padStart(2,'0')} STYLES</div>
+      </section>
+      ${renderFullLineup(key)}
+    </div>`;
+  }
   const looks = LOOKS.filter(l=>l.cat===key);
   const editorialLooks = looks.filter(l=>l.hasEditorial);
   const featured = editorialLooks[0];
@@ -1976,7 +1997,7 @@ function bindCampaignInteractions(key){
   }, {passive:true});
 }
 
-const COLLECTION_BY_CAT = {game:'Game Wear', casual:'Daily Wear', easy:'Easy Wear'};
+const COLLECTION_BY_CAT = {game:'Game Wear', casual:'Daily Wear', easy:'Easy Wear', bagacc:'Bag/Acc'};
 /* Approximate swatch colors for the FULL LINE-UP color-dot picker — PRODUCTS
    only stores color NAMES (from the brand sheet), not hex values, so these
    are visual approximations for the dot only; the real name is always in
