@@ -249,9 +249,16 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .full-lineup{max-width:1320px;margin:0 auto;padding:0 28px 120px;border-top:1px solid var(--line-soft);}
 .fl-head{display:flex;align-items:baseline;justify-content:space-between;padding:46px 0 30px;flex-wrap:wrap;gap:14px;}
 .fl-head h2{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--ink);font-weight:700;}
-.fl-head-right{display:flex;align-items:center;gap:16px;flex:1 1 100%;justify-content:space-between;}
-.fl-toggle{position:relative;display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);}
-.fl-toggle button{position:relative;z-index:1;font-family:var(--display);font-size:9.5px;font-weight:600;letter-spacing:.06em;padding:5px 13px;background:none;border:none;border-radius:999px;cursor:pointer;color:var(--muted);transition:color .25s var(--ease-out),transform .15s ease;}
+.fl-head-right{display:flex;align-items:center;gap:16px;flex:1 1 100%;min-width:0;justify-content:space-between;}
+/* min-width:0 + overflow-x:auto is the actual fix -- a flex item's
+   default min-width is its content width, which otherwise refuses to
+   shrink and just pushes this pill past the viewport edge instead of
+   scrolling. Only bites once a category has enough lineupTabs to not
+   fit one row (BAG/ACC's 6 tabs vs. every apparel category's 3) --
+   invisible otherwise, since there's nothing to scroll. */
+.fl-toggle{position:relative;display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);min-width:0;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.fl-toggle::-webkit-scrollbar{display:none;}
+.fl-toggle button{position:relative;z-index:1;flex:none;font-family:var(--display);font-size:9.5px;font-weight:600;letter-spacing:.06em;padding:5px 13px;background:none;border:none;border-radius:999px;cursor:pointer;color:var(--muted);transition:color .25s var(--ease-out),transform .15s ease;}
 .fl-toggle button.active{color:var(--paper);}
 .fl-toggle button:active{transform:scale(.96);}
 .fl-count{font-family:var(--mono);font-size:11px;color:var(--muted);}
@@ -547,6 +554,15 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .pm-ww-row .ww-mini .frame{aspect-ratio:4/5;background:var(--paper-2);overflow:hidden;}
 .pm-ww-row .ww-mini .frame img{width:100%;height:100%;object-fit:cover;object-position:top center;}
 .pm-ww-row .ww-mini .lbl{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:6px;}
+/* optional close-up shots (logo, hardware, stitching) for products that
+   have them -- sits right under the DETAIL material text, reusing the
+   exact visual language of the WORN WITH row below it (a .frame +
+   object-fit:cover thumbnail) rather than inventing a new component. */
+.pm-detailshots{margin-top:24px;}
+.pm-detailshots .ds-row{display:flex;gap:10px;}
+.pm-detailshots .ds-mini{flex:1;cursor:zoom-in;}
+.pm-detailshots .ds-mini .frame{aspect-ratio:4/5;background:var(--paper-2);overflow:hidden;border:1px solid var(--line-soft);}
+.pm-detailshots .ds-mini .frame img{width:100%;height:100%;object-fit:cover;display:block;}
 /* mobile: compact the panel so photo through DETAIL material text
    fits in one screen without scrolling — shorter figure frame,
    tighter padding/row spacing throughout */
@@ -679,6 +695,7 @@ footer.lb-foot .eyebrow{justify-content:center;display:flex;text-transform:none;
     <button data-cat="game" onclick="go('category','game')">GAME WEAR</button>
     <button data-cat="casual" onclick="go('category','casual')">DAILY WEAR</button>
     <button data-cat="easy" onclick="go('category','easy')">EASY WEAR</button>
+    <button data-cat="bagacc" onclick="go('category','bagacc')">BAG/ACC</button>
   </nav>
 </header>
 
@@ -899,12 +916,249 @@ const PRODUCTS = {
   '269PH002-3':{code:"269PH002F",name:"Easy Wear Shorts",color:"Navy Blue",price:43000,gender:"Women",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",size:"85–100",collection:"Easy Wear",img:"images/products/269PH002F_navyblue.jpg",pairCode:"269PH001-3"},
   '269PH002-4':{code:"269PH002F",name:"Easy Wear Shorts",color:"Pale Green",price:43000,gender:"Women",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",size:"85–100",collection:"Easy Wear",img:"images/products/269PH002F_palegreen.jpg",pairCode:"269PH001-4"},
   '269PH002-5':{code:"269PH002F",name:"Easy Wear Shorts",color:"White",price:43000,gender:"Women",material:"겉감 : NY 77%, PU 23% / 속바지: PE 100% (WHITE)",note1:"우븐 3부",size:"85–100",collection:"Easy Wear",img:"images/products/269PH002F_white.jpg",pairCode:"269PH001-5"},
+
+  /* ---- BAG/ACC (2026 FW) ---- */
+  '269BA029U':{code:"269BA029U", name:"Sling Bag", color:"GRAY", price:45000, gender:"Unisex", material:"겉감: NY 100%, 안감: PE 100%", size:"18cm x 31cm x 12cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BA029U.jpg"},
+  'BA72631WEX':{code:"BA72631WEX", name:"Tournament Bag (2-Tier)", color:"BEIGE", price:139000, gender:"Unisex", line:"GEARLOGIC SERIES", material:"PE 100%", size:"75cm x 30cm x 20cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA72631WEX_beige.jpg"},
+  'BA72631WEX-2':{code:"BA72631WEX", name:"Tournament Bag (2-Tier)", color:"BLACK", price:139000, gender:"Unisex", line:"GEARLOGIC SERIES", material:"PE 100%", size:"75cm x 30cm x 20cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA72631WEX_black.jpg"},
+  'BA72612EX':{code:"BA72612EX", name:"Backpack", color:"BEIGE", price:139000, gender:"Unisex", line:"GEARLOGIC SERIES", material:"PE 100%", size:"34cm x 52cm x 22cm", capacity:"40L", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA72612EX_beige.jpg"},
+  'BA72612EX-2':{code:"BA72612EX", name:"Backpack", color:"BLACK", price:139000, gender:"Unisex", line:"GEARLOGIC SERIES", material:"PE 100%", size:"34cm x 52cm x 22cm", capacity:"40L", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA72612EX_black.jpg"},
+  'BA72611EX':{code:"BA72611EX", name:"Boston Bag", color:"BEIGE", price:129000, gender:"Unisex", line:"GEARLOGIC SERIES", material:"PE 100%", size:"49cm x 39cm x 20cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA72611EX_beige.jpg"},
+  'BA72611EX-2':{code:"BA72611EX", name:"Boston Bag", color:"BLACK", price:129000, gender:"Unisex", line:"GEARLOGIC SERIES", material:"PE 100%", size:"49cm x 39cm x 20cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA72611EX_black.jpg"},
+  'BA72606EX':{code:"BA72606EX", name:"Stuff Bag", color:"BLACK", price:35000, gender:"Unisex", line:"GEARLOGIC SERIES", material:"NY 100%", size:"20cm x 44cm x 20cm", capacity:"9L", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA72606EX.jpg"},
+  'BA42529EX':{code:"BA42529EX", name:"Racket Bag (3-Tier)", color:"RUBY RED", price:129000, gender:"Unisex", line:"TEAM SERIES", material:"PE 100%", size:"75cm x 32cm x 30cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA42529EX.jpg"},
+  'BA42526EX':{code:"BA42526EX", name:"Racket Bag (2-Tier)", color:"RUBY RED", price:99000, gender:"Unisex", line:"TEAM SERIES", material:"PE 100%", size:"75cm x 32cm x 22cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA42526EX.jpg"},
+  'BA42503EX':{code:"BA42503EX", name:"Shoe Case", color:"BLACK", price:20000, gender:"Unisex", line:"TEAM SERIES", material:"PE 100%", size:"34cm x 14cm x 23cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA42503EX.jpg"},
+  'BA52531WEX':{code:"BA52531WEX", name:"Tournament Bag (2-Tier)", color:"WHITE/BLUE", price:81000, gender:"Unisex", line:"CLUB SERIES", material:"PE 90%, PU 10%", size:"71cm x 30cm x 13cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA52531WEX_whiteblue.jpg"},
+  'BA52531WEX-2':{code:"BA52531WEX", name:"Tournament Bag (2-Tier)", color:"BLACK/BLUE", price:81000, gender:"Unisex", line:"CLUB SERIES", material:"PE 90%, PU 10%", size:"71cm x 30cm x 13cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA52531WEX_blackblue.jpg"},
+  'BA52531WEX-3':{code:"BA52531WEX", name:"Tournament Bag (2-Tier)", color:"PINK/WHITE", price:81000, gender:"Unisex", line:"CLUB SERIES", material:"PE 90%, PU 10%", size:"71cm x 30cm x 13cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA52531WEX_pinkwhite.jpg"},
+  'BA52512EX':{code:"BA52512EX", name:"Backpack", color:"WHITE/BLUE", price:85000, gender:"Unisex", line:"CLUB SERIES", material:"PE 80%, PU 20%", size:"30cm x 48cm x 18cm", capacity:"19L", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA52512EX_whiteblue.jpg"},
+  'BA52512EX-2':{code:"BA52512EX", name:"Backpack", color:"BLACK/BLUE", price:85000, gender:"Unisex", line:"CLUB SERIES", material:"PE 80%, PU 20%", size:"30cm x 48cm x 18cm", capacity:"19L", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA52512EX_blackblue.jpg"},
+  'BA52512EX-3':{code:"BA52512EX", name:"Backpack", color:"PINK/WHITE", price:85000, gender:"Unisex", line:"CLUB SERIES", material:"PE 80%, PU 20%", size:"30cm x 48cm x 18cm", capacity:"19L", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA52512EX_pinkwhite.jpg"},
+  'BA52511EX':{code:"BA52511EX", name:"Boston Bag", color:"WHITE/BLUE", price:79000, gender:"Unisex", line:"CLUB SERIES", material:"PE 90%, PU 10%", size:"55cm x 30cm x 26cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA52511EX_whiteblue.jpg"},
+  'BA52511EX-2':{code:"BA52511EX", name:"Boston Bag", color:"BLACK/BLUE", price:79000, gender:"Unisex", line:"CLUB SERIES", material:"PE 90%, PU 10%", size:"55cm x 30cm x 26cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA52511EX_blackblue.jpg"},
+  'BA52511EX-3':{code:"BA52511EX", name:"Boston Bag", color:"PINK/WHITE", price:79000, gender:"Unisex", line:"CLUB SERIES", material:"PE 90%, PU 10%", size:"55cm x 30cm x 26cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA52511EX_pinkwhite.jpg"},
+  'BA52511SEX':{code:"BA52511SEX", name:"Compact Bag", color:"WHITE/BLUE", price:65000, gender:"Unisex", line:"CLUB SERIES", material:"PE 85%, PU 15%", size:"39cm x 30cm x 15cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA52511SEX_whiteblue.jpg"},
+  'BA52511SEX-2':{code:"BA52511SEX", name:"Compact Bag", color:"BLACK/BLUE", price:65000, gender:"Unisex", line:"CLUB SERIES", material:"PE 85%, PU 15%", size:"39cm x 30cm x 15cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA52511SEX_blackblue.jpg"},
+  'BA52511SEX-3':{code:"BA52511SEX", name:"Compact Bag", color:"PINK/WHITE", price:65000, gender:"Unisex", line:"CLUB SERIES", material:"PE 85%, PU 15%", size:"39cm x 30cm x 15cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA52511SEX_pinkwhite.jpg"},
+  'BA02626EX':{code:"BA02626EX", name:"Racket Bag (2-Tier)", color:"BLACK", price:189000, gender:"Unisex", line:"EXPERT SERIES", material:"PE 20%, PU 80%", size:"76cm x 35cm x 20.5cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA02626EX_black.jpg"},
+  'BA02626EX-2':{code:"BA02626EX", name:"Racket Bag (2-Tier)", color:"WHITE", price:189000, gender:"Unisex", line:"EXPERT SERIES", material:"PE 20%, PU 80%", size:"76cm x 35cm x 20.5cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA02626EX_white.jpg"},
+  'BA02626EX-3':{code:"BA02626EX", name:"Racket Bag (2-Tier)", color:"SKY BLUE", price:189000, gender:"Unisex", line:"EXPERT SERIES", material:"PE 20%, PU 80%", size:"76cm x 35cm x 20.5cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA02626EX_skyblue.jpg"},
+  'BA02626EX-4':{code:"BA02626EX", name:"Racket Bag (2-Tier)", color:"SMOKE GREEN", price:189000, gender:"Unisex", line:"EXPERT SERIES", material:"PE 20%, PU 80%", size:"76cm x 35cm x 20.5cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA02626EX_smokegreen.jpg"},
+  'BA02631WEX':{code:"BA02631WEX", name:"Tournament Bag (2-Tier)", color:"BLACK", price:169000, gender:"Unisex", line:"EXPERT SERIES", material:"PE 15%, PU 85%", size:"76cm x 33cm x 19cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA02631WEX_black.jpg"},
+  'BA02631WEX-2':{code:"BA02631WEX", name:"Tournament Bag (2-Tier)", color:"WHITE", price:169000, gender:"Unisex", line:"EXPERT SERIES", material:"PE 15%, PU 85%", size:"76cm x 33cm x 19cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA02631WEX_white.jpg"},
+  'BA02631WEX-3':{code:"BA02631WEX", name:"Tournament Bag (2-Tier)", color:"SKY BLUE", price:169000, gender:"Unisex", line:"EXPERT SERIES", material:"PE 15%, PU 85%", size:"76cm x 33cm x 19cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA02631WEX_skyblue.jpg"},
+  'BA02631WEX-4':{code:"BA02631WEX", name:"Tournament Bag (2-Tier)", color:"SMOKE GREEN", price:169000, gender:"Unisex", line:"EXPERT SERIES", material:"PE 15%, PU 85%", size:"76cm x 33cm x 19cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA02631WEX_smokegreen.jpg"},
+  'BA02611EX':{code:"BA02611EX", name:"Boston Bag", color:"BLACK", price:155000, gender:"Unisex", line:"EXPERT SERIES", material:"PE 10%, PU 90%", size:"55cm x 28cm x 22cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA02611EX_black.jpg"},
+  'BA02611EX-2':{code:"BA02611EX", name:"Boston Bag", color:"WHITE", price:155000, gender:"Unisex", line:"EXPERT SERIES", material:"PE 10%, PU 90%", size:"55cm x 28cm x 22cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA02611EX_white.jpg"},
+  'BA02611EX-3':{code:"BA02611EX", name:"Boston Bag", color:"SKY BLUE", price:155000, gender:"Unisex", line:"EXPERT SERIES", material:"PE 10%, PU 90%", size:"55cm x 28cm x 22cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA02611EX_skyblue.jpg"},
+  'BA02611EX-4':{code:"BA02611EX", name:"Boston Bag", color:"SMOKE GREEN", price:155000, gender:"Unisex", line:"EXPERT SERIES", material:"PE 10%, PU 90%", size:"55cm x 28cm x 22cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BA02611EX_smokegreen.jpg"},
+  'BAG2661EX':{code:"BAG2661EX", name:"Tote Bag", color:"BLACK", price:99000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"53cm x 38cm x 18cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2661EX_black.jpg"},
+  'BAG2661EX-2':{code:"BAG2661EX", name:"Tote Bag", color:"GRAYISH NAVY", price:99000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"53cm x 38cm x 18cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2661EX_grayishnavy.jpg"},
+  'BAG2661EX-3':{code:"BAG2661EX", name:"Tote Bag", color:"SMOKE MINT", price:99000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"53cm x 38cm x 18cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2661EX_smokemint.jpg"},
+  'BAG2662EX':{code:"BAG2662EX", name:"Racket Bag", color:"BLACK", price:129000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"73cm x 33cm x 18cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2662EX_black.jpg"},
+  'BAG2662EX-2':{code:"BAG2662EX", name:"Racket Bag", color:"GRAYISH NAVY", price:129000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"73cm x 33cm x 18cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2662EX_grayishnavy.jpg"},
+  'BAG2663EX':{code:"BAG2663EX", name:"Mini Shoulder Bag", color:"BLACK", price:33000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"15cm x 20cm x 6cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2663EX_black.jpg"},
+  'BAG2663EX-2':{code:"BAG2663EX", name:"Mini Shoulder Bag", color:"GRAYISH NAVY", price:33000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"15cm x 20cm x 6cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2663EX_grayishnavy.jpg"},
+  'BAG2663EX-3':{code:"BAG2663EX", name:"Mini Shoulder Bag", color:"SMOKE MINT", price:33000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"15cm x 20cm x 6cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2663EX_smokemint.jpg"},
+  'BAG2664EX':{code:"BAG2664EX", name:"Shoulder Bag", color:"BLACK", price:65000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"35cm x 32cm x 15cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2664EX_black.jpg"},
+  'BAG2664EX-2':{code:"BAG2664EX", name:"Shoulder Bag", color:"GRAYISH NAVY", price:65000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"35cm x 32cm x 15cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2664EX_grayishnavy.jpg"},
+  'BAG2664EX-3':{code:"BAG2664EX", name:"Shoulder Bag", color:"SMOKE MINT", price:65000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"35cm x 32cm x 15cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2664EX_smokemint.jpg"},
+  'BAG2665EX':{code:"BAG2665EX", name:"Shoulder Bag (S)", color:"BLACK", price:39000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"18cm x 24cm x 13cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2665EX_black.jpg"},
+  'BAG2665EX-2':{code:"BAG2665EX", name:"Shoulder Bag (S)", color:"GRAYISH NAVY", price:39000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"18cm x 24cm x 13cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2665EX_grayishnavy.jpg"},
+  'BAG2665EX-3':{code:"BAG2665EX", name:"Shoulder Bag (S)", color:"SMOKE MINT", price:39000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"18cm x 24cm x 13cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2665EX_smokemint.jpg"},
+  'BAG2666EX':{code:"BAG2666EX", name:"Boston Bag", color:"BLACK", price:99000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"52cm x 30cm x 22cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2666EX_black.jpg"},
+  'BAG2666EX-2':{code:"BAG2666EX", name:"Boston Bag", color:"GRAYISH NAVY", price:99000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"52cm x 30cm x 22cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2666EX_grayishnavy.jpg"},
+  'BAG2667EX':{code:"BAG2667EX", name:"Cooler Bag", color:"GRAYISH NAVY", price:65000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"45cm x 36cm x 14cm", capacity:"13L", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2667EX_grayishnavy.jpg"},
+  'BAG2667EX-2':{code:"BAG2667EX", name:"Cooler Bag", color:"SMOKE MINT", price:65000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"45cm x 36cm x 14cm", capacity:"13L", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2667EX_smokemint.jpg"},
+  'BAG2668EX':{code:"BAG2668EX", name:"Backpack", color:"BLACK", price:115000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"30cm x 48cm x 20cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2668EX_black.jpg"},
+  'BAG2668EX-2':{code:"BAG2668EX", name:"Backpack", color:"GRAYISH NAVY", price:115000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"30cm x 48cm x 20cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2668EX_grayishnavy.jpg"},
+  'BAG2668EX-3':{code:"BAG2668EX", name:"Backpack", color:"SMOKE MINT", price:115000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"30cm x 48cm x 20cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2668EX_smokemint.jpg"},
+  'BAG2669EX':{code:"BAG2669EX", name:"Racket Backpack", color:"BLACK", price:135000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"30cm x 73cm x 20cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2669EX_black.jpg"},
+  'BAG2669EX-2':{code:"BAG2669EX", name:"Racket Backpack", color:"GRAYISH NAVY", price:135000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"30cm x 73cm x 20cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2669EX_grayishnavy.jpg"},
+  'BAG2669EX-3':{code:"BAG2669EX", name:"Racket Backpack", color:"SMOKE MINT", price:135000, gender:"Unisex", line:"COMPACT SERIES", material:"NY 100%", size:"30cm x 73cm x 20cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/BAG2669EX_smokemint.jpg"},
+  '269BT001U':{code:"269BT001U", name:"Tournament Bag (3-Tier)", color:"IVORY", price:169000, gender:"Unisex", material:"겉감: PU 100% / 안감: PE 100%", size:"72cm x 32cm x 25cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BT001U.jpg"},
+  '269BT002U':{code:"269BT002U", name:"Tournament Bag (3-Tier)", color:"OLIVE", price:169000, gender:"Unisex", material:"겉감: PU 100% / 안감: PE 100%", size:"73cm x 33cm x 26cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BT002U.jpg"},
+  '269BT003U':{code:"269BT003U", name:"Tournament Bag (3-Tier)", color:"WHITE", price:169000, gender:"Unisex", material:"겉감: PU 100% / 안감: PE 100%", size:"74cm x 33cm x 25cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BT003U.jpg"},
+  '269BT004U':{code:"269BT004U", name:"Tournament Bag (2-Tier)", color:"CREAM", price:149000, gender:"Unisex", material:"겉감: PU 100% / 안감: PE 100%", size:"72cm x 32cm x 19cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BT004U.jpg"},
+  '269BT005U':{code:"269BT005U", name:"Tournament Bag (2-Tier)", color:"WHITE", price:149000, gender:"Unisex", material:"겉감: PU 100% / 안감: PE 100%", size:"72cm x 32cm x 22cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BT005U.jpg"},
+  '269BT006U':{code:"269BT006U", name:"Tournament Bag (2-Tier)", color:"WHITE", price:149000, gender:"Unisex", material:"겉감: PU 100% / 안감: PE 100%", size:"72cm x 32cm x 22cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BT006U.jpg"},
+  '269BT007U':{code:"269BT007U", name:"Tournament Bag (2-Tier)", color:"GRAY", price:149000, gender:"Unisex", material:"겉감: PU 100% / 안감: PE 100%", size:"74cm x 33cm x 19cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BT007U.jpg"},
+  '269BT009U':{code:"269BT009U", name:"Tournament Bag (Mini)", color:"BLACK", price:109000, gender:"Unisex", material:"겉감: PU 100% / 안감: PE 100%", size:"53cm x 28cm x 19cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BT009U.jpg"},
+  '269BT008U':{code:"269BT008U", name:"Tournament Bag (Mini)", color:"WHITE", price:109000, gender:"Unisex", material:"겉감: PU 100% / 안감: PE 100%", size:"53cm x 28cm x 18cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BT008U.jpg"},
+  '269BT010U':{code:"269BT010U", name:"Tournament Bag (Mini)", color:"LIGHT BEIGE", price:109000, gender:"Unisex", material:"겉감: PU 100% / 배색, 안감: PE 100%", size:"53cm x 28cm x 19cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BT010U.jpg"},
+  '269BT011U':{code:"269BT011U", name:"Tournament Bag (Mini)", color:"CHARCOAL GRAY", price:109000, gender:"Unisex", material:"겉감: PU 100% / 배색, 안감: PE 100%", size:"56cm x 27cm x 19cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BT011U.jpg"},
+  '269BA001U':{code:"269BA001U", name:"Boston Bag", color:"CREAM", price:119000, gender:"Unisex", material:"겉감: PU 100% / 안감: PE 100%", size:"51cm x 32cm x 27cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BA001U.jpg"},
+  '269BA002U':{code:"269BA002U", name:"Tote Bag", color:"WHITE", price:65000, gender:"Unisex", material:"겉감: PE 100% (PU 코팅) / 안감: PE 100%", size:"41cm x 42cm x 12cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BA002U.jpg"},
+  '269BP002U':{code:"269BP002U", name:"Backpack", color:"KHAKI", price:105000, gender:"Unisex", material:"겉감: NY 100% / 안감: PE 100%", size:"30cm x 51cm x 18cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BP002U_khaki.jpg"},
+  '269BP002U-2':{code:"269BP002U", name:"Backpack", color:"NAVY BLUE", price:105000, gender:"Unisex", material:"겉감: NY 100% / 안감: PE 100%", size:"30cm x 51cm x 18cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BP002U_navyblue.jpg"},
+  '269BP001U':{code:"269BP001U", name:"Backpack", color:"INDIGO", price:119000, gender:"Unisex", material:"겉감: PU 100% / 안감: PE 100%", size:"33cm x 49cm x 23cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BP001U.jpg"},
+  '269BA003U':{code:"269BA003U", name:"Tote Bag", color:"BLACK", price:71000, gender:"Unisex", material:"겉감: NY 100% / 배색: PU 100% / 안감: PE 100%", size:"42cm x 30cm x 17cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BA003U.jpg"},
+  '269BA004U':{code:"269BA004U", name:"Tote Bag", color:"IVORY", price:79000, gender:"Unisex", material:"겉감: PE 75%, PU 25% / 안감: PE 100%", size:"48cm x 29cm x 16cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BA004U.jpg"},
+  '269BA006U':{code:"269BA006U", name:"Dry Bag", color:"ORANGE", price:27000, gender:"Unisex", material:"겉감: PVC 100%", size:"42cm x 28cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BA006U.jpg"},
+  '269BA005U':{code:"269BA005U", name:"Tote Bag", color:"SILVER", price:103000, gender:"Unisex", material:"겉감: PE 75%, PU 25% / 안감: PE 100%", size:"45cm x 30cm x 15cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BA005U.jpg"},
+  '269BA007U':{code:"269BA007U", name:"Racket Cover", color:"BLACK", price:15000, gender:"Unisex", material:"겉감: PE 100%", size:"24cm x 72cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BA007U.jpg"},
+  '269BA008U':{code:"269BA008U", name:"Reusable Bag (S)", color:"WHITE", price:5000, gender:"Unisex", material:"겉감: RPET 55% / 배색: PU 45%", size:"37cm x 30cm x 13cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BA008U.jpg"},
+  '269BA009U':{code:"269BA009U", name:"Reusable Bag (L)", color:"BLUE", price:7000, gender:"Unisex", material:"겉감: RPET 55% / 배색: PU 45%", size:"70cm x 45cm x 19.5cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BA009U.jpg"},
+  '19273EX':{code:"19273EX", name:"Socks", color:"WHITE/DENIM", price:21000, gender:"Unisex", material:"CO 53%, PE 43%, PU 4%", note1:"1켤레", size:"S, M", collection:"Bag/Acc", subcat:"socks", img:"images/products/19273EX_whitedenim.jpg"},
+  '19273EX-2':{code:"19273EX", name:"Socks", color:"WHITE/NAVY", price:21000, gender:"Unisex", material:"CO 53%, PE 44%, PU 3%", note1:"1켤레", size:"S, M", collection:"Bag/Acc", subcat:"socks", img:"images/products/19273EX_whitenavy.jpg"},
+  '19273EX-3':{code:"19273EX", name:"Socks", color:"WHITE/GREEN", price:21000, gender:"Unisex", material:"CO 53%, PE 44%, PU 3%", note1:"1켤레", size:"S, M", collection:"Bag/Acc", subcat:"socks", img:"images/products/19273EX_whitegreen.jpg"},
+  '29274EX':{code:"29274EX", name:"Socks", color:"WHITE/PURPLE", price:21000, gender:"Women", material:"CO 51%, PE 46%, PU 3%", note1:"1켤레", size:"S", collection:"Bag/Acc", subcat:"socks", img:"images/products/29274EX_whitepurple.jpg"},
+  '29274EX-2':{code:"29274EX", name:"Socks", color:"WHITE/GREEN", price:21000, gender:"Women", material:"CO 51%, PE 46%, PU 3%", note1:"1켤레", size:"S", collection:"Bag/Acc", subcat:"socks", img:"images/products/29274EX_whitegreen.jpg"},
+  '29274EX-3':{code:"29274EX", name:"Socks", color:"PEARL BEIGE", price:21000, gender:"Women", material:"CO 51%, PE 46%, PU 3%", note1:"1켤레", size:"S", collection:"Bag/Acc", subcat:"socks", img:"images/products/29274EX_pearlbeige.jpg"},
+  '29274EX-4':{code:"29274EX", name:"Socks", color:"POWDER PINK", price:21000, gender:"Women", material:"CO 51%, PE 46%, PU 3%", note1:"1켤레", size:"S", collection:"Bag/Acc", subcat:"socks", img:"images/products/29274EX_powderpink.jpg"},
+  '269SN007M':{code:"269SN007M", name:"Compression Socks", color:"WHITE", price:8900, gender:"Men", material:"CO 46%, PE 44%, PU 8%, NY 2%", note1:"1켤레", size:"250mm~280mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN007M.jpg"},
+  '269SN008F':{code:"269SN008F", name:"Compression Socks", color:"WHITE", price:8900, gender:"Women", material:"CO 46%, PE 44%, PU 8%, NY 2%", note1:"1켤레", size:"230mm~250mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN008F.jpg"},
+  '269SN009M':{code:"269SN009M", name:"Compression Socks (Non-Slip)", color:"WHITE", price:20000, gender:"Men", material:"CO 46%, PE 44%, PU 8%, NY 2%", note1:"1켤레", size:"250mm~280mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN009M.jpg"},
+  '269SN010F':{code:"269SN010F", name:"Compression Socks (Non-Slip)", color:"WHITE", price:20000, gender:"Women", material:"CO 46%, PE 44%, PU 8%, NY 2%", note1:"1켤레", size:"230mm~250mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN010F.jpg"},
+  '259SN001M':{code:"259SN001M", name:"Socks", color:"RED", price:7900, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/259SN001M_red.jpg"},
+  '259SN001M-2':{code:"259SN001M", name:"Socks", color:"BLACK", price:7900, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/259SN001M_black.jpg"},
+  '259SN001M-3':{code:"259SN001M", name:"Socks", color:"GREEN", price:7900, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/259SN001M_green.jpg"},
+  '259SN002F':{code:"259SN002F", name:"Socks", color:"RED", price:7900, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/259SN002F_red.jpg"},
+  '259SN002F-2':{code:"259SN002F", name:"Socks", color:"BLACK", price:7900, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/259SN002F_black.jpg"},
+  '259SN002F-3':{code:"259SN002F", name:"Socks", color:"GREEN", price:7900, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/259SN002F_green.jpg"},
+  '249SN001M':{code:"249SN001M", name:"Socks", color:"BLACK", price:7900, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"250mm~280mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN001M_black.jpg"},
+  '249SN001M-2':{code:"249SN001M", name:"Socks", color:"RED", price:7900, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"250mm~280mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN001M_red.jpg"},
+  '249SN001M-3':{code:"249SN001M", name:"Socks", color:"GREEN", price:7900, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"250mm~280mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN001M_green.jpg"},
+  '249SN005F':{code:"249SN005F", name:"Socks", color:"BLACK", price:7900, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"230mm~250mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN005F_black.jpg"},
+  '249SN005F-2':{code:"249SN005F", name:"Socks", color:"RED", price:7900, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"230mm~250mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN005F_red.jpg"},
+  '249SN005F-3':{code:"249SN005F", name:"Socks", color:"GREEN", price:7900, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"230mm~250mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN005F_green.jpg"},
+  '269SN005M':{code:"269SN005M", name:"Socks", color:"BLACK", price:7900, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"250mm~280mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN005M_black.jpg"},
+  '269SN005M-2':{code:"269SN005M", name:"Socks", color:"RED", price:7900, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"250mm~280mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN005M_red.jpg"},
+  '269SN005M-3':{code:"269SN005M", name:"Socks", color:"DARK GREEN", price:7900, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"250mm~280mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN005M_darkgreen.jpg"},
+  '269SN006F':{code:"269SN006F", name:"Socks", color:"BLACK", price:7900, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"230mm~250mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN006F_black.jpg"},
+  '269SN006F-2':{code:"269SN006F", name:"Socks", color:"RED", price:7900, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"230mm~250mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN006F_red.jpg"},
+  '269SN006F-3':{code:"269SN006F", name:"Socks", color:"DARK GREEN", price:7900, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"230mm~250mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN006F_darkgreen.jpg"},
+  '269SN003M':{code:"269SN003M", name:"Socks", color:"WHITE", price:7900, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"250mm~280mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN003M.jpg"},
+  '269SN004F':{code:"269SN004F", name:"Socks", color:"WHITE", price:7900, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"230mm~250mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN004F.jpg"},
+  '269SN001M':{code:"269SN001M", name:"Socks", color:"WHITE", price:7900, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"250mm~280mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN001M.jpg"},
+  '269SN002F':{code:"269SN002F", name:"Socks", color:"WHITE", price:7900, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"1켤레", size:"230mm~250mm", collection:"Bag/Acc", subcat:"socks", img:"images/products/269SN002F.jpg"},
+  '249SN002M':{code:"249SN002M", name:"Crew Socks Set", color:"MIDNIGHT", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN002M_midnight.jpg"},
+  '249SN002M-2':{code:"249SN002M", name:"Crew Socks Set", color:"MOROCO BLUE", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN002M_morocoblue.jpg"},
+  '249SN002M-3':{code:"249SN002M", name:"Crew Socks Set", color:"SKY BLUE", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN002M_skyblue.jpg"},
+  '249SN002M-4':{code:"249SN002M", name:"Crew Socks Set", color:"RED", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN002M_red.jpg"},
+  '249SN002M-5':{code:"249SN002M", name:"Crew Socks Set", color:"PURPLE", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN002M_purple.jpg"},
+  '249SN006F':{code:"249SN006F", name:"Crew Socks Set", color:"MIDNIGHT", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN006F_midnight.jpg"},
+  '249SN006F-2':{code:"249SN006F", name:"Crew Socks Set", color:"MOROCO BLUE", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN006F_morocoblue.jpg"},
+  '249SN006F-3':{code:"249SN006F", name:"Crew Socks Set", color:"SKY BLUE", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN006F_skyblue.jpg"},
+  '249SN006F-4':{code:"249SN006F", name:"Crew Socks Set", color:"RED", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN006F_red.jpg"},
+  '249SN006F-5':{code:"249SN006F", name:"Crew Socks Set", color:"PURPLE", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN006F_purple.jpg"},
+  '249SN003M':{code:"249SN003M", name:"Mid-Crew Socks Set", color:"MIDNIGHT", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN003M_midnight.jpg"},
+  '249SN003M-2':{code:"249SN003M", name:"Mid-Crew Socks Set", color:"MOROCO BLUE", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN003M_morocoblue.jpg"},
+  '249SN003M-3':{code:"249SN003M", name:"Mid-Crew Socks Set", color:"SKY BLUE", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN003M_skyblue.jpg"},
+  '249SN003M-4':{code:"249SN003M", name:"Mid-Crew Socks Set", color:"RED", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN003M_red.jpg"},
+  '249SN003M-5':{code:"249SN003M", name:"Mid-Crew Socks Set", color:"PURPLE", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN003M_purple.jpg"},
+  '249SN007F':{code:"249SN007F", name:"Mid-Crew Socks Set", color:"MIDNIGHT", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN007F_midnight.jpg"},
+  '249SN007F-2':{code:"249SN007F", name:"Mid-Crew Socks Set", color:"MOROCO BLUE", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN007F_morocoblue.jpg"},
+  '249SN007F-3':{code:"249SN007F", name:"Mid-Crew Socks Set", color:"SKY BLUE", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN007F_skyblue.jpg"},
+  '249SN007F-4':{code:"249SN007F", name:"Mid-Crew Socks Set", color:"RED", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN007F_red.jpg"},
+  '249SN007F-5':{code:"249SN007F", name:"Mid-Crew Socks Set", color:"PURPLE", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/249SN007F_purple.jpg"},
+  '239SN004M':{code:"239SN004M", name:"No-Show Socks Set", color:"MIDNIGHT", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/239SN004M_midnight.jpg"},
+  '239SN004M-2':{code:"239SN004M", name:"No-Show Socks Set", color:"MOROCO BLUE", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/239SN004M_morocoblue.jpg"},
+  '239SN004M-3':{code:"239SN004M", name:"No-Show Socks Set", color:"SKY BLUE", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/239SN004M_skyblue.jpg"},
+  '239SN004M-4':{code:"239SN004M", name:"No-Show Socks Set", color:"RED", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/239SN004M_red.jpg"},
+  '239SN004M-5':{code:"239SN004M", name:"No-Show Socks Set", color:"PURPLE", price:21000, gender:"Men", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/239SN004M_purple.jpg"},
+  '239SN008F':{code:"239SN008F", name:"No-Show Socks Set", color:"MIDNIGHT", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/239SN008F_midnight.jpg"},
+  '239SN008F-2':{code:"239SN008F", name:"No-Show Socks Set", color:"MOROCO BLUE", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/239SN008F_morocoblue.jpg"},
+  '239SN008F-3':{code:"239SN008F", name:"No-Show Socks Set", color:"SKY BLUE", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/239SN008F_skyblue.jpg"},
+  '239SN008F-4':{code:"239SN008F", name:"No-Show Socks Set", color:"RED", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/239SN008F_red.jpg"},
+  '239SN008F-5':{code:"239SN008F", name:"No-Show Socks Set", color:"PURPLE", price:21000, gender:"Women", material:"CO 83%, PE 15%, PU 2%", note1:"5켤레=1SET", size:"FREE", collection:"Bag/Acc", subcat:"socks", img:"images/products/239SN008F_purple.jpg"},
+  '249BN002U':{code:"249BN002U", name:"Wristband", color:"ROYAL BLUE", price:6500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN002U_royalblue.jpg"},
+  '249BN002U-2':{code:"249BN002U", name:"Wristband", color:"STONE CHARCOAL", price:6500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN002U_stonecharcoal.jpg"},
+  '249BN002U-3':{code:"249BN002U", name:"Wristband", color:"INDIGO BLUE", price:6500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN002U_indigoblue.jpg"},
+  '249BN002U-4':{code:"249BN002U", name:"Wristband", color:"BLACK", price:6500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN002U_black.jpg"},
+  '249BN002U-5':{code:"249BN002U", name:"Wristband", color:"BLUE", price:6500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN002U_blue.jpg"},
+  '249BN002U-6':{code:"249BN002U", name:"Wristband", color:"CHARCOAL GRAY", price:6500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN002U_charcoalgray.jpg"},
+  '249BN002U-7':{code:"249BN002U", name:"Wristband", color:"GRAY", price:6500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN002U_gray.jpg"},
+  '249BN002U-8':{code:"249BN002U", name:"Wristband", color:"NAVY", price:6500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN002U_navy.jpg"},
+  '249BN002U-9':{code:"249BN002U", name:"Wristband", color:"RED", price:6500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN002U_red.jpg"},
+  '249BN002U-10':{code:"249BN002U", name:"Wristband", color:"WHITE", price:6500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN002U_white.jpg"},
+  '269BN001U':{code:"269BN001U", name:"Wristband", color:"BEIGE", price:7000, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"1개입", size:"7cm x 12cm", collection:"Bag/Acc", subcat:"band", img:"images/products/269BN001U_beige.jpg"},
+  '269BN001U-2':{code:"269BN001U", name:"Wristband", color:"BLUE GRAY", price:7000, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"1개입", size:"7cm x 12cm", collection:"Bag/Acc", subcat:"band", img:"images/products/269BN001U_bluegray.jpg"},
+  '249BN001U':{code:"249BN001U", name:"Wristband", color:"ROYAL BLUE", price:5500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"1개입", size:"7cm x 12cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN001U_royalblue.jpg"},
+  '249BN001U-2':{code:"249BN001U", name:"Wristband", color:"STONE CHARCOAL", price:5500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"1개입", size:"7cm x 12cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN001U_stonecharcoal.jpg"},
+  '249BN001U-3':{code:"249BN001U", name:"Wristband", color:"INDIGO BLUE", price:5500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"1개입", size:"7cm x 12cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN001U_indigoblue.jpg"},
+  '249BN001U-4':{code:"249BN001U", name:"Wristband", color:"BLACK", price:5500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"1개입", size:"7cm x 12cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN001U_black.jpg"},
+  '249BN001U-5':{code:"249BN001U", name:"Wristband", color:"BLUE", price:5500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"1개입", size:"7cm x 12cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN001U_blue.jpg"},
+  '249BN001U-6':{code:"249BN001U", name:"Wristband", color:"CHARCOAL GRAY", price:5500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"1개입", size:"7cm x 12cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN001U_charcoalgray.jpg"},
+  '249BN001U-7':{code:"249BN001U", name:"Wristband", color:"GRAY", price:5500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"1개입", size:"7cm x 12cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN001U_gray.jpg"},
+  '249BN001U-8':{code:"249BN001U", name:"Wristband", color:"NAVY", price:5500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"1개입", size:"7cm x 12cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN001U_navy.jpg"},
+  '249BN001U-9':{code:"249BN001U", name:"Wristband", color:"RED", price:5500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"1개입", size:"7cm x 12cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN001U_red.jpg"},
+  '249BN001U-10':{code:"249BN001U", name:"Wristband", color:"WHITE", price:5500, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"1개입", size:"7cm x 12cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN001U_white.jpg"},
+  '269BN002U':{code:"269BN002U", name:"Wristband", color:"DARK NAVY", price:8000, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/269BN002U_darknavy.jpg"},
+  '269BN002U-2':{code:"269BN002U", name:"Wristband", color:"BLACK", price:8000, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/269BN002U_black.jpg"},
+  '269BN002U-3':{code:"269BN002U", name:"Wristband", color:"WHITE", price:8000, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/269BN002U_white.jpg"},
+  '269BN002U-4':{code:"269BN002U", name:"Wristband", color:"STONE CHARCOAL", price:8000, gender:"Unisex", material:"CO 70%, PE 20%, PU 10%", note1:"2개입", size:"7cm x 7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/269BN002U_stonecharcoal.jpg"},
+  '46066EX':{code:"46066EX", name:"Headband", color:"ICE BLUE", price:20000, gender:"Unisex", material:"NY 82%, PU 18%", note1:"1개입", size:"FREE", collection:"Bag/Acc", subcat:"band", img:"images/products/46066EX_iceblue.jpg"},
+  '46066EX-2':{code:"46066EX", name:"Headband", color:"BLACK", price:20000, gender:"Unisex", material:"NY 82%, PU 18%", note1:"1개입", size:"FREE", collection:"Bag/Acc", subcat:"band", img:"images/products/46066EX_black.jpg"},
+  '46067EX':{code:"46067EX", name:"Scrunchie", color:"ASSORTED", price:15000, gender:"Women", material:"PE 93%, PU 7%", note1:"2개입", size:"FREE", collection:"Bag/Acc", subcat:"band", img:"images/products/46067EX_assorted.jpg"},
+  '46067EX-2':{code:"46067EX", name:"Scrunchie", color:"BLACK", price:15000, gender:"Women", material:"PE 93%, PU 7%", note1:"2개입", size:"FREE", collection:"Bag/Acc", subcat:"band", img:"images/products/46067EX_black.jpg"},
+  '269AA001U':{code:"269AA001U", name:"Shoe Deodorizer", color:"BLUE & GREEN", price:8900, gender:"Unisex", material:"겉감: 린넨(마) 100% / 충전재: 대나무 숯 100%", note1:"2개입", size:"17cm x 7.5cm", collection:"Bag/Acc", subcat:"acc", img:"images/products/269AA001U.jpg"},
+  '249BN003U':{code:"249BN003U", name:"Headband", color:"ROYAL BLUE", price:5000, gender:"Unisex", material:"CO 80%, PE 10%, PU 10%", note1:"1개입", size:"7.5cm x 4.5cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN003U_royalblue.jpg"},
+  '249BN003U-2':{code:"249BN003U", name:"Headband", color:"STONE CHARCOAL", price:5000, gender:"Unisex", material:"CO 80%, PE 10%, PU 10%", note1:"1개입", size:"7.5cm x 4.5cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN003U_stonecharcoal.jpg"},
+  '249BN003U-3':{code:"249BN003U", name:"Headband", color:"INDIGO BLUE", price:5000, gender:"Unisex", material:"CO 80%, PE 10%, PU 10%", note1:"1개입", size:"7.5cm x 4.5cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN003U_indigoblue.jpg"},
+  '249BN003U-4':{code:"249BN003U", name:"Headband", color:"BLACK", price:5000, gender:"Unisex", material:"CO 80%, PE 10%, PU 10%", note1:"1개입", size:"7.5cm x 4.5cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN003U_black.jpg"},
+  '249BN003U-5':{code:"249BN003U", name:"Headband", color:"BLUE", price:5000, gender:"Unisex", material:"CO 80%, PE 10%, PU 10%", note1:"1개입", size:"7.5cm x 4.5cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN003U_blue.jpg"},
+  '249BN003U-6':{code:"249BN003U", name:"Headband", color:"CHARCOAL GRAY", price:5000, gender:"Unisex", material:"CO 80%, PE 10%, PU 10%", note1:"1개입", size:"7.5cm x 4.5cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN003U_charcoalgray.jpg"},
+  '249BN003U-7':{code:"249BN003U", name:"Headband", color:"GRAY", price:5000, gender:"Unisex", material:"CO 80%, PE 10%, PU 10%", note1:"1개입", size:"7.5cm x 4.5cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN003U_gray.jpg"},
+  '249BN003U-8':{code:"249BN003U", name:"Headband", color:"NAVY", price:5000, gender:"Unisex", material:"CO 80%, PE 10%, PU 10%", note1:"1개입", size:"7.5cm x 4.5cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN003U_navy.jpg"},
+  '249BN003U-9':{code:"249BN003U", name:"Headband", color:"RED", price:5000, gender:"Unisex", material:"CO 80%, PE 10%, PU 10%", note1:"1개입", size:"7.5cm x 4.5cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN003U_red.jpg"},
+  '249BN003U-10':{code:"249BN003U", name:"Headband", color:"WHITE", price:5000, gender:"Unisex", material:"CO 80%, PE 10%, PU 10%", note1:"1개입", size:"7.5cm x 4.5cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN003U_white.jpg"},
+  '249BN004U':{code:"249BN004U", name:"Headband (S)", color:"DARK GREEN", price:15000, gender:"Unisex", material:"NY 90%, PU 10%", note1:"3개입", size:"22cm x 0.7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN004U_darkgreen.jpg"},
+  '249BN004U-2':{code:"249BN004U", name:"Headband (S)", color:"BLUE GRAY", price:15000, gender:"Unisex", material:"NY 90%, PU 10%", note1:"3개입", size:"22cm x 0.7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN004U_bluegray.jpg"},
+  '249BN004U-3':{code:"249BN004U", name:"Headband (S)", color:"BLACK", price:15000, gender:"Unisex", material:"NY 90%, PU 10%", note1:"3개입", size:"22cm x 0.7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN004U_black.jpg"},
+  '249BN005U':{code:"249BN005U", name:"Headband (M)", color:"BLUE", price:15000, gender:"Unisex", material:"NY 90%, PU 10%", note1:"3개입", size:"21.5cm x 1.5cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN005U_blue.jpg"},
+  '249BN005U-2':{code:"249BN005U", name:"Headband (M)", color:"BLACK", price:15000, gender:"Unisex", material:"NY 90%, PU 10%", note1:"3개입", size:"21.5cm x 1.5cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN005U_black.jpg"},
+  '249BN005U-3':{code:"249BN005U", name:"Headband (M)", color:"PINK", price:15000, gender:"Unisex", material:"NY 90%, PU 10%", note1:"3개입", size:"21.5cm x 1.5cm", collection:"Bag/Acc", subcat:"band", img:"images/products/249BN005U_pink.jpg"},
+  '269BN006U':{code:"269BN006U", name:"Headband", color:"PALE LILAC", price:5900, gender:"Unisex", material:"CO 67%, PE 23%, NY 6%, RU 4%", note1:"1개입", size:"WIDE 5cm (논파일)", collection:"Bag/Acc", subcat:"band", img:"images/products/269BN006U_palelilac.jpg"},
+  '269BN006U-2':{code:"269BN006U", name:"Headband", color:"INDIGO BLUE", price:5900, gender:"Unisex", material:"CO 67%, PE 23%, NY 6%, RU 4%", note1:"1개입", size:"WIDE 5cm (논파일)", collection:"Bag/Acc", subcat:"band", img:"images/products/269BN006U_indigoblue.jpg"},
+  '269BN003U':{code:"269BN003U", name:"Headband (S)", color:"BLUE GRAY", price:15000, gender:"Unisex", material:"NY 90%, PU 10%", note1:"3개입", size:"22cm x 0.7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/269BN003U_bluegray.jpg"},
+  '269BN003U-2':{code:"269BN003U", name:"Headband (S)", color:"PALE BLUE", price:15000, gender:"Unisex", material:"NY 90%, PU 10%", note1:"3개입", size:"22cm x 0.7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/269BN003U_paleblue.jpg"},
+  '269BN003U-3':{code:"269BN003U", name:"Headband (S)", color:"ORANGE", price:15000, gender:"Unisex", material:"NY 90%, PU 10%", note1:"3개입", size:"22cm x 0.7cm", collection:"Bag/Acc", subcat:"band", img:"images/products/269BN003U_orange.jpg"},
+  'AC1091YX':{code:"AC1091YX", name:"Towel", color:"BLUE", price:29000, gender:"Unisex", material:"CO 100%", size:"100cm x 33cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/AC1091YX_blue.jpg"},
+  'AC1091YX-2':{code:"AC1091YX", name:"Towel", color:"ORANGE", price:29000, gender:"Unisex", material:"CO 100%", size:"100cm x 33cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/AC1091YX_orange.jpg"},
+  'AC1091YX-3':{code:"AC1091YX", name:"Towel", color:"AQUA BLUE", price:29000, gender:"Unisex", material:"CO 100%", size:"100cm x 33cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/AC1091YX_aquablue.jpg"},
+  '269TW001U':{code:"269TW001U", name:"Towel", color:"EMERALD", price:15000, gender:"Unisex", material:"CO 100%", size:"116cm x 40cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/269TW001U_emerald.jpg"},
+  '269TW001U-2':{code:"269TW001U", name:"Towel", color:"ORANGE", price:15000, gender:"Unisex", material:"CO 100%", size:"116cm x 40cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/269TW001U_orange.jpg"},
+  '269TW002U':{code:"269TW002U", name:"Towel", color:"PINK", price:7900, gender:"Unisex", material:"CO 100%", size:"100cm x 19cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/269TW002U_pink.jpg"},
+  '269TW002U-2':{code:"269TW002U", name:"Towel", color:"DARK NAVY", price:7900, gender:"Unisex", material:"CO 100%", size:"100cm x 19cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/269TW002U_darknavy.jpg"},
+  '259TW003U':{code:"259TW003U", name:"Towel", color:"LIME", price:18000, gender:"Unisex", material:"CO 100%", size:"82cm x 34cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/259TW003U_lime.jpg"},
+  '259TW003U-2':{code:"259TW003U", name:"Towel", color:"CORAL", price:18000, gender:"Unisex", material:"CO 100%", size:"82cm x 34cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/259TW003U_coral.jpg"},
+  'AC605':{code:"AC605", name:"Towel", color:"GREEN", price:8500, gender:"Unisex", material:"CO 100%", size:"100cm x 19cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/AC605.jpg"},
+  'AC5802':{code:"AC5802", name:"Towel", color:"WHITE", price:12000, gender:"Unisex", material:"CO 100%", size:"80cm x 40cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/AC5802.jpg"},
+  '269SP006U':{code:"269SP006U", name:"Hamstring Support", color:"BLACK", price:30000, gender:"Unisex", material:"겉감: NY 85%, PU 15%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP006U.jpg"},
+  '269SP001U':{code:"269SP001U", name:"Wrist Thermal Support", color:"BLACK", price:15000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"S/M, L/XL", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP001U.jpg"},
+  '269SP002U':{code:"269SP002U", name:"Thumb Wrist Thermal Support", color:"BLACK", price:19000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"S/M, L/XL", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP002U.jpg"},
+  '269SP003U':{code:"269SP003U", name:"Elbow Thermal Support", color:"BLACK", price:29000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"S/M, L/XL", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP003U.jpg"},
+  '269SP004U':{code:"269SP004U", name:"Knee Thermal Support", color:"BLACK", price:29000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"S/M, L/XL", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP004U.jpg"},
+  '269SP005U':{code:"269SP005U", name:"Shoulder Thermal Support", color:"BLACK", price:45000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"FREE", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP005U.jpg"},
+  '259SP001U':{code:"259SP001U", name:"Calf Sleeve", color:"WHITE", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP001U.jpg"},
+  '259SP002U':{code:"259SP002U", name:"Knee Sleeve", color:"WHITE", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"1개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP002U.jpg"},
+  '259SP003U':{code:"259SP003U", name:"Elbow Sleeve", color:"WHITE", price:29000, gender:"Unisex", material:"NY 77%, PU 23%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP003U_white.jpg"},
+  '259SP003U-2':{code:"259SP003U", name:"Elbow Sleeve", color:"BLACK", price:29000, gender:"Unisex", material:"NY 77%, PU 23%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP003U_black.jpg"},
+  '259SP004U':{code:"259SP004U", name:"Knee Sleeve", color:"BLACK", price:29000, gender:"Unisex", material:"NY 45%, PE 33%, PU 22%", note1:"1개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP004U.jpg"},
+  '249SP001U':{code:"249SP001U", name:"Knee Support", color:"BLACK", price:25000, gender:"Unisex", material:"PE 100%, NY 40%, PU 12%", note1:"1개입", size:"FREE", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP001U.jpg"},
+  '259SP006U':{code:"259SP006U", name:"Knee Support", color:"BLACK", price:40000, gender:"Unisex", material:"NY 85%, PU 15%", note1:"1개입", size:"S/M, M/L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP006U.jpg"},
+  '259SP007U':{code:"259SP007U", name:"Ankle Support", color:"BLACK", price:29000, gender:"Unisex", material:"NY 64%, PU 36%", note1:"1개입", size:"S/M, M/L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP007U.jpg"},
+  '249SP002U':{code:"249SP002U", name:"Calf Sleeve", color:"TURQUOISE", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP002U_turquoise.jpg"},
+  '249SP002U-2':{code:"249SP002U", name:"Calf Sleeve", color:"BLACK", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP002U_black.jpg"},
+  '249SP003U':{code:"249SP003U", name:"Knee Sleeve", color:"TURQUOISE", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"1개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP003U_turquoise.jpg"},
+  '249SP003U-2':{code:"249SP003U", name:"Knee Sleeve", color:"BLACK", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"1개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP003U_black.jpg"},
 };
 
 const CATEGORIES = {
   game:{label:'GAME WEAR',accent:'#D2240C',keywords:['PERFORMANCE','DYNAMIC','TECHNICAL'],tagline:'Built for performance.',desc:'On-court silhouettes tuned for movement — matched from center line to sideline.'},
   casual:{label:'DAILY WEAR',accent:'#194193',keywords:['STYLE','DAILY','MODERN'],tagline:'Style, off the court.',desc:'Everyday pieces styled for the walk between the club and the street.'},
   easy:{label:'EASY WEAR',accent:'#4B8043',keywords:['COMFORT','RELAX','LIFESTYLE'],tagline:'Comfort, every day.',desc:'Soft, relaxed layers for downtime — before the game, after, and in between.'},
+  /* TODO: placeholder label/accent/copy -- confirm exact wording, then
+     fill PRODUCTS with collection:'Bag/Acc' entries (see COLLECTION_BY_CAT
+     below) to populate this category's FULL LINE-UP. */
+  /* lineupTabs replaces the FULL LINE-UP toggle's default ALL/MEN/WOMEN
+     with ALL + one button per tab, filtering PRODUCTS by .subcat instead
+     of .gender (see renderFullLineup/filterFullLineup) -- this category
+     has enough items that a flat 78-card grid needs sub-browsing, but
+     splitting by gender the way apparel does wouldn't help here. */
+  bagacc:{label:'BAG/ACC',accent:'#6B5B3E',keywords:['GEAR','ESSENTIALS'],tagline:'Finish the kit.',desc:'Bags and accessories built to match every wear.',lineupOnly:true,lineupTabs:[{key:'bag',label:'BAG'},{key:'socks',label:'SOCKS'},{key:'band',label:'BAND'},{key:'acc',label:'ACC'},{key:'towel',label:'TOWEL'},{key:'support',label:'SUPPORT'}]},
 };
 
 const HS_DEFAULT = {top:{x:24,y:13,w:52,h:39},bottom:{x:22,y:50,w:56,h:31}};
@@ -1873,6 +2127,22 @@ function renderCover(){
 function renderCategory(key){
   const c = CATEGORIES[key];
   if(!c) return renderCover();
+  /* BAG/ACC (and any future category with no model-cut photography) has
+     no LOOKS entries at all -- there's no outfit to shoot, just the
+     items themselves -- so it skips straight to FULL LINE-UP instead of
+     the CAMPAIGN carousel + look grid every other category shows. */
+  if(c.lineupOnly){
+    const groups = productsForCat(key);
+    return `<div class="view">
+      <section class="cat-hero">
+        <div class="cat-tags">${c.keywords.map(k=>`<span>${k}</span>`).join('')}</div>
+        <h1>${c.label}</h1>
+        <p>${c.tagline} ${c.desc}</p>
+        <div class="cat-count">${String(groups.length).padStart(2,'0')} STYLES</div>
+      </section>
+      ${renderFullLineup(key)}
+    </div>`;
+  }
   const looks = LOOKS.filter(l=>l.cat===key);
   const editorialLooks = looks.filter(l=>l.hasEditorial);
   const featured = editorialLooks[0];
@@ -1976,7 +2246,7 @@ function bindCampaignInteractions(key){
   }, {passive:true});
 }
 
-const COLLECTION_BY_CAT = {game:'Game Wear', casual:'Daily Wear', easy:'Easy Wear'};
+const COLLECTION_BY_CAT = {game:'Game Wear', casual:'Daily Wear', easy:'Easy Wear', bagacc:'Bag/Acc'};
 /* Approximate swatch colors for the FULL LINE-UP color-dot picker — PRODUCTS
    only stores color NAMES (from the brand sheet), not hex values, so these
    are visual approximations for the dot only; the real name is always in
@@ -2027,15 +2297,20 @@ function renderFullLineup(key){
   if(fullLineupCache.has(key)) return fullLineupCache.get(key);
   const groups = productsForCat(key);
   if(!groups.length) return '';
+  const tabs = CATEGORIES[key] && CATEGORIES[key].lineupTabs;
+  const filterAttr = tabs ? 'subcat' : 'gender';
+  const toggleButtonsHtml = tabs
+    ? tabs.map(t=>`<button type="button" data-g="${t.key}" onclick="filterFullLineup('${t.key}')">${t.label}</button>`).join('')
+    : `<button type="button" data-g="men" onclick="filterFullLineup('men')">MEN</button>
+          <button type="button" data-g="women" onclick="filterFullLineup('women')">WOMEN</button>`;
   const html = `<section class="full-lineup">
     <div class="fl-head">
       <h2>FULL LINE-UP</h2>
       <div class="fl-head-right">
         <span class="fl-count">${String(groups.length).padStart(2,'0')} STYLES</span>
-        <div class="fl-toggle">
+        <div class="fl-toggle" data-filter-attr="${filterAttr}">
           <button type="button" class="active" data-g="all" onclick="filterFullLineup('all')">ALL</button>
-          <button type="button" data-g="men" onclick="filterFullLineup('men')">MEN</button>
-          <button type="button" data-g="women" onclick="filterFullLineup('women')">WOMEN</button>
+          ${toggleButtonsHtml}
         </div>
       </div>
     </div>
@@ -2043,9 +2318,9 @@ function renderFullLineup(key){
       ${groups.map((variants,i)=>{
         const [defaultKey,p] = variants[0];
         return `
-        <div class="fl-card reveal" style="--i:${i}" data-gender="${p.gender.toLowerCase()}" data-active-key="${defaultKey}">
+        <div class="fl-card reveal" style="--i:${i}" data-gender="${p.gender.toLowerCase()}" data-subcat="${p.subcat||''}" data-active-key="${defaultKey}">
           <button type="button" class="fl-open" aria-label="${p.name} ${p.code}" onclick="openFullLineupCard(this.closest('.fl-card'))"></button>
-          <div class="fl-frame${isLooseCropCode(p.code)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
+          <div class="fl-frame${isLooseCropCode(p)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" loading="lazy" data-chain='[]' onerror="imgChainNext(this)"></div>
           <div class="fl-code">${p.code}</div>
           <div class="fl-sub">${fmtPrice(p.price)} · <span class="fl-color">${p.color}</span></div>
           ${variants.length>1 ? `<div class="fl-swatches">${variants.map(([vk,vp],vi)=>`<button type="button" class="fl-swatch${vi===0?' active':''}" data-key="${vk}" style="background-color:${colorHex(vp.color)}" title="${vp.color}" aria-label="${vp.color}" onclick="event.stopPropagation();selectFullLineupSwatch(this)"></button>`).join('')}</div>` : ''}
@@ -2057,12 +2332,14 @@ function renderFullLineup(key){
   return html;
 }
 function filterFullLineup(g){
+  const toggle = document.querySelector('.fl-toggle');
+  const attr = (toggle && toggle.dataset.filterAttr) || 'gender';
   document.querySelectorAll('.fl-toggle button').forEach(b=>b.classList.toggle('active', b.dataset.g===g));
-  positionToggleThumb(document.querySelector('.fl-toggle'));
+  positionToggleThumb(toggle);
   let visible = 0;
   const toShow = [], toHide = [];
   document.querySelectorAll('.fl-card').forEach(c=>{
-    const show = g==='all' || c.dataset.gender==='unisex' || c.dataset.gender===g;
+    const show = g==='all' || (attr==='gender' && c.dataset.gender==='unisex') || c.dataset[attr]===g;
     (show ? toShow : toHide).push(c);
     if(show) visible++;
   });
@@ -2115,8 +2392,16 @@ function itemFig(code){
    defect. Excluded so they render at the same unscaled size as a
    normal (non-EX) item. */
 const LOOSE_CROP_EXCEPTIONS = new Set(['61073EX','68121EX','80108EX']);
-function isLooseCropCode(code){
-  return /EX$/.test(code || '') && !LOOSE_CROP_EXCEPTIONS.has(code);
+/* the EX-suffix heuristic above was tuned against this line's apparel
+   photography specifically -- Bag/Acc reuses the same EX suffix on its
+   product codes (it's a generic Yonex line-code convention, not a
+   Game/World Collection marker there) for entirely different product
+   shots that were never measured for this padding quirk. Scaling a bag
+   or sock photo by the same 1.25x meant for a jersey's dead space would
+   just crop the actual item, so this only ever applies within the
+   apparel collections it was measured against. */
+function isLooseCropCode(p){
+  return !!p && p.collection!=='Bag/Acc' && /EX$/.test(p.code || '') && !LOOSE_CROP_EXCEPTIONS.has(p.code);
 }
 
 /* a few special/commemorative items have no confirmed price in any source yet (price:0) */
@@ -2396,7 +2681,7 @@ function buildItemsHtml(look, variant){
       ? `<div class="ii-gtoggle"><button type="button" class="${gi.active==='M'?'active':''}" data-g="M">M</button><button type="button" class="${gi.active==='W'?'active':''}" data-g="W">W</button></div>`
       : '';
     const colorLine = p && p.color ? `<div class="ii-color">${p.color}</div>` : '';
-    const figureHtml = isBottom ? '' : `<div class="ii-figure${isLooseCropCode(p?.code)?' loose-crop':''}"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>`;
+    const figureHtml = isBottom ? '' : `<div class="ii-figure${isLooseCropCode(p)?' loose-crop':''}"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}" data-chain='[]' onerror="imgChainNext(this)"></div>`;
     /* only offer the jump when this item's code actually has a mannequin
        cutout uploaded — checked against MIX_TOPS/MIX_BOTTOMS (the pool
        filtered down to confirmed-existing files by initMixPool()), not
@@ -2946,7 +3231,13 @@ function lookKeyNav(e){
 /* ---------------- PRODUCT MODAL ---------------- */
 let currentPmCode = null;
 let currentPmLookId = null;
-function isWorldCollectionCode(code){ return /(YX|EX)$/.test(code); }
+/* the YX/EX suffix reliably means World/national-team Collection across
+   every apparel code, but Bag/Acc reuses EX as a plain Yonex line-code
+   suffix with no such meaning -- its catalog data marks WORLD COLLECTION
+   explicitly per item instead, and these two are the only Bag/Acc codes
+   that heuristic would otherwise mislabel. */
+const NOT_WORLD_COLLECTION_EXCEPTIONS = new Set(['46066EX','46067EX']);
+function isWorldCollectionCode(code){ return /(YX|EX)$/.test(code) && !NOT_WORLD_COLLECTION_EXCEPTIONS.has(code); }
 function openProduct(code, lookId){
   const p = PRODUCTS[code];
   if(!p) return;
@@ -2961,7 +3252,7 @@ function openProduct(code, lookId){
   const siblings = Object.entries(PRODUCTS).filter(([,sp])=>sp.code===p.code);
   const related = wornWithFor(code, lookId).slice(0,3);
   document.getElementById('pmBody').innerHTML = `
-    <div class="pm-figure${isLooseCropCode(p.code)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" id="pmFigImg"></div>
+    <div class="pm-figure${isLooseCropCode(p)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" id="pmFigImg" data-chain='[]' onerror="imgChainNext(this)"></div>
     ${p.imgBack ? `<div class="pm-view-toggle">
       <button type="button" class="active" data-view="front" onclick="setPmView('front')">FRONT</button>
       <button type="button" data-view="back" onclick="setPmView('back')">BACK</button>
@@ -2974,10 +3265,14 @@ function openProduct(code, lookId){
     <div class="pm-specs">
       ${p.color ? `<div class="pm-spec"><span class="pm-spec-label">COLOR</span><span class="pm-spec-value">${p.color}</span>${siblings.length>1 ? `<div class="pm-swatches">${siblings.map(([sk,sp])=>`<button type="button" class="pm-swatch${sk===code?' active':''}" style="background-color:${colorHex(sp.color)}" title="${sp.color}" aria-label="${sp.color}" onclick="openProduct('${sk}', currentPmLookId)"></button>`).join('')}</div>` : ''}</div>` : ''}
       ${p.size ? `<div class="pm-spec"><span class="pm-spec-label">SIZE</span><span class="pm-spec-value">${p.size}</span></div>` : ''}
+      ${p.capacity ? `<div class="pm-spec"><span class="pm-spec-label">CAPACITY</span><span class="pm-spec-value">${p.capacity}</span></div>` : ''}
       <div class="pm-spec"><span class="pm-spec-label">COLLECTION</span><span class="pm-spec-value">${p.collection}</span></div>
     </div>
     <div class="pm-detail-lbl">DETAIL</div>
     <div class="pm-detail-txt">${p.material}</div>
+    ${p.detailImgs && p.detailImgs.length ? `<div class="pm-detailshots"><div class="ds-row">
+      ${p.detailImgs.map(d=>`<div class="ds-mini" onclick="openLightbox('${d.src}','${d.alt||''}')"><div class="frame"><img src="${d.src}" alt="${d.alt||''}" loading="lazy" data-chain='[]' onerror="imgChainNext(this)"></div></div>`).join('')}
+    </div></div>` : ''}
     ${related.length ? `<div class="pm-ww"><h4>WORN WITH</h4><div class="pm-ww-row">
       ${related.map(l=>`<a class="ww-mini" href="#look/${l.id}" onclick="navClick(event,'look','${l.id}')">
         <div class="frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>
