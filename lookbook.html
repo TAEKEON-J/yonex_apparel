@@ -909,7 +909,12 @@ const CATEGORIES = {
   /* TODO: placeholder label/accent/copy -- confirm exact wording, then
      fill PRODUCTS with collection:'Bag/Acc' entries (see COLLECTION_BY_CAT
      below) to populate this category's FULL LINE-UP. */
-  bagacc:{label:'BAG/ACC',accent:'#6B5B3E',keywords:['GEAR','ESSENTIALS'],tagline:'Finish the kit.',desc:'Bags and accessories built to match every wear.',lineupOnly:true},
+  /* lineupTabs replaces the FULL LINE-UP toggle's default ALL/MEN/WOMEN
+     with ALL + one button per tab, filtering PRODUCTS by .subcat instead
+     of .gender (see renderFullLineup/filterFullLineup) -- this category
+     has enough items that a flat 78-card grid needs sub-browsing, but
+     splitting by gender the way apparel does wouldn't help here. */
+  bagacc:{label:'BAG/ACC',accent:'#6B5B3E',keywords:['GEAR','ESSENTIALS'],tagline:'Finish the kit.',desc:'Bags and accessories built to match every wear.',lineupOnly:true,lineupTabs:[{key:'bag',label:'BAG'},{key:'socks',label:'SOCKS'},{key:'acc',label:'ACC'}]},
 };
 
 const HS_DEFAULT = {top:{x:24,y:13,w:52,h:39},bottom:{x:22,y:50,w:56,h:31}};
@@ -2048,15 +2053,20 @@ function renderFullLineup(key){
   if(fullLineupCache.has(key)) return fullLineupCache.get(key);
   const groups = productsForCat(key);
   if(!groups.length) return '';
+  const tabs = CATEGORIES[key] && CATEGORIES[key].lineupTabs;
+  const filterAttr = tabs ? 'subcat' : 'gender';
+  const toggleButtonsHtml = tabs
+    ? tabs.map(t=>`<button type="button" data-g="${t.key}" onclick="filterFullLineup('${t.key}')">${t.label}</button>`).join('')
+    : `<button type="button" data-g="men" onclick="filterFullLineup('men')">MEN</button>
+          <button type="button" data-g="women" onclick="filterFullLineup('women')">WOMEN</button>`;
   const html = `<section class="full-lineup">
     <div class="fl-head">
       <h2>FULL LINE-UP</h2>
       <div class="fl-head-right">
         <span class="fl-count">${String(groups.length).padStart(2,'0')} STYLES</span>
-        <div class="fl-toggle">
+        <div class="fl-toggle" data-filter-attr="${filterAttr}">
           <button type="button" class="active" data-g="all" onclick="filterFullLineup('all')">ALL</button>
-          <button type="button" data-g="men" onclick="filterFullLineup('men')">MEN</button>
-          <button type="button" data-g="women" onclick="filterFullLineup('women')">WOMEN</button>
+          ${toggleButtonsHtml}
         </div>
       </div>
     </div>
@@ -2064,7 +2074,7 @@ function renderFullLineup(key){
       ${groups.map((variants,i)=>{
         const [defaultKey,p] = variants[0];
         return `
-        <div class="fl-card reveal" style="--i:${i}" data-gender="${p.gender.toLowerCase()}" data-active-key="${defaultKey}">
+        <div class="fl-card reveal" style="--i:${i}" data-gender="${p.gender.toLowerCase()}" data-subcat="${p.subcat||''}" data-active-key="${defaultKey}">
           <button type="button" class="fl-open" aria-label="${p.name} ${p.code}" onclick="openFullLineupCard(this.closest('.fl-card'))"></button>
           <div class="fl-frame${isLooseCropCode(p.code)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
           <div class="fl-code">${p.code}</div>
@@ -2078,12 +2088,14 @@ function renderFullLineup(key){
   return html;
 }
 function filterFullLineup(g){
+  const toggle = document.querySelector('.fl-toggle');
+  const attr = (toggle && toggle.dataset.filterAttr) || 'gender';
   document.querySelectorAll('.fl-toggle button').forEach(b=>b.classList.toggle('active', b.dataset.g===g));
-  positionToggleThumb(document.querySelector('.fl-toggle'));
+  positionToggleThumb(toggle);
   let visible = 0;
   const toShow = [], toHide = [];
   document.querySelectorAll('.fl-card').forEach(c=>{
-    const show = g==='all' || c.dataset.gender==='unisex' || c.dataset.gender===g;
+    const show = g==='all' || (attr==='gender' && c.dataset.gender==='unisex') || c.dataset[attr]===g;
     (show ? toShow : toHide).push(c);
     if(show) visible++;
   });
