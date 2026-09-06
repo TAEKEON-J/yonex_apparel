@@ -2251,7 +2251,6 @@ function renderCategory(key){
       <section class="cat-hero">
         <div class="cat-tags">${c.keywords.map(k=>`<span>${k}</span>`).join('')}</div>
         <h1>${c.label}</h1>
-        <div class="cat-count">${String(groups.length).padStart(2,'0')} STYLES</div>
       </section>
       ${renderFullLineup(key)}
     </div>`;
