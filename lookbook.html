@@ -312,6 +312,12 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .ld-item:hover .ii-figure.loose-crop img{transform:translateY(-3px) scale(1.275);}
 }
 .fl-card .fl-code{font-family:var(--mono);font-size:11px;font-weight:700;margin-top:10px;letter-spacing:.02em;}
+/* opt-in Korean product-type label (set via PRODUCTS[x].nameKo) for
+   items a bare code + photo placeholder doesn't explain on its own --
+   currently just SUPPORT, where "269SP006U" tells a dealer nothing
+   but "햄스트링보호대" does. Sits in the sans body font (not the mono
+   code/price rows around it) so it doesn't read as another code. */
+.fl-card .fl-name-ko{font-family:var(--sans);font-size:11.5px;color:var(--ink-soft);margin-top:2px;line-height:1.3;}
 .fl-card .fl-sub{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px;}
 .fl-swatches{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
 /* the swatch dot stays visually small; ::before extends the actual hit
@@ -1133,24 +1139,24 @@ const PRODUCTS = {
   '259TW003U-2':{code:"259TW003U", name:"Towel", color:"Coral", price:18000, gender:"Unisex", material:"CO 100%", size:"82cm x 34cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/259TW003U_coral.jpg", detailImgs:[{src:"images/products/259TW003U_coral_detail1.jpg", alt:"259TW003U detail"}]},
   'AC605':{code:"AC605", name:"Towel", color:"Green", price:8500, gender:"Unisex", material:"CO 100%", size:"100cm x 19cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/AC605.jpg"},
   'AC5802':{code:"AC5802", name:"Towel", color:"White", price:12000, gender:"Unisex", material:"CO 100%", size:"80cm x 40cm", collection:"Bag/Acc", subcat:"towel", img:"images/products/AC5802.jpg"},
-  '269SP006U':{code:"269SP006U", name:"Hamstring Support", color:"Black", price:30000, gender:"Unisex", material:"겉감: NY 85%, PU 15%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP006U.jpg"},
-  '269SP001U':{code:"269SP001U", name:"Wrist Thermal Support", color:"Black", price:15000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"S/M, L/XL", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP001U.jpg"},
-  '269SP002U':{code:"269SP002U", name:"Thumb Wrist Thermal Support", color:"Black", price:19000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"S/M, L/XL", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP002U.jpg"},
-  '269SP003U':{code:"269SP003U", name:"Elbow Thermal Support", color:"Black", price:29000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"S/M, L/XL", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP003U.jpg"},
-  '269SP004U':{code:"269SP004U", name:"Knee Thermal Support", color:"Black", price:29000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"S/M, L/XL", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP004U.jpg"},
-  '269SP005U':{code:"269SP005U", name:"Shoulder Thermal Support", color:"Black", price:45000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"FREE", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP005U.jpg"},
-  '259SP001U':{code:"259SP001U", name:"Calf Sleeve", color:"White", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP001U.jpg"},
-  '259SP002U':{code:"259SP002U", name:"Knee Sleeve", color:"White", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"1개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP002U.jpg"},
-  '259SP003U':{code:"259SP003U", name:"Elbow Sleeve", color:"White", price:29000, gender:"Unisex", material:"NY 77%, PU 23%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP003U_white.jpg"},
-  '259SP003U-2':{code:"259SP003U", name:"Elbow Sleeve", color:"Black", price:29000, gender:"Unisex", material:"NY 77%, PU 23%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP003U_black.jpg"},
-  '259SP004U':{code:"259SP004U", name:"Knee Sleeve", color:"Black", price:29000, gender:"Unisex", material:"NY 45%, PE 33%, PU 22%", note1:"1개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP004U.jpg"},
-  '249SP001U':{code:"249SP001U", name:"Knee Support", color:"Black", price:25000, gender:"Unisex", material:"PE 100%, NY 40%, PU 12%", note1:"1개입", size:"FREE", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP001U.jpg"},
-  '259SP006U':{code:"259SP006U", name:"Knee Support", color:"Black", price:40000, gender:"Unisex", material:"NY 85%, PU 15%", note1:"1개입", size:"S/M, M/L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP006U.jpg"},
-  '259SP007U':{code:"259SP007U", name:"Ankle Support", color:"Black", price:29000, gender:"Unisex", material:"NY 64%, PU 36%", note1:"1개입", size:"S/M, M/L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP007U.jpg"},
-  '249SP002U':{code:"249SP002U", name:"Calf Sleeve", color:"Turquoise", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP002U_turquoise.jpg"},
-  '249SP002U-2':{code:"249SP002U", name:"Calf Sleeve", color:"Black", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP002U_black.jpg"},
-  '249SP003U':{code:"249SP003U", name:"Knee Sleeve", color:"Turquoise", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"1개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP003U_turquoise.jpg"},
-  '249SP003U-2':{code:"249SP003U", name:"Knee Sleeve", color:"Black", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"1개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP003U_black.jpg"},
+  '269SP006U':{code:"269SP006U", name:"Hamstring Support", nameKo:"햄스트링보호대", color:"Black", price:30000, gender:"Unisex", material:"겉감: NY 85%, PU 15%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP006U.jpg"},
+  '269SP001U':{code:"269SP001U", name:"Wrist Thermal Support", nameKo:"손목찜질 보호대", color:"Black", price:15000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"S/M, L/XL", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP001U.jpg"},
+  '269SP002U':{code:"269SP002U", name:"Thumb Wrist Thermal Support", nameKo:"엄지손목찜질 보호대", color:"Black", price:19000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"S/M, L/XL", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP002U.jpg"},
+  '269SP003U':{code:"269SP003U", name:"Elbow Thermal Support", nameKo:"팔꿈치찜질 보호대", color:"Black", price:29000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"S/M, L/XL", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP003U.jpg"},
+  '269SP004U':{code:"269SP004U", name:"Knee Thermal Support", nameKo:"무릎찜질 보호대", color:"Black", price:29000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"S/M, L/XL", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP004U.jpg"},
+  '269SP005U':{code:"269SP005U", name:"Shoulder Thermal Support", nameKo:"어깨찜질 보호대", color:"Black", price:45000, gender:"Unisex", material:"겉감: NY 87%, PU 13%", note1:"1개입", size:"FREE", collection:"Bag/Acc", subcat:"support", img:"images/products/269SP005U.jpg"},
+  '259SP001U':{code:"259SP001U", name:"Calf Sleeve", nameKo:"종아리 슬리브", color:"White", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP001U.jpg"},
+  '259SP002U':{code:"259SP002U", name:"Knee Sleeve", nameKo:"무릎 슬리브", color:"White", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"1개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP002U.jpg"},
+  '259SP003U':{code:"259SP003U", name:"Elbow Sleeve", nameKo:"팔꿈치 슬리브", color:"White", price:29000, gender:"Unisex", material:"NY 77%, PU 23%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP003U_white.jpg"},
+  '259SP003U-2':{code:"259SP003U", name:"Elbow Sleeve", nameKo:"팔꿈치 슬리브", color:"Black", price:29000, gender:"Unisex", material:"NY 77%, PU 23%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP003U_black.jpg"},
+  '259SP004U':{code:"259SP004U", name:"Knee Sleeve", nameKo:"무릎 슬리브", color:"Black", price:29000, gender:"Unisex", material:"NY 45%, PE 33%, PU 22%", note1:"1개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP004U.jpg"},
+  '249SP001U':{code:"249SP001U", name:"Knee Support", nameKo:"무릎보호대", color:"Black", price:25000, gender:"Unisex", material:"PE 100%, NY 40%, PU 12%", note1:"1개입", size:"FREE", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP001U.jpg"},
+  '259SP006U':{code:"259SP006U", name:"Knee Support", nameKo:"무릎 보호대", color:"Black", price:40000, gender:"Unisex", material:"NY 85%, PU 15%", note1:"1개입", size:"S/M, M/L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP006U.jpg"},
+  '259SP007U':{code:"259SP007U", name:"Ankle Support", nameKo:"발목 보호대", color:"Black", price:29000, gender:"Unisex", material:"NY 64%, PU 36%", note1:"1개입", size:"S/M, M/L", collection:"Bag/Acc", subcat:"support", img:"images/products/259SP007U.jpg"},
+  '249SP002U':{code:"249SP002U", name:"Calf Sleeve", nameKo:"종아리 슬리브", color:"Turquoise", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP002U_turquoise.jpg"},
+  '249SP002U-2':{code:"249SP002U", name:"Calf Sleeve", nameKo:"종아리 슬리브", color:"Black", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"2개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP002U_black.jpg"},
+  '249SP003U':{code:"249SP003U", name:"Knee Sleeve", nameKo:"무릎 슬리브", color:"Turquoise", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"1개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP003U_turquoise.jpg"},
+  '249SP003U-2':{code:"249SP003U", name:"Knee Sleeve", nameKo:"무릎 슬리브", color:"Black", price:29000, gender:"Unisex", material:"PE 70%, PU 30%", note1:"1개입", size:"S, M, L", collection:"Bag/Acc", subcat:"support", img:"images/products/249SP003U_black.jpg"},
 };
 
 const CATEGORIES = {
@@ -2461,6 +2467,7 @@ function renderFullLineup(key){
           <button type="button" class="fl-open" aria-label="${p.name} ${p.code}" onclick="openFullLineupCard(this.closest('.fl-card'))"></button>
           <div class="fl-frame${isLooseCropCode(p)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" loading="lazy" data-chain='[]' onerror="imgChainNext(this)"></div>
           <div class="fl-code">${p.code}</div>
+          ${p.nameKo ? `<div class="fl-name-ko">${p.nameKo}</div>` : ''}
           <div class="fl-sub">${fmtPrice(p.price)} · <span class="fl-color">${p.color}</span></div>
           ${variants.length>1 ? `<div class="fl-swatches">${variants.map(([vk,vp],vi)=>`<button type="button" class="fl-swatch${vi===0?' active':''}" data-key="${vk}" style="background:${swatchBg(vp.color)}" title="${vp.color}" aria-label="${vp.color}" onclick="event.stopPropagation();selectFullLineupSwatch(this)"></button>`).join('')}</div>` : ''}
         </div>`;
