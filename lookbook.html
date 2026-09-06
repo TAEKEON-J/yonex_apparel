@@ -1000,9 +1000,9 @@ const PRODUCTS = {
   '269BA007U':{code:"269BA007U", name:"Racket Cover", color:"Black", price:15000, gender:"Unisex", material:"겉감: PE 100%", size:"24cm x 72cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BA007U.jpg"},
   '269BA008U':{code:"269BA008U", name:"Reusable Bag (S)", color:"White", price:5000, gender:"Unisex", material:"겉감: RPET 55% / 배색: PU 45%", size:"37cm x 30cm x 13cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BA008U.jpg"},
   '269BA009U':{code:"269BA009U", name:"Reusable Bag (L)", color:"Blue", price:7000, gender:"Unisex", material:"겉감: RPET 55% / 배색: PU 45%", size:"70cm x 45cm x 19.5cm", collection:"Bag/Acc", subcat:"bag", img:"images/products/269BA009U.jpg"},
-  '19273EX':{code:"19273EX", name:"Socks", color:"White/Denim", price:21000, gender:"Unisex", material:"CO 53%, PE 43%, PU 4%", note1:"1켤레", size:"S, M", collection:"Bag/Acc", subcat:"socks", img:"images/products/19273EX_whitedenim.jpg"},
-  '19273EX-2':{code:"19273EX", name:"Socks", color:"White/Navy", price:21000, gender:"Unisex", material:"CO 53%, PE 44%, PU 3%", note1:"1켤레", size:"S, M", collection:"Bag/Acc", subcat:"socks", img:"images/products/19273EX_whitenavy.jpg"},
-  '19273EX-3':{code:"19273EX", name:"Socks", color:"White/Green", price:21000, gender:"Unisex", material:"CO 53%, PE 44%, PU 3%", note1:"1켤레", size:"S, M", collection:"Bag/Acc", subcat:"socks", img:"images/products/19273EX_whitegreen.jpg"},
+  '19273EX':{code:"19273EX", styleGroup:"19273EX-denim", name:"Socks", color:"White/Denim", price:21000, gender:"Unisex", line:"NATURE SERIES", material:"CO 53%, PE 43%, PU 4%", note1:"1켤레", size:"S, M", collection:"Bag/Acc", subcat:"socks", img:"images/products/19273EX_whitedenim.jpg"},
+  '19273EX-2':{code:"19273EX", styleGroup:"19273EX-mix", name:"Socks", color:"White/Navy", price:21000, gender:"Unisex", line:"NATURE SERIES", material:"CO 53%, PE 44%, PU 3%", note1:"1켤레", size:"S, M", collection:"Bag/Acc", subcat:"socks", img:"images/products/19273EX_whitenavy.jpg"},
+  '19273EX-3':{code:"19273EX", styleGroup:"19273EX-mix", name:"Socks", color:"White/Green", price:21000, gender:"Unisex", line:"NATURE SERIES", material:"CO 53%, PE 44%, PU 3%", note1:"1켤레", size:"S, M", collection:"Bag/Acc", subcat:"socks", img:"images/products/19273EX_whitegreen.jpg"},
   '29274EX':{code:"29274EX", name:"Socks", color:"White/Purple", price:21000, gender:"Women", material:"CO 51%, PE 46%, PU 3%", note1:"1켤레", size:"S", collection:"Bag/Acc", subcat:"socks", img:"images/products/29274EX_whitepurple.jpg"},
   '29274EX-2':{code:"29274EX", name:"Socks", color:"White/Green", price:21000, gender:"Women", material:"CO 51%, PE 46%, PU 3%", note1:"1켤레", size:"S", collection:"Bag/Acc", subcat:"socks", img:"images/products/29274EX_whitegreen.jpg"},
   '29274EX-3':{code:"29274EX", name:"Socks", color:"Pearl Beige", price:21000, gender:"Women", material:"CO 51%, PE 46%, PU 3%", note1:"1켤레", size:"S", collection:"Bag/Acc", subcat:"socks", img:"images/products/29274EX_pearlbeige.jpg"},
@@ -2325,12 +2325,22 @@ function swatchBg(name){
    not N separate styles. Returns an array of variant-groups, each an
    array of [key,p] pairs in PRODUCTS insertion order (first = default
    colorway shown until a swatch is tapped). */
+/* Normally every PRODUCTS entry sharing a .code is one style's color
+   variants (same product, same materials, just a different colorway) --
+   but a couple of Bag/Acc codes (19273EX) genuinely have two different
+   fabric blends depending on which colorway, because the catalog lists
+   them as two separate line items under the one code. styleGroup lets
+   those force a split into separate FULL LINE-UP cards/swatch sets
+   despite sharing a .code; entries without it (everything else) group
+   by .code exactly as before. */
+function styleGroupKey(p){ return p.styleGroup || p.code; }
 function productsForCat(key){
   const entries = Object.entries(PRODUCTS).filter(([,p])=>p.collection===COLLECTION_BY_CAT[key]);
   const groups = new Map();
   entries.forEach(([k,p])=>{
-    if(!groups.has(p.code)) groups.set(p.code, []);
-    groups.get(p.code).push([k,p]);
+    const gk = styleGroupKey(p);
+    if(!groups.has(gk)) groups.set(gk, []);
+    groups.get(gk).push([k,p]);
   });
   return Array.from(groups.values());
 }
@@ -3306,7 +3316,7 @@ function openProduct(code, lookId){
      e.g. '10716YX' and '10716YX-2' — shown as a small dot row so you can
      switch color without leaving the modal. Order follows PRODUCTS
      insertion order, same as the FULL LINE-UP grouping. */
-  const siblings = Object.entries(PRODUCTS).filter(([,sp])=>sp.code===p.code);
+  const siblings = Object.entries(PRODUCTS).filter(([,sp])=>styleGroupKey(sp)===styleGroupKey(p));
   const related = wornWithFor(code, lookId).slice(0,3);
   document.getElementById('pmBody').innerHTML = `
     <div class="pm-figure${isLooseCropCode(p)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" id="pmFigImg" data-chain='[]' onerror="imgChainNext(this)"></div>
