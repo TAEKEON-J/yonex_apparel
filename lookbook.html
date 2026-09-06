@@ -547,6 +547,15 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .pm-ww-row .ww-mini .frame{aspect-ratio:4/5;background:var(--paper-2);overflow:hidden;}
 .pm-ww-row .ww-mini .frame img{width:100%;height:100%;object-fit:cover;object-position:top center;}
 .pm-ww-row .ww-mini .lbl{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:6px;}
+/* optional close-up shots (logo, hardware, stitching) for products that
+   have them -- sits right under the DETAIL material text, reusing the
+   exact visual language of the WORN WITH row below it (a .frame +
+   object-fit:cover thumbnail) rather than inventing a new component. */
+.pm-detailshots{margin-top:24px;}
+.pm-detailshots .ds-row{display:flex;gap:10px;}
+.pm-detailshots .ds-mini{flex:1;cursor:zoom-in;}
+.pm-detailshots .ds-mini .frame{aspect-ratio:4/5;background:var(--paper-2);overflow:hidden;border:1px solid var(--line-soft);}
+.pm-detailshots .ds-mini .frame img{width:100%;height:100%;object-fit:cover;display:block;}
 /* mobile: compact the panel so photo through DETAIL material text
    fits in one screen without scrolling — shorter figure frame,
    tighter padding/row spacing throughout */
@@ -2304,7 +2313,7 @@ function renderFullLineup(key){
         return `
         <div class="fl-card reveal" style="--i:${i}" data-gender="${p.gender.toLowerCase()}" data-subcat="${p.subcat||''}" data-active-key="${defaultKey}">
           <button type="button" class="fl-open" aria-label="${p.name} ${p.code}" onclick="openFullLineupCard(this.closest('.fl-card'))"></button>
-          <div class="fl-frame${isLooseCropCode(p)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
+          <div class="fl-frame${isLooseCropCode(p)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" loading="lazy" data-chain='[]' onerror="imgChainNext(this)"></div>
           <div class="fl-code">${p.code}</div>
           <div class="fl-sub">${fmtPrice(p.price)} · <span class="fl-color">${p.color}</span></div>
           ${variants.length>1 ? `<div class="fl-swatches">${variants.map(([vk,vp],vi)=>`<button type="button" class="fl-swatch${vi===0?' active':''}" data-key="${vk}" style="background-color:${colorHex(vp.color)}" title="${vp.color}" aria-label="${vp.color}" onclick="event.stopPropagation();selectFullLineupSwatch(this)"></button>`).join('')}</div>` : ''}
@@ -2665,7 +2674,7 @@ function buildItemsHtml(look, variant){
       ? `<div class="ii-gtoggle"><button type="button" class="${gi.active==='M'?'active':''}" data-g="M">M</button><button type="button" class="${gi.active==='W'?'active':''}" data-g="W">W</button></div>`
       : '';
     const colorLine = p && p.color ? `<div class="ii-color">${p.color}</div>` : '';
-    const figureHtml = isBottom ? '' : `<div class="ii-figure${isLooseCropCode(p)?' loose-crop':''}"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}"></div>`;
+    const figureHtml = isBottom ? '' : `<div class="ii-figure${isLooseCropCode(p)?' loose-crop':''}"><img src="${itemFig(it.code)}" alt="${p?p.name:it.slot}" data-chain='[]' onerror="imgChainNext(this)"></div>`;
     /* only offer the jump when this item's code actually has a mannequin
        cutout uploaded — checked against MIX_TOPS/MIX_BOTTOMS (the pool
        filtered down to confirmed-existing files by initMixPool()), not
@@ -3236,7 +3245,7 @@ function openProduct(code, lookId){
   const siblings = Object.entries(PRODUCTS).filter(([,sp])=>sp.code===p.code);
   const related = wornWithFor(code, lookId).slice(0,3);
   document.getElementById('pmBody').innerHTML = `
-    <div class="pm-figure${isLooseCropCode(p)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" id="pmFigImg"></div>
+    <div class="pm-figure${isLooseCropCode(p)?' loose-crop':''}"><img src="${p.img}" alt="${p.name}" id="pmFigImg" data-chain='[]' onerror="imgChainNext(this)"></div>
     ${p.imgBack ? `<div class="pm-view-toggle">
       <button type="button" class="active" data-view="front" onclick="setPmView('front')">FRONT</button>
       <button type="button" data-view="back" onclick="setPmView('back')">BACK</button>
@@ -3254,6 +3263,9 @@ function openProduct(code, lookId){
     </div>
     <div class="pm-detail-lbl">DETAIL</div>
     <div class="pm-detail-txt">${p.material}</div>
+    ${p.detailImgs && p.detailImgs.length ? `<div class="pm-detailshots"><div class="ds-row">
+      ${p.detailImgs.map(d=>`<div class="ds-mini" onclick="openLightbox('${d.src}','${d.alt||''}')"><div class="frame"><img src="${d.src}" alt="${d.alt||''}" loading="lazy" data-chain='[]' onerror="imgChainNext(this)"></div></div>`).join('')}
+    </div></div>` : ''}
     ${related.length ? `<div class="pm-ww"><h4>WORN WITH</h4><div class="pm-ww-row">
       ${related.map(l=>`<a class="ww-mini" href="#look/${l.id}" onclick="navClick(event,'look','${l.id}')">
         <div class="frame">${lookImgTag(l.items, 'editorial', l.img, `alt="${l.caption}" loading="lazy"`)}</div>
