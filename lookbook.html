@@ -474,6 +474,15 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .pm-panel.show{transform:translateX(0);}
 .pm-close{position:absolute;top:22px;right:24px;background:none;border:none;cursor:pointer;font-size:22px;line-height:1;color:var(--ink-soft);transition:transform .25s var(--ease),color .2s;}
 .pm-close:hover{transform:rotate(90deg);color:var(--ink);}
+/* visual affordance for the drag-to-dismiss gesture (see pmPanelTouchMove
+   below) -- without it, nothing on screen hints the panel can be dragged
+   at all, so a first-time user has no reason to ever try. A static bar
+   would still leave the gesture's live feedback invisible while it's
+   actually happening, so it also darkens and grows taller in lockstep
+   with the drag itself (see pmDragDx) rather than just toggling a single
+   "active" state. */
+.pm-handle{position:absolute;left:7px;top:50%;width:5px;height:44px;margin-top:-22px;border-radius:3px;background:var(--line);pointer-events:none;transition:background .15s var(--ease),height .1s linear;}
+.pm-panel.pm-dragging .pm-handle{background:var(--ink-soft);}
 /* ===== LIGHTBOX (tap-to-enlarge look photo) ===== */
 .lightbox{position:fixed;inset:0;background:rgba(10,10,9,.94);z-index:600;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s var(--ease-out);cursor:zoom-out;}
 .lightbox.show{opacity:1;pointer-events:auto;}
@@ -681,6 +690,7 @@ footer.lb-foot .eyebrow{justify-content:center;display:flex;text-transform:none;
 
 <div class="pm-backdrop" id="pmBackdrop" onclick="closeProduct()"></div>
 <aside class="pm-panel" id="pmPanel">
+  <div class="pm-handle" aria-hidden="true"></div>
   <button class="pm-close" onclick="closeProduct()" aria-label="Close product details">&times;</button>
   <div class="pm-body" id="pmBody"></div>
 </aside>
@@ -3023,6 +3033,13 @@ function pmPanelTouchMove(e){
   panel.style.transition = 'none';
   panel.style.transform = `translateX(${dx}px)`;
   backdrop.style.opacity = String(Math.max(0, 1 - (dx / panel.offsetWidth) * 1.6));
+  panel.classList.add('pm-dragging');
+  const handle = panel.querySelector('.pm-handle');
+  if(handle){
+    const grow = Math.min(1, dx / PM_DISMISS_THRESHOLD) * 20;
+    handle.style.height = `${44 + grow}px`;
+    handle.style.marginTop = `${-(44 + grow) / 2}px`;
+  }
 }
 function pmPanelTouchEnd(){
   if(pmDragStartX===null) return;
@@ -3031,6 +3048,9 @@ function pmPanelTouchEnd(){
   if(!wasDragging) return;
   const panel = document.getElementById('pmPanel');
   const backdrop = document.getElementById('pmBackdrop');
+  panel.classList.remove('pm-dragging');
+  const handle = panel.querySelector('.pm-handle');
+  if(handle){ handle.style.height = ''; handle.style.marginTop = ''; }
   if(pmDragDx > PM_DISMISS_THRESHOLD){
     panel.style.transition = 'transform .28s var(--ease-drawer)';
     panel.style.transform = 'translateX(100%)';
