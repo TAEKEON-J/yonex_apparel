@@ -1961,7 +1961,7 @@ else setTimeout(initMixPool, 300);
 let backPhotoPromise = null;
 function discoverBackPhotos(){
   if(backPhotoPromise) return backPhotoPromise;
-  const cache = loadProbeCache('yx_backPhotoCache_v1');
+  const cache = loadProbeCache('yx_backPhotoCache_v2');
   const candidates = Object.values(PRODUCTS).filter(p=>p.collection==='Bag/Acc' && !p.imgBack && p.img);
   const tasks = candidates.map(p=>() => {
     const backSrc = p.img.replace(/\.(jpe?g|png)$/i, '_B.$1');
@@ -1974,7 +1974,7 @@ function discoverBackPhotos(){
       if(ok) p.imgBack = backSrc;
     });
   });
-  backPhotoPromise = runThrottled(tasks, 6).then(()=>saveProbeCache('yx_backPhotoCache_v1', cache));
+  backPhotoPromise = runThrottled(tasks, 6).then(()=>saveProbeCache('yx_backPhotoCache_v2', cache));
   return backPhotoPromise;
 }
 if('requestIdleCallback' in window) requestIdleCallback(discoverBackPhotos, {timeout: 2000});
