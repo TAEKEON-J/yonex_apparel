@@ -573,9 +573,9 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
    object-fit:cover thumbnail) rather than inventing a new component. */
 .pm-detailshots{margin-top:24px;}
 .pm-detailshots .ds-row{display:flex;gap:10px;}
-.pm-detailshots .ds-mini{flex:1;cursor:zoom-in;}
-.pm-detailshots .ds-mini .frame{aspect-ratio:4/5;background:var(--paper-2);overflow:hidden;border:1px solid var(--line-soft);}
-.pm-detailshots .ds-mini .frame img{width:100%;height:100%;object-fit:cover;display:block;}
+.pm-detailshots .ds-mini{flex:1;max-width:160px;cursor:zoom-in;}
+.pm-detailshots .ds-mini .frame{aspect-ratio:4/5;background:var(--paper-2);overflow:hidden;border:1px solid var(--line-soft);display:flex;align-items:center;justify-content:center;}
+.pm-detailshots .ds-mini .frame img{width:100%;height:100%;object-fit:contain;display:block;}
 /* mobile: compact the panel so photo through DETAIL material text
    fits in one screen without scrolling — shorter figure frame,
    tighter padding/row spacing throughout */
