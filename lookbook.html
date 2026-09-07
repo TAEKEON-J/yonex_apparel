@@ -247,18 +247,17 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 
 /* ===== FULL LINE-UP (all SKUs in a category) ===== */
 .full-lineup{max-width:1320px;margin:0 auto;padding:0 28px 120px;border-top:1px solid var(--line-soft);}
-.fl-head{display:flex;align-items:baseline;justify-content:space-between;padding:46px 0 30px;flex-wrap:wrap;gap:14px;}
+.fl-head{display:flex;flex-direction:column;padding:46px 0 30px;gap:14px;}
+.fl-head-top{display:flex;align-items:baseline;justify-content:space-between;gap:14px;}
 .fl-head h2{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--ink);font-weight:700;}
-.fl-head-right{display:flex;align-items:center;gap:16px;flex:1 1 100%;min-width:0;justify-content:space-between;}
-/* min-width:0 + overflow-x:auto is the actual fix -- a flex item's
-   default min-width is its content width, which otherwise refuses to
-   shrink and just pushes this pill past the viewport edge instead of
-   scrolling. Only bites once a category has enough lineupTabs to not
-   fit one row (BAG/ACC's 6 tabs vs. every apparel category's 3) --
-   invisible otherwise, since there's nothing to scroll. */
-.fl-toggle{position:relative;display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);min-width:0;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+/* min-width:0 + overflow-x:auto is a fallback, not the primary fix --
+   giving the toggle its own full-width row (instead of splitting that
+   row with fl-count) is what actually gets a category with a lot of
+   lineupTabs (BAG/ACC's 7 vs. every apparel category's 3) to fit
+   without scrolling; this only kicks in if it still doesn't. */
+.fl-toggle{position:relative;display:inline-flex;gap:1px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);min-width:0;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .fl-toggle::-webkit-scrollbar{display:none;}
-.fl-toggle button{position:relative;z-index:1;flex:none;font-family:var(--display);font-size:9.5px;font-weight:600;letter-spacing:.06em;padding:5px 13px;background:none;border:none;border-radius:999px;cursor:pointer;color:var(--muted);transition:color .25s var(--ease-out),transform .15s ease;}
+.fl-toggle button{position:relative;z-index:1;flex:none;font-family:var(--display);font-size:9.5px;font-weight:600;letter-spacing:.04em;padding:5px 9px;background:none;border:none;border-radius:999px;cursor:pointer;color:var(--muted);transition:color .25s var(--ease-out),transform .15s ease;}
 .fl-toggle button.active{color:var(--paper);}
 .fl-toggle button:active{transform:scale(.96);}
 .fl-count{font-family:var(--mono);font-size:11px;color:var(--muted);}
@@ -2449,13 +2448,13 @@ function renderFullLineup(key){
           <button type="button" data-g="women" onclick="filterFullLineup('women')">WOMEN</button>`;
   const html = `<section class="full-lineup">
     <div class="fl-head">
-      <h2>FULL LINE-UP</h2>
-      <div class="fl-head-right">
+      <div class="fl-head-top">
+        <h2>FULL LINE-UP</h2>
         <span class="fl-count">${String(groups.length).padStart(2,'0')} STYLES</span>
-        <div class="fl-toggle" data-filter-attr="${filterAttr}">
-          <button type="button" class="active" data-g="all" onclick="filterFullLineup('all')">ALL</button>
-          ${toggleButtonsHtml}
-        </div>
+      </div>
+      <div class="fl-toggle" data-filter-attr="${filterAttr}">
+        <button type="button" class="active" data-g="all" onclick="filterFullLineup('all')">ALL</button>
+        ${toggleButtonsHtml}
       </div>
     </div>
     <div class="fl-grid">
