@@ -618,10 +618,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-preview.mp-broken .mp-fallback{display:flex;}
 .mix-stage{max-width:920px;margin:18px auto 0;padding:0 28px;}
 .mix-loading{padding:30px 0;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted);}
-.mix-loading-inline{padding:22px 0 30px;text-align:left;}
-.mc-cat-toggle{display:flex;gap:6px;margin:2px 0 12px;}
-.mc-cat-toggle button{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer;transition:background .2s,border-color .2s,color .2s;}
-.mc-cat-toggle button.active{background:var(--ink);border-color:var(--ink);color:var(--paper);}
 .mix-carousel{padding:14px 0;border-top:1px solid var(--line-soft);}
 .mix-carousel:last-of-type{border-bottom:1px solid var(--line-soft);}
 .mc-row{display:flex;align-items:center;gap:6px;}
@@ -645,25 +641,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-carousel[data-kind="bottom"] .mc-head{color:#55914C;}
 .mix-carousel .mc-name{font-size:14px;font-weight:600;}
 .mix-carousel .mc-code{font-family:var(--mono);font-size:11px;color:var(--muted);}
-.mc-viewall{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-soft);background:none;border:none;text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:2px;}
-/* Preview-only bottom sheet (see openMixPicker) -- same z-index tier
-   as the product modal's own backdrop/panel pair since only one of
-   these overlays is ever open at a time on this page. */
-.mp-sheet-backdrop{position:fixed;inset:0;background:rgba(15,14,12,.5);z-index:500;opacity:0;pointer-events:none;transition:opacity .3s var(--ease-out);}
-.mp-sheet-backdrop.show{opacity:1;pointer-events:auto;}
-.mp-sheet{position:fixed;left:0;right:0;bottom:0;max-width:640px;margin:0 auto;height:66vh;background:var(--paper);z-index:501;border-radius:20px 20px 0 0;box-shadow:0 -20px 50px rgba(0,0,0,.14);transform:translateY(100%);transition:transform .4s var(--ease-drawer);display:flex;flex-direction:column;overflow:hidden;}
-.mp-sheet.show{transform:translateY(0);}
-.mp-sheet-handle{width:36px;height:4px;border-radius:999px;background:var(--line);margin:12px auto 4px;flex:none;}
-.mp-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:8px 20px 12px;border-bottom:1px solid var(--line-soft);flex:none;}
-.mp-sheet-head span{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--muted);}
-.mp-sheet-close{background:none;border:none;font-size:22px;line-height:1;color:var(--ink-soft);cursor:pointer;padding:4px 8px;}
-.mp-sheet-grid{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:16px 20px 28px;}
-.mp-sheet-item{background:none;border:none;cursor:pointer;padding:0;display:flex;flex-direction:column;gap:6px;}
-.mp-sheet-item .frame{aspect-ratio:1/1;background:var(--paper-2);border:1px solid var(--line-soft);border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:border-color .2s;}
-.mp-sheet-item .frame img{width:100%;height:100%;object-fit:contain;}
-.mp-sheet-item.active .frame{border-color:var(--ink);border-width:2px;}
-.mp-sheet-item-code{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center;}
-@media(max-width:640px){.mp-sheet-grid{grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 16px 24px;}}
 .mix-cta{text-align:center;padding:26px 28px 90px;}
 .mix-cta button{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;padding:12px 30px;border-radius:999px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;transition:opacity .2s,transform .15s ease;}
 .mix-cta button:not(:disabled):active{transform:scale(.96);}
@@ -1867,22 +1844,9 @@ window.addEventListener('mouseup', ()=>{
    them with an unrelated product in between. */
 const MIX_TOP_POOL = ['263TS001','263TS003','263TS005','263TS007','263TS009','263TS011','263TS013','263TS015','263TS057','263TS017','263TS019','263TS021','263TS023','263TS025','263TS027','263TS029','263TS029-2','263TS031','263TS031-2','263TR001','263TR002','263WU001','263WU002','263WU003','263WU005','263WU009','70108EX'];
 const MIX_BOTTOM_POOL = ['263PH001','263PH001-2','263PH002','263PH002-2','263PL001','263PL002','263WP001','263WP002','263WP003','263WP005','263WP006','263WP007','263WP008','263WP009','263WP010','261PH001M-1','261PH001M-1-2','261PH001M-1-3','261PH001M-1-4','261PH002F-1','261PH002F-1-2','261PH002F-1-3','261PH002F-1-4','261PH003M-1','261PH003M-1-2','261PH003M-1-3','261PH004F-1','261PH004F-1-2','261PH004F-1-3','261PH005M-1','261PH006F-1','261PH009U-1'];
-/* Daily Wear preview only -- no mannequin cutout PNGs exist for any
-   Daily Wear product yet, so these pools stay empty (and the category
-   toggle below just shows an empty-state message for them) until
-   those photos are shot and uploaded the same way Game Wear's were. */
-const MIX_TOP_POOL_CASUAL = [];
-const MIX_BOTTOM_POOL_CASUAL = [];
 /* subset of the pools above with a confirmed uploaded image, filled
    in by initMixPool() */
 let MIX_TOPS = [], MIX_BOTTOMS = [];
-let MIX_TOPS_CASUAL = [], MIX_BOTTOMS_CASUAL = [];
-/* independent per-slot category so e.g. a Daily Wear top can be paired
-   with a Game Wear bottom -- each carousel/sheet gets its own small
-   GAME/DAILY toggle rather than one switch governing both. */
-let mixTopCategory = 'game', mixBottomCategory = 'game';
-function activeMixTops(){ return mixTopCategory==='casual' ? MIX_TOPS_CASUAL : MIX_TOPS; }
-function activeMixBottoms(){ return mixBottomCategory==='casual' ? MIX_BOTTOMS_CASUAL : MIX_BOTTOMS; }
 let mixPoolPromise = null;
 function imgExistsProbe(src){
   return fetch(src, {method:'HEAD'}).then(r=>r.ok).catch(()=>false);
@@ -1941,9 +1905,7 @@ function initMixPool(){
   mixPoolPromise = Promise.all([
     runThrottled(MIX_TOP_POOL.map(code=>probeTask(code,'tops')), 6),
     runThrottled(MIX_BOTTOM_POOL.map(code=>probeTask(code,'bottoms')), 6),
-    runThrottled(MIX_TOP_POOL_CASUAL.map(code=>probeTask(code,'tops')), 6),
-    runThrottled(MIX_BOTTOM_POOL_CASUAL.map(code=>probeTask(code,'bottoms')), 6),
-  ]).then(([tops,bottoms,topsCasual,bottomsCasual])=>{
+  ]).then(([tops,bottoms])=>{
     saveProbeCache('yx_mixPoolCache_v2', cache);
     /* a cold-started PWA can fire all ~55 of these existence probes before
        the network is really warmed up, spuriously failing every single one
@@ -1954,8 +1916,6 @@ function initMixPool(){
     if(!MIX_TOPS.length) MIX_TOPS = [...MIX_TOP_POOL];
     MIX_BOTTOMS = bottoms.filter(Boolean);
     if(!MIX_BOTTOMS.length) MIX_BOTTOMS = [...MIX_BOTTOM_POOL];
-    MIX_TOPS_CASUAL = topsCasual.filter(Boolean);
-    MIX_BOTTOMS_CASUAL = bottomsCasual.filter(Boolean);
     if(mixTopIdx >= MIX_TOPS.length) mixTopIdx = 0;
     if(mixBottomIdx >= MIX_BOTTOMS.length) mixBottomIdx = 0;
     refreshLookMixButtons();
@@ -3806,15 +3766,6 @@ function renderMix(){
         <div class="mix-preview" id="mixPreview"></div>
         <p class="mix-preview-note">본 이미지는 코디 참고용으로 실제 핏과 다를 수 있습니다</p>
       </div>
-      <div class="mp-sheet-backdrop" id="mpSheetBackdrop" onclick="closeMixPicker()"></div>
-      <div class="mp-sheet" id="mpSheet">
-        <div class="mp-sheet-handle"></div>
-        <div class="mp-sheet-head">
-          <span id="mpSheetTitle">TOP</span>
-          <button type="button" class="mp-sheet-close" onclick="closeMixPicker()" aria-label="Close">&times;</button>
-        </div>
-        <div class="mp-sheet-grid" id="mpSheetGrid"></div>
-      </div>
       <div class="mix-controls">
         <section class="mix-stage" id="mixStage"></section>
         <section class="mix-cta" id="mixCta"></section>
@@ -3822,22 +3773,8 @@ function renderMix(){
     </div>
   </div>`;
 }
-function mixTopCode(){ return activeMixTops()[mixTopIdx]; }
-function mixBottomCode(){ return activeMixBottoms()[mixBottomIdx]; }
-function mixCatToggleHtml(kind){
-  const cat = kind==='top' ? mixTopCategory : mixBottomCategory;
-  return `<div class="mc-cat-toggle" data-kind="${kind}">
-    <button type="button" class="${cat==='game'?'active':''}" onclick="selectMixCategory('${kind}','game')">GAME</button>
-    <button type="button" class="${cat==='casual'?'active':''}" onclick="selectMixCategory('${kind}','casual')">DAILY</button>
-  </div>`;
-}
-function selectMixCategory(kind, cat){
-  const cur = kind==='top' ? mixTopCategory : mixBottomCategory;
-  if(cat===cur) return;
-  if(kind==='top'){ mixTopCategory = cat; mixTopIdx = 0; }
-  else{ mixBottomCategory = cat; mixBottomIdx = 0; }
-  paintMix();
-}
+function mixTopCode(){ return MIX_TOPS[mixTopIdx]; }
+function mixBottomCode(){ return MIX_BOTTOMS[mixBottomIdx]; }
 
 /* Jump from a look's item card straight to STYLE MIX with that item
    already selected — reads the item's *current* code off the DOM rather
@@ -3936,9 +3873,7 @@ function mixCarouselHtml(kind, codes, activeIdx){
       <span class="mc-head">${kind.toUpperCase()}</span>
       <span class="mc-name">${active?.name||''}</span>
       <span class="mc-code">${active?.code||''} — ${active?.color||''}</span>
-      <button type="button" class="mc-viewall" onclick="openMixPicker('${kind}')">전체보기</button>
     </div>
-    ${mixCatToggleHtml(kind)}
     <div class="mc-row">
       <button type="button" class="mc-arrow mc-arrow-prev" onclick="stepMix('${kind}',-1)" aria-label="Previous ${kind}">&#8249;</button>
       <div class="mc-strip">${thumbs}</div>
@@ -3950,7 +3885,7 @@ function mixCarouselHtml(kind, codes, activeIdx){
    ends) and scroll just far enough to bring it into view — swiping/
    dragging the strip itself stays free scrolling, untouched by this. */
 function stepMix(kind, dir){
-  const list = kind==='top' ? activeMixTops() : activeMixBottoms();
+  const list = kind==='top' ? MIX_TOPS : MIX_BOTTOMS;
   const curIdx = kind==='top' ? mixTopIdx : mixBottomIdx;
   const nextIdx = (curIdx + dir + list.length) % list.length;
   selectMix(kind, nextIdx);
@@ -3964,30 +3899,14 @@ function paintMix(){
   const preview = document.getElementById('mixPreview');
   if(!stage) return;
   applyPendingMixSelection();
-  const tops = activeMixTops(), bottoms = activeMixBottoms();
-  /* TOP and BOTTOM now pick their category independently (see
-     mixTopCategory/mixBottomCategory), so either one alone can be
-     empty (e.g. TOP set to Daily Wear, which has no cutouts yet, while
-     BOTTOM stays on Game Wear) -- each carousel shows its own
-     empty-state in that case, with its toggle still there to switch
-     back, rather than blanking the whole stage like a single shared
-     category used to. */
-  stage.innerHTML =
-    (tops.length ? mixCarouselHtml('top', tops, mixTopIdx) : mixCarouselEmptyHtml('top')) +
-    (bottoms.length ? mixCarouselHtml('bottom', bottoms, mixBottomIdx) : mixCarouselEmptyHtml('bottom'));
-  if(tops.length && bottoms.length){
-    updateMixPreview();
-  } else {
+  if(!MIX_TOPS.length || !MIX_BOTTOMS.length){
+    stage.innerHTML = '<div class="mix-loading">업로드된 코디 이미지가 아직 없습니다</div>';
     if(cta) cta.innerHTML = '';
     if(preview) preview.innerHTML = '';
+    return;
   }
-}
-function mixCarouselEmptyHtml(kind){
-  return `<div class="mix-carousel" data-kind="${kind}">
-    <div class="mc-info"><span class="mc-head">${kind.toUpperCase()}</span></div>
-    ${mixCatToggleHtml(kind)}
-    <div class="mix-loading mix-loading-inline">${kind==='top'?'상의':'하의'} 코디는 준비 중입니다</div>
-  </div>`;
+  stage.innerHTML = mixCarouselHtml('top', MIX_TOPS, mixTopIdx) + mixCarouselHtml('bottom', MIX_BOTTOMS, mixBottomIdx);
+  updateMixPreview();
 }
 /* Refreshes just the mannequin preview + CTA — used both by the initial
    full paintMix() render and by selectMix()'s lighter per-tap update,
@@ -4028,48 +3947,6 @@ function selectMix(kind, idx){
     }
   }
   updateMixPreview();
-  syncMixPickerActive();
-}
-/* Preview-only alternative to the carousel: a bottom sheet with every
-   candidate laid out in a grid instead of one strip you swipe through.
-   Tapping a tile updates the mannequin immediately via the same
-   selectMix() the carousel uses, without closing the sheet, so you can
-   flip through several before committing -- the sheet leaves the
-   mannequin preview visible above it rather than covering the screen. */
-let mixPickerKind = null;
-function mixPickerGridHtml(kind){
-  const codes = kind==='top' ? activeMixTops() : activeMixBottoms();
-  const activeIdx = kind==='top' ? mixTopIdx : mixBottomIdx;
-  return codes.map((code,i)=>{
-    const p = PRODUCTS[code];
-    if(!p) return '';
-    const isActive = i===activeIdx;
-    return `<button type="button" class="mp-sheet-item${isActive?' active':''}" onclick="selectMix('${kind}',${i})" aria-pressed="${isActive}">
-      <div class="frame"><img src="${p.img}" alt="" loading="lazy"></div>
-      <span class="mp-sheet-item-code">${p.code}</span>
-    </button>`;
-  }).join('');
-}
-function syncMixPickerActive(){
-  if(!mixPickerKind) return;
-  const activeIdx = mixPickerKind==='top' ? mixTopIdx : mixBottomIdx;
-  document.querySelectorAll('#mpSheetGrid .mp-sheet-item').forEach((el,i)=>{
-    el.classList.toggle('active', i===activeIdx);
-    el.setAttribute('aria-pressed', i===activeIdx ? 'true' : 'false');
-  });
-}
-function openMixPicker(kind){
-  mixPickerKind = kind;
-  document.getElementById('mpSheetTitle').textContent = kind.toUpperCase();
-  document.getElementById('mpSheetGrid').innerHTML = mixPickerGridHtml(kind);
-  document.getElementById('mpSheetBackdrop').classList.add('show');
-  document.getElementById('mpSheet').classList.add('show');
-  window.scrollTo({top: 0, behavior: REDUCE_MOTION ? 'auto' : 'smooth'});
-}
-function closeMixPicker(){
-  mixPickerKind = null;
-  document.getElementById('mpSheetBackdrop').classList.remove('show');
-  document.getElementById('mpSheet').classList.remove('show');
 }
 
 /* ---------------- REVEAL ON SCROLL ---------------- */
