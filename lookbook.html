@@ -616,9 +616,12 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-preview-note{max-width:280px;margin:8px auto 0;font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;}
 .mix-preview.mp-broken img{visibility:hidden;}
 .mix-preview.mp-broken .mp-fallback{display:flex;}
-.mix-cat-toggle-wrap{max-width:920px;margin:0 auto;padding:0 28px;}
 .mix-stage{max-width:920px;margin:18px auto 0;padding:0 28px;}
 .mix-loading{padding:30px 0;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted);}
+.mix-loading-inline{padding:22px 0 30px;text-align:left;}
+.mc-cat-toggle{display:flex;gap:6px;margin:2px 0 12px;}
+.mc-cat-toggle button{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer;transition:background .2s,border-color .2s,color .2s;}
+.mc-cat-toggle button.active{background:var(--ink);border-color:var(--ink);color:var(--paper);}
 .mix-carousel{padding:14px 0;border-top:1px solid var(--line-soft);}
 .mix-carousel:last-of-type{border-bottom:1px solid var(--line-soft);}
 .mc-row{display:flex;align-items:center;gap:6px;}
@@ -675,7 +678,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .mix-visual{position:sticky;top:84px;}
   .mix-preview{width:100%;max-width:480px;margin:20px auto 0;}
   .mix-preview-note{max-width:480px;}
-  .mix-cat-toggle-wrap{max-width:none;padding:0;}
   .mix-stage{max-width:none;margin:18px 0 0;padding:0;}
   .mix-cta{padding:26px 0 40px;}
 }
@@ -683,7 +685,6 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
   .mix-visual{padding:0 16px;}
   .mix-preview{width:100%;max-width:420px;margin:14px auto 0;}
   .mix-preview-note{max-width:420px;margin:6px auto 0;}
-  .mix-cat-toggle-wrap{padding:0 16px;}
   .mix-stage{padding:0 16px;margin:10px auto 0;}
   .mix-thumb{padding:3px;}
   .mix-cta{padding:16px 0 40px;}
@@ -1876,9 +1877,12 @@ const MIX_BOTTOM_POOL_CASUAL = [];
    in by initMixPool() */
 let MIX_TOPS = [], MIX_BOTTOMS = [];
 let MIX_TOPS_CASUAL = [], MIX_BOTTOMS_CASUAL = [];
-let mixCategory = 'game';
-function activeMixTops(){ return mixCategory==='casual' ? MIX_TOPS_CASUAL : MIX_TOPS; }
-function activeMixBottoms(){ return mixCategory==='casual' ? MIX_BOTTOMS_CASUAL : MIX_BOTTOMS; }
+/* independent per-slot category so e.g. a Daily Wear top can be paired
+   with a Game Wear bottom -- each carousel/sheet gets its own small
+   GAME/DAILY toggle rather than one switch governing both. */
+let mixTopCategory = 'game', mixBottomCategory = 'game';
+function activeMixTops(){ return mixTopCategory==='casual' ? MIX_TOPS_CASUAL : MIX_TOPS; }
+function activeMixBottoms(){ return mixBottomCategory==='casual' ? MIX_BOTTOMS_CASUAL : MIX_BOTTOMS; }
 let mixPoolPromise = null;
 function imgExistsProbe(src){
   return fetch(src, {method:'HEAD'}).then(r=>r.ok).catch(()=>false);
@@ -2241,7 +2245,6 @@ function render(){
     positionToggleThumb(document.querySelector('.fl-toggle'));
   }
   if(view==='mix'){
-    positionToggleThumb(document.getElementById('mixCatToggle'));
     if(MIX_TOPS.length && MIX_BOTTOMS.length){
       paintMix();
     } else {
@@ -3813,12 +3816,6 @@ function renderMix(){
         <div class="mp-sheet-grid" id="mpSheetGrid"></div>
       </div>
       <div class="mix-controls">
-        <div class="mix-cat-toggle-wrap">
-          <div class="fl-toggle" id="mixCatToggle">
-            <button type="button" class="${mixCategory==='game'?'active':''}" onclick="selectMixCategory('game')">GAME WEAR</button>
-            <button type="button" class="${mixCategory==='casual'?'active':''}" onclick="selectMixCategory('casual')">DAILY WEAR</button>
-          </div>
-        </div>
         <section class="mix-stage" id="mixStage"></section>
         <section class="mix-cta" id="mixCta"></section>
       </div>
@@ -3827,12 +3824,18 @@ function renderMix(){
 }
 function mixTopCode(){ return activeMixTops()[mixTopIdx]; }
 function mixBottomCode(){ return activeMixBottoms()[mixBottomIdx]; }
-function selectMixCategory(cat){
-  if(cat===mixCategory) return;
-  mixCategory = cat;
-  mixTopIdx = 0; mixBottomIdx = 0;
-  document.querySelectorAll('#mixCatToggle button').forEach(b=>b.classList.toggle('active', b.textContent===(cat==='game'?'GAME WEAR':'DAILY WEAR')));
-  positionToggleThumb(document.getElementById('mixCatToggle'));
+function mixCatToggleHtml(kind){
+  const cat = kind==='top' ? mixTopCategory : mixBottomCategory;
+  return `<div class="mc-cat-toggle" data-kind="${kind}">
+    <button type="button" class="${cat==='game'?'active':''}" onclick="selectMixCategory('${kind}','game')">GAME</button>
+    <button type="button" class="${cat==='casual'?'active':''}" onclick="selectMixCategory('${kind}','casual')">DAILY</button>
+  </div>`;
+}
+function selectMixCategory(kind, cat){
+  const cur = kind==='top' ? mixTopCategory : mixBottomCategory;
+  if(cat===cur) return;
+  if(kind==='top'){ mixTopCategory = cat; mixTopIdx = 0; }
+  else{ mixBottomCategory = cat; mixBottomIdx = 0; }
   paintMix();
 }
 
@@ -3935,6 +3938,7 @@ function mixCarouselHtml(kind, codes, activeIdx){
       <span class="mc-code">${active?.code||''} — ${active?.color||''}</span>
       <button type="button" class="mc-viewall" onclick="openMixPicker('${kind}')">전체보기</button>
     </div>
+    ${mixCatToggleHtml(kind)}
     <div class="mc-row">
       <button type="button" class="mc-arrow mc-arrow-prev" onclick="stepMix('${kind}',-1)" aria-label="Previous ${kind}">&#8249;</button>
       <div class="mc-strip">${thumbs}</div>
@@ -3961,16 +3965,29 @@ function paintMix(){
   if(!stage) return;
   applyPendingMixSelection();
   const tops = activeMixTops(), bottoms = activeMixBottoms();
-  if(!tops.length || !bottoms.length){
-    stage.innerHTML = mixCategory==='casual'
-      ? '<div class="mix-loading">데일리웨어 코디는 준비 중입니다</div>'
-      : '<div class="mix-loading">업로드된 코디 이미지가 아직 없습니다</div>';
+  /* TOP and BOTTOM now pick their category independently (see
+     mixTopCategory/mixBottomCategory), so either one alone can be
+     empty (e.g. TOP set to Daily Wear, which has no cutouts yet, while
+     BOTTOM stays on Game Wear) -- each carousel shows its own
+     empty-state in that case, with its toggle still there to switch
+     back, rather than blanking the whole stage like a single shared
+     category used to. */
+  stage.innerHTML =
+    (tops.length ? mixCarouselHtml('top', tops, mixTopIdx) : mixCarouselEmptyHtml('top')) +
+    (bottoms.length ? mixCarouselHtml('bottom', bottoms, mixBottomIdx) : mixCarouselEmptyHtml('bottom'));
+  if(tops.length && bottoms.length){
+    updateMixPreview();
+  } else {
     if(cta) cta.innerHTML = '';
     if(preview) preview.innerHTML = '';
-    return;
   }
-  stage.innerHTML = mixCarouselHtml('top', tops, mixTopIdx) + mixCarouselHtml('bottom', bottoms, mixBottomIdx);
-  updateMixPreview();
+}
+function mixCarouselEmptyHtml(kind){
+  return `<div class="mix-carousel" data-kind="${kind}">
+    <div class="mc-info"><span class="mc-head">${kind.toUpperCase()}</span></div>
+    ${mixCatToggleHtml(kind)}
+    <div class="mix-loading mix-loading-inline">${kind==='top'?'상의':'하의'} 코디는 준비 중입니다</div>
+  </div>`;
 }
 /* Refreshes just the mannequin preview + CTA — used both by the initial
    full paintMix() render and by selectMix()'s lighter per-tap update,
