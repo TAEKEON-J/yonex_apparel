@@ -642,6 +642,25 @@ body[data-cat="easy"] .look-card .lc-frame{aspect-ratio:5/6;border-radius:2px;}
 .mix-carousel[data-kind="bottom"] .mc-head{color:#55914C;}
 .mix-carousel .mc-name{font-size:14px;font-weight:600;}
 .mix-carousel .mc-code{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.mc-viewall{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-soft);background:none;border:none;text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:2px;}
+/* Preview-only bottom sheet (see openMixPicker) -- same z-index tier
+   as the product modal's own backdrop/panel pair since only one of
+   these overlays is ever open at a time on this page. */
+.mp-sheet-backdrop{position:fixed;inset:0;background:rgba(15,14,12,.5);z-index:500;opacity:0;pointer-events:none;transition:opacity .3s var(--ease-out);}
+.mp-sheet-backdrop.show{opacity:1;pointer-events:auto;}
+.mp-sheet{position:fixed;left:0;right:0;bottom:0;max-width:640px;margin:0 auto;height:66vh;background:var(--paper);z-index:501;border-radius:20px 20px 0 0;box-shadow:0 -20px 50px rgba(0,0,0,.14);transform:translateY(100%);transition:transform .4s var(--ease-drawer);display:flex;flex-direction:column;overflow:hidden;}
+.mp-sheet.show{transform:translateY(0);}
+.mp-sheet-handle{width:36px;height:4px;border-radius:999px;background:var(--line);margin:12px auto 4px;flex:none;}
+.mp-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:8px 20px 12px;border-bottom:1px solid var(--line-soft);flex:none;}
+.mp-sheet-head span{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--muted);}
+.mp-sheet-close{background:none;border:none;font-size:22px;line-height:1;color:var(--ink-soft);cursor:pointer;padding:4px 8px;}
+.mp-sheet-grid{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:16px 20px 28px;}
+.mp-sheet-item{background:none;border:none;cursor:pointer;padding:0;display:flex;flex-direction:column;gap:6px;}
+.mp-sheet-item .frame{aspect-ratio:1/1;background:var(--paper-2);border:1px solid var(--line-soft);border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:border-color .2s;}
+.mp-sheet-item .frame img{width:100%;height:100%;object-fit:contain;}
+.mp-sheet-item.active .frame{border-color:var(--ink);border-width:2px;}
+.mp-sheet-item-code{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center;}
+@media(max-width:640px){.mp-sheet-grid{grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 16px 24px;}}
 .mix-cta{text-align:center;padding:26px 28px 90px;}
 .mix-cta button{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;padding:12px 30px;border-radius:999px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;transition:opacity .2s,transform .15s ease;}
 .mix-cta button:not(:disabled):active{transform:scale(.96);}
@@ -3784,6 +3803,15 @@ function renderMix(){
         <div class="mix-preview" id="mixPreview"></div>
         <p class="mix-preview-note">본 이미지는 코디 참고용으로 실제 핏과 다를 수 있습니다</p>
       </div>
+      <div class="mp-sheet-backdrop" id="mpSheetBackdrop" onclick="closeMixPicker()"></div>
+      <div class="mp-sheet" id="mpSheet">
+        <div class="mp-sheet-handle"></div>
+        <div class="mp-sheet-head">
+          <span id="mpSheetTitle">TOP</span>
+          <button type="button" class="mp-sheet-close" onclick="closeMixPicker()" aria-label="Close">&times;</button>
+        </div>
+        <div class="mp-sheet-grid" id="mpSheetGrid"></div>
+      </div>
       <div class="mix-controls">
         <div class="mix-cat-toggle-wrap">
           <div class="fl-toggle" id="mixCatToggle">
@@ -3905,6 +3933,7 @@ function mixCarouselHtml(kind, codes, activeIdx){
       <span class="mc-head">${kind.toUpperCase()}</span>
       <span class="mc-name">${active?.name||''}</span>
       <span class="mc-code">${active?.code||''} — ${active?.color||''}</span>
+      <button type="button" class="mc-viewall" onclick="openMixPicker('${kind}')">전체보기</button>
     </div>
     <div class="mc-row">
       <button type="button" class="mc-arrow mc-arrow-prev" onclick="stepMix('${kind}',-1)" aria-label="Previous ${kind}">&#8249;</button>
@@ -3982,6 +4011,48 @@ function selectMix(kind, idx){
     }
   }
   updateMixPreview();
+  syncMixPickerActive();
+}
+/* Preview-only alternative to the carousel: a bottom sheet with every
+   candidate laid out in a grid instead of one strip you swipe through.
+   Tapping a tile updates the mannequin immediately via the same
+   selectMix() the carousel uses, without closing the sheet, so you can
+   flip through several before committing -- the sheet leaves the
+   mannequin preview visible above it rather than covering the screen. */
+let mixPickerKind = null;
+function mixPickerGridHtml(kind){
+  const codes = kind==='top' ? activeMixTops() : activeMixBottoms();
+  const activeIdx = kind==='top' ? mixTopIdx : mixBottomIdx;
+  return codes.map((code,i)=>{
+    const p = PRODUCTS[code];
+    if(!p) return '';
+    const isActive = i===activeIdx;
+    return `<button type="button" class="mp-sheet-item${isActive?' active':''}" onclick="selectMix('${kind}',${i})" aria-pressed="${isActive}">
+      <div class="frame"><img src="${p.img}" alt="" loading="lazy"></div>
+      <span class="mp-sheet-item-code">${p.code}</span>
+    </button>`;
+  }).join('');
+}
+function syncMixPickerActive(){
+  if(!mixPickerKind) return;
+  const activeIdx = mixPickerKind==='top' ? mixTopIdx : mixBottomIdx;
+  document.querySelectorAll('#mpSheetGrid .mp-sheet-item').forEach((el,i)=>{
+    el.classList.toggle('active', i===activeIdx);
+    el.setAttribute('aria-pressed', i===activeIdx ? 'true' : 'false');
+  });
+}
+function openMixPicker(kind){
+  mixPickerKind = kind;
+  document.getElementById('mpSheetTitle').textContent = kind.toUpperCase();
+  document.getElementById('mpSheetGrid').innerHTML = mixPickerGridHtml(kind);
+  document.getElementById('mpSheetBackdrop').classList.add('show');
+  document.getElementById('mpSheet').classList.add('show');
+  window.scrollTo({top: 0, behavior: REDUCE_MOTION ? 'auto' : 'smooth'});
+}
+function closeMixPicker(){
+  mixPickerKind = null;
+  document.getElementById('mpSheetBackdrop').classList.remove('show');
+  document.getElementById('mpSheet').classList.remove('show');
 }
 
 /* ---------------- REVEAL ON SCROLL ---------------- */
