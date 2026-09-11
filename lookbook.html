@@ -42,6 +42,10 @@
   --ease:cubic-bezier(.16,.8,.24,1);
   --ease-out:cubic-bezier(.23,1,.32,1);
   --ease-drawer:cubic-bezier(.32,.72,0,1);
+  /* kept in sync with the real header.topnav height by JS (see
+     syncHeaderHeight below) -- this static fallback only covers the
+     instant before that first measurement lands. */
+  --header-h:88px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important;}}
@@ -133,7 +137,7 @@ main#app.app-out{opacity:0;transform:translateY(-8px);filter:blur(3px);}
 @keyframes viewIn{from{opacity:0;transform:translateY(16px) scale(.985);filter:blur(4px);}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0);}}
 
 /* ===== COVER ===== */
-.cover{position:relative;height:100svh;min-height:560px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:#141414;}
+.cover{position:relative;height:calc(100svh - var(--header-h));min-height:560px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:#141414;}
 .cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%;}
 .cover .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,0) 0%,rgba(8,8,8,.12) 45%,rgba(6,6,6,.88) 100%);}
 .cover-in{position:relative;z-index:2;max-width:1320px;margin:0 auto;width:100%;padding:0 28px 64px;color:#fff;}
@@ -154,7 +158,7 @@ main#app.app-out{opacity:0;transform:translateY(-8px);filter:blur(3px);}
 .cover-cats button:hover .cc-name{transform:translateX(3px);}
 .cover-cats .cc-arrow{display:inline-block;margin-left:8px;transition:transform .25s var(--ease);}
 .cover-cats button:hover .cc-arrow{transform:translateX(4px);}
-@media(max-width:640px){.cover{min-height:640px;} .cover-cats{margin-top:26px;} .cover-cats button{flex:1 1 100%;border-right:none;border-top:1px solid rgba(255,255,255,.2);padding:12px 22px 13px;} .cover-cats button:first-child{border-top:none;} .cover-cats .cc-name{margin-top:5px;}}
+@media(max-width:640px){.cover{min-height:min(640px, calc(100svh - var(--header-h)));} .cover-cats{margin-top:26px;} .cover-cats button{flex:1 1 100%;border-right:none;border-top:1px solid rgba(255,255,255,.2);padding:12px 22px 13px;} .cover-cats button:first-child{border-top:none;} .cover-cats .cc-name{margin-top:5px;}}
 
 /* ===== CATEGORY PAGE ===== */
 .cat-hero{padding:72px 28px 20px;max-width:1320px;margin:0 auto;}
@@ -2016,6 +2020,22 @@ function go(view, param){
 }
 window.addEventListener('hashchange', render);
 window.addEventListener('DOMContentLoaded', render);
+
+/* .cover sizes itself as 100svh minus the sticky header's real height
+   (--header-h) so the hero section's bottom edge lands exactly at the
+   viewport edge instead of running the header's own height past it --
+   the header's layout height shifts across breakpoints (mobile drops
+   the wordmark, etc.), so it's measured live rather than hardcoded. */
+function syncHeaderHeight(){
+  const header = document.querySelector('header.topnav');
+  if(header) document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+}
+syncHeaderHeight();
+if('ResizeObserver' in window){
+  new ResizeObserver(syncHeaderHeight).observe(document.querySelector('header.topnav'));
+} else {
+  window.addEventListener('resize', syncHeaderHeight);
+}
 
 /* fade lazy-loaded images in once decoded, instead of a hard pop-in
    as they scroll into view; capture phase since 'load' doesn't bubble */
