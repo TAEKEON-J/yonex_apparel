@@ -115,13 +115,6 @@ header.topnav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.88)
    natural left-to-right reading order so the first category is what's
    visible by default, with overflow-x:auto/scroll as the safety net
    once there are more categories than fit. */
-/* no longer a child of header.topnav (it needs to be a sibling so the
-   mobile floating-pill override further down can use position:fixed --
-   backdrop-filter on an ancestor creates a containing block that traps
-   fixed descendants, which is exactly what header.topnav has). Sticky
-   right under the header instead, restating its background/blur/
-   border so the two still read as one continuous bar. */
-nav.catnav-row{position:sticky;top:var(--header-h);z-index:199;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft);}
 .catnav-row{display:flex;gap:26px;max-width:1320px;margin:0 auto;padding:14px 28px 16px;overflow-x:auto;scrollbar-width:none;justify-content:flex-start;}
 .catnav-row::-webkit-scrollbar{display:none;}
 .catnav-row button{background:none;border:none;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--ink-soft);padding:0 0 4px;font-family:var(--display);text-transform:uppercase;white-space:nowrap;position:relative;flex:none;transition:color .2s;}
@@ -137,22 +130,6 @@ nav.catnav-row{position:sticky;top:var(--header-h);z-index:199;background:rgba(2
    it) only where the row is genuinely tight. */
 @media(max-width:480px){.catnav-row{justify-content:space-between;}}
 @media(max-width:400px){.brand .season{display:none;} .search-toggle{width:26px;height:26px;} .mix-link{height:26px;padding:0 10px;} .catnav-row{gap:16px;} .catnav-row button{font-size:11px;}}
-
-/* MOCKUP -- moves the category switcher off the sticky header and
-   into a floating pill anchored to the bottom of the screen on
-   phones, thumb-reachable instead of top-of-screen, and freeing up
-   header height (the hero above sizes itself off the header's live
-   height, so it gets taller here for free). Same #catnav element,
-   same click handlers/active-state JS -- only repositioned via CSS. */
-@media(max-width:640px){
-  #catnav.catnav-row{position:fixed;top:auto;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:220;margin:0;max-width:none;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(19,19,19,.08);border-radius:999px;box-shadow:0 14px 32px rgba(0,0,0,.16);padding:6px;gap:2px;overflow-x:visible;justify-content:space-between;}
-  #catnav.catnav-row button{flex:1 1 0;text-align:center;font-size:10px;letter-spacing:.01em;padding:11px 4px;border-radius:999px;transition:color .2s,background .2s;}
-  #catnav.catnav-row button::after{display:none;}
-  #catnav.catnav-row button.active{color:var(--paper);background:var(--ink);}
-  main#app{padding-bottom:78px;}
-  .share-toast{bottom:calc(78px + env(safe-area-inset-bottom));}
-  .pwa-banner{bottom:calc(78px + env(safe-area-inset-bottom));}
-}
 
 main#app{min-height:70vh;transition:opacity .22s var(--ease-out),transform .22s var(--ease-out),filter .22s var(--ease-out);}
 main#app.app-out{opacity:0;transform:translateY(-8px);filter:blur(3px);}
@@ -730,13 +707,13 @@ footer.lb-foot .eyebrow{justify-content:center;display:flex;text-transform:none;
       </div>
     </div>
   </div>
+  <nav class="catnav-row" id="catnav">
+    <button data-cat="game" onclick="go('category','game')">GAME WEAR</button>
+    <button data-cat="casual" onclick="go('category','casual')">DAILY WEAR</button>
+    <button data-cat="easy" onclick="go('category','easy')">EASY WEAR</button>
+    <button data-cat="bagacc" onclick="go('category','bagacc')">BAG/ACC</button>
+  </nav>
 </header>
-<nav class="catnav-row" id="catnav">
-  <button data-cat="game" onclick="go('category','game')">GAME WEAR</button>
-  <button data-cat="casual" onclick="go('category','casual')">DAILY WEAR</button>
-  <button data-cat="easy" onclick="go('category','easy')">EASY WEAR</button>
-  <button data-cat="bagacc" onclick="go('category','bagacc')">BAG/ACC</button>
-</nav>
 
 <main id="app"></main>
 
@@ -2051,22 +2028,14 @@ window.addEventListener('DOMContentLoaded', render);
    the wordmark, etc.), so it's measured live rather than hardcoded. */
 function syncHeaderHeight(){
   const header = document.querySelector('header.topnav');
-  const catnav = document.getElementById('catnav');
-  /* catnav sticks right under the header on desktop (occupying real
-     flow height, same as when it lived inside header) but floats as
-     a fixed pill on mobile (contributing nothing to the space above
-     .cover) -- so its offsetHeight only counts while it's not fixed. */
-  let h = header ? header.offsetHeight : 0;
-  if(catnav && getComputedStyle(catnav).position !== 'fixed') h += catnav.offsetHeight;
-  document.documentElement.style.setProperty('--header-h', h + 'px');
+  if(header) document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
 }
 syncHeaderHeight();
 if('ResizeObserver' in window){
-  const ro = new ResizeObserver(syncHeaderHeight);
-  document.querySelector('header.topnav') && ro.observe(document.querySelector('header.topnav'));
-  document.getElementById('catnav') && ro.observe(document.getElementById('catnav'));
+  new ResizeObserver(syncHeaderHeight).observe(document.querySelector('header.topnav'));
+} else {
+  window.addEventListener('resize', syncHeaderHeight);
 }
-window.addEventListener('resize', syncHeaderHeight);
 
 /* fade lazy-loaded images in once decoded, instead of a hard pop-in
    as they scroll into view; capture phase since 'load' doesn't bubble */
